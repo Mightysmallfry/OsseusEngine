@@ -5,8 +5,8 @@
 #include "Osseus/math/Integrators/IntegratorRungeKutta4.h"
 
 namespace osseus {
-    void IntegratorRungeKutta4::step(BodyManager &manager, const IForceEvaluator &forces, double delta) {
-        for (BodyData& body : manager.bodies.Data()) {
+    void IntegratorRungeKutta4::Step(BodyManager &manager, const IForceEvaluator &forces, double delta) {
+        for (BodyData& body : manager.Data()) {
             if (body.invMass == 0.0) { continue; }
             Vector3 x = body.position;
             Vector3 v = body.velocity;

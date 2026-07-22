@@ -31,6 +31,16 @@ add_library(Osseus
         Osseus/include/Osseus/physics/Forces/ForceGravity.h
         Osseus/src/physics/Forces/ForceComposite.cpp
         Osseus/include/Osseus/physics/Forces/ForceComposite.h
+        Osseus/src/system/ShapeManager.cpp
+        Osseus/include/Osseus/system/ShapeManager.h
+        Osseus/src/interfaces/IShape.cpp
+        Osseus/include/Osseus/interfaces/IShape.h
+        Osseus/include/Osseus/system/AABB.h
+        Osseus/include/Osseus/math/Geometry/ShapeSphere.h
+        Osseus/include/Osseus/math/Geometry/ShapePoint.h
+        Osseus/include/Osseus/system/CollisionCandidatePair.h
+        Osseus/src/system/BroadPhase.cpp
+        Osseus/include/Osseus/system/BroadPhase.h
 )
 
 target_include_directories(Osseus

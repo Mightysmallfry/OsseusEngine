@@ -9,24 +9,31 @@
 #include <vector>
 
 #include "PhysicsBody.h"
-#include "../interfaces/IIntegrator.h"
+#include "Osseus/interfaces/IIntegrator.h"
 #include "Forces/ForceComposite.h"
 #include "Osseus/math/Solver.h"
 #include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 #include "Osseus/system/BodyManager.h"
+#include "Osseus/system/BroadPhase.h"
 #include "Osseus/system/Registry.h"
 
 namespace osseus {
-    struct Handle;
 
     class PhysicsWorld {
     public:
         PhysicsWorld() : integrator(std::make_unique<IntegratorEulerCromer>()) {}
 
-        Handle CreateBody(BodyData bodyData);
+        Handle CreateHandle();
+
+        Handle CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape);
         void DestroyBody(Handle handle);
 
         void AddForce(std::unique_ptr<IForceEvaluator> force);
+
+        void AttachBody(Handle handle, BodyData bodyData);
+        void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
+
+
         void SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator);
 
         void Step(double delta);
@@ -39,10 +46,12 @@ namespace osseus {
 
         Registry registry;
         BodyManager bodyManager;
+        ShapeManager shapeManager;
         // ConstraintManager constraintManager;
 
         ForceComposite forces;
         Solver solver;
+        BroadPhase broadPhase;
     };
 } // osseus
 

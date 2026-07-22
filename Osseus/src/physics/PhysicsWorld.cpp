@@ -2,24 +2,39 @@
 // Created by MightySmallFry on 7/16/2026.
 //
 
-#include "../../include/Osseus/physics/PhysicsWorld.h"
-#include "Osseus/physics/Forces/ForceGravity.h"
+#include "Osseus/physics/PhysicsWorld.h"
 
 namespace osseus {
-    Handle PhysicsWorld::CreateBody(BodyData bodyData) {
-        Handle handle = registry.CreateHandle();
-        bodyManager.bodies.Insert(handle, bodyData);
+    Handle PhysicsWorld::CreateHandle() {
+        return registry.CreateHandle();
+    }
+
+    Handle PhysicsWorld::CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape) {
+        Handle handle = CreateHandle();
+        AttachBody(handle, bodyData);
+        AttachShape(handle, std::move(shape));
         return handle;
     }
 
     void PhysicsWorld::DestroyBody(Handle handle) {
         if (!registry.IsValid(handle)) { return; }
-        bodyManager.bodies.Remove(handle);
+        bodyManager.RemoveBody(handle);
+        shapeManager.RemoveShape(handle);
         registry.Destroy(handle);
     }
 
     void PhysicsWorld::AddForce(std::unique_ptr<IForceEvaluator> force) {
         forces.AddForce(std::move(force));
+    }
+
+    void PhysicsWorld::AttachBody(Handle handle, BodyData bodyData) {
+        if (!registry.IsValid(handle)) { return; }
+        bodyManager.AddBody(handle, bodyData);
+    }
+
+    void PhysicsWorld::AttachShape(Handle handle, std::unique_ptr<IShape> shape) {
+        if (!registry.IsValid(handle)) { return; }
+        shapeManager.AddShape(handle, std::move(shape));
     }
 
     void PhysicsWorld::SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator) {
@@ -28,24 +43,25 @@ namespace osseus {
 
     void PhysicsWorld::Step(double delta) {
         // Broad Phase
-
+        std::vector<CollisionCandidatePair> candidates =
+            broadPhase.FindCandidatePairs(bodyManager, shapeManager);
         // Narrow Phase
 
         // Solver
 
         // Integrator
-        integrator->step(bodyManager, forces, delta);
+        integrator->Step(bodyManager, forces, delta);
 
         // Sync State
     }
 
     BodyData * PhysicsWorld::GetBody(Handle handle) {
         if (!registry.IsValid(handle)) { return nullptr; }
-        return bodyManager.bodies.Get(handle);
+        return bodyManager.GetBody(handle);
     }
 
     const BodyData* PhysicsWorld::GetBody(Handle handle) const {
         if (!registry.IsValid(handle)) { return nullptr; }
-        return bodyManager.bodies.Get(handle);
+        return bodyManager.GetBody(handle);
     }
 } // osseus

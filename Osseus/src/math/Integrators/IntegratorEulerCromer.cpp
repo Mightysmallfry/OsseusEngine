@@ -5,8 +5,8 @@
 #include "../../../include/Osseus/math/Integrators/IntegratorEulerCromer.h"
 
 namespace osseus {
-    void IntegratorEulerCromer::step(BodyManager &manager, const IForceEvaluator &forces, double delta) {
-        for (BodyData& body : manager.bodies.Data()) {
+    void IntegratorEulerCromer::Step(BodyManager &manager, const IForceEvaluator &forces, double delta) {
+        for (BodyData& body : manager.Data()) {
             if (body.invMass == 0.0) { continue; }
 
             Vector3 acceleration = forces.CalculateAcceleration(body);

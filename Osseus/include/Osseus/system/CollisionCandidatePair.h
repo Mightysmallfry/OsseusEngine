@@ -1,0 +1,16 @@
+//
+// Created by MightySmallFry on 7/21/2026.
+//
+
+#ifndef OSSEUSENGINE_COLLISIONCANDIDATE_H
+#define OSSEUSENGINE_COLLISIONCANDIDATE_H
+#include "PhysicsHandle.h"
+
+namespace osseus {
+    struct CollisionCandidatePair {
+        Handle a;
+        Handle b;
+    };
+} // osseus
+
+#endif //OSSEUSENGINE_COLLISIONCANDIDATE_H
