@@ -27,8 +27,8 @@ namespace osseus {
             Vector3 k4v = forces.CalculateAcceleration(state4);
             Vector3 k4x = v + k3v * delta;
 
-            body.velocity = v + (k1v + k2v*2.0f + k3v*2.0f + k4v) * (delta/6.0f);
-            body.position = x + (k1x + k2x*2.0f + k3x*2.0f + k4x) * (delta/6.0f);
+            body.velocity = v + (k1v + k2v*2.0 + k3v*2.0 + k4v) * (delta/6.0);
+            body.position = x + (k1x + k2x*2.0 + k3x*2.0 + k4x) * (delta/6.0);
         }
     }
 } // osseus

@@ -1,9 +1,6 @@
 #include <iostream>
 #include <Osseus/Osseus.h>
 
-#include "Osseus/math/Geometry/ShapePoint.h"
-#include "Osseus/math/Geometry/ShapeSphere.h"
-#include "Osseus/physics/Forces/ForceGravity.h"
 
 
 // sandbox for the Osseus Engine.
@@ -26,7 +23,7 @@ int main() {
     };
 
     world.AttachBody(capsule, capsuleData);
-    world.AttachShape(capsule, std::make_unique<osseus::ShapeSphere>(1.0));
+    world.AttachShape(capsule, std::make_unique<osseus::ShapePoint>());
 
     // Consider a builder class
     osseus::Handle ball = world.CreateBody(

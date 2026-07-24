@@ -8,9 +8,8 @@
 #include <stdint.h>
 #include <vector>
 
-#include "PhysicsBody.h"
 #include "Osseus/interfaces/IIntegrator.h"
-#include "Forces/ForceComposite.h"
+#include "Osseus/physics/Forces/ForceComposite.h"
 #include "Osseus/math/Solver.h"
 #include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 #include "Osseus/system/BodyManager.h"

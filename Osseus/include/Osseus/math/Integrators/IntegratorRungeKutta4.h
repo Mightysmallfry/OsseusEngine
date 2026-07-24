@@ -7,7 +7,7 @@
 #include "Osseus/interfaces/IIntegrator.h"
 
 namespace osseus {
-    class IntegratorRungeKutta4 : IIntegrator{
+    class IntegratorRungeKutta4 : public IIntegrator{
     public:
         void Step(BodyManager &manager, const IForceEvaluator &forces, double delta) override;
     };

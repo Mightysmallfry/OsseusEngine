@@ -16,6 +16,7 @@ namespace osseus {
                 position + Vector3(radius, radius, radius) };
         }
 
+        double GetRadius() const { return radius; }
     private:
         double radius{ 1.0 };
     };

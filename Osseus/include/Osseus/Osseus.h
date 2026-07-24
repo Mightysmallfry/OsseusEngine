@@ -9,6 +9,7 @@
 // --- interfaces ---
 #include "interfaces/IForceEvaluator.h"
 #include "interfaces/IIntegrator.h"
+#include "interfaces/IShape.h"
 
 // --- math ---
 #include "math/Vector3.h"
@@ -16,8 +17,11 @@
 #include "math/Integrators/IntegratorEulerCromer.h"
 #include "math/Integrators/IntegratorRungeKutta4.h"
 
+#include "math/Geometry/ShapePoint.h"
+#include "math/Geometry/ShapeSphere.h"
+#include "math/Geometry/ShapeCube.h"
+
 // --- physics ---
-#include "physics/PhysicsBody.h"
 #include "physics/PhysicsWorld.h"
 #include "physics/Forces/ForceComposite.h"
 #include "physics/Forces/ForceGravity.h"
@@ -28,6 +32,12 @@
 #include "system/SparseSet.h"
 #include "system/BodyData.h"
 #include "system/BodyManager.h"
+#include "system/AABB.h"
+#include "system/CollisionCandidatePair.h"
+#include "system/BroadPhase.h"
+#include "system/Contact.h"
+#include "system/NarrowPhase.h"
+
 
 
 
