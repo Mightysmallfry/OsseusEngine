@@ -8,7 +8,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(OsseusTests)
+add_executable(OsseusTests
+        math/Rk4Tests.cpp
+        math/EulerCromerTests.cpp)
 
 target_sources(OsseusTests
         PRIVATE
@@ -17,6 +19,8 @@ target_sources(OsseusTests
 
         # Math
         math/Vector3Tests.cpp
+        math/RK4Tests.cpp
+        math/EulerCromerTests.cpp
 
         # Physics
         # physics/PhysicsWorldTests.cpp

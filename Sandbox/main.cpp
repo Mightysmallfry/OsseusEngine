@@ -8,6 +8,7 @@ int main() {
     const double delta = 0.05;
 
     osseus::PhysicsWorld world;
+    world.SetIntegrator(std::make_unique<osseus::IntegratorRungeKutta4>());
 
     // Add Force for all particles to be subject to.
     world.AddForce(std::make_unique<osseus::ForceGravity>());
