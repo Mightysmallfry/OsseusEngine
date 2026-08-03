@@ -24,14 +24,19 @@ namespace osseus {
   // Divides each component by the vector magnitude.
   void Vector3::Normalize() noexcept
   {
-    double magnitude = Length();
+    double length = Length();
 
-    if (magnitude <= TOLERANCE)
-      magnitude = 1.0;
+    if (length <= TOLERANCE)
+    {
+      x = 0.0;
+      y = 0.0;
+      z = 0.0;
+      return;
+    }
 
-    x /= magnitude;
-    y /= magnitude;
-    z /= magnitude;
+    x /= length;
+    y /= length;
+    z /= length;
   }
 
   // Returns a new unit vector in the direction of this vector,

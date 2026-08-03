@@ -1,4 +1,6 @@
-add_library(Osseus)
+add_library(Osseus
+        src/math/Quaternion.cpp
+        include/Osseus/math/Quaternion.h)
 
 target_sources(Osseus
         PRIVATE

@@ -8,6 +8,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iosfwd>
+#include <stdexcept>
 #include <string>
 
 namespace osseus {
@@ -73,12 +74,24 @@ namespace osseus {
         }
 
         // Policy: division by zero produces inf/nan (IEEE 754 behavior),
-        // it does not throw. This keeps the operator constexpr-eligible
-        // and noexcept. Callers who need strict validation should check
+        // Callers who need strict validation should check
         // the scalar themselves before dividing.
-        [[nodiscard]] constexpr Vector3 operator/(double scalar) const noexcept {
-            return Vector3(x / scalar, y / scalar, z / scalar);
+        [[nodiscard]] Vector3 operator/(double scalar) const
+        {
+            if (std::abs(scalar) < 1e-12)
+            {
+                throw std::runtime_error(
+                    "Cannot divide Vector3 by zero."
+                );
+            }
+
+            return Vector3(
+                x / scalar,
+                y / scalar,
+                z / scalar
+            );
         }
+
         constexpr Vector3& operator/=(double scalar) noexcept {
             x /= scalar; y /= scalar; z /= scalar;
             return *this;
