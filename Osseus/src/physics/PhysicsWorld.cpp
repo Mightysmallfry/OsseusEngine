@@ -47,7 +47,12 @@ namespace osseus {
             broadPhase.FindCandidatePairs(bodyManager, shapeManager);
         // Narrow Phase
 
+        // Narrow Phase (GJK/EPA via IShape::Support)
+        std::vector<Contact> contacts =
+            narrowPhase.GenerateContacts(candidates, bodyManager, shapeManager);
+
         // Solver
+        solver.ResolveContacts(contacts, bodyManager);
 
         // Integrator
         integrator->Step(bodyManager, forces, delta);

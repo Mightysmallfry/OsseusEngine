@@ -4,6 +4,7 @@
 
 #ifndef OSSEUSENGINE_CIRCLE_H
 #define OSSEUSENGINE_CIRCLE_H
+#include <cmath>
 #include "Osseus/interfaces/IShape.h"
 
 namespace osseus {
@@ -14,6 +15,16 @@ namespace osseus {
         AABB ComputeBoundingBox(const Vector3 &position) const override {
             return AABB{ position - Vector3(radius, radius, radius),
                 position + Vector3(radius, radius, radius) };
+        }
+
+        // Furthest point on a sphere along `direction` is just the
+        // center pushed out by one radius along that direction.
+        Vector3 Support(const Vector3 &position, const Vector3 &direction) const override {
+            const double lengthSq = direction.LengthSquared();
+            const Vector3 unitDirection = (lengthSq > Vector3::TOLERANCE)
+                ? direction * (1.0 / std::sqrt(lengthSq))
+                : Vector3::UnitX();
+            return position + unitDirection * radius;
         }
 
         double GetRadius() const { return radius; }

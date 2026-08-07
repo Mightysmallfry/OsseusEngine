@@ -14,6 +14,7 @@
 #include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 #include "Osseus/system/BodyManager.h"
 #include "Osseus/system/BroadPhase.h"
+#include "Osseus/system/NarrowPhase.h"
 #include "Osseus/system/Registry.h"
 
 namespace osseus {
@@ -51,6 +52,8 @@ namespace osseus {
         ForceComposite forces;
         Solver solver;
         BroadPhase broadPhase;
+        NarrowPhase narrowPhase;
+
     };
 } // osseus
 

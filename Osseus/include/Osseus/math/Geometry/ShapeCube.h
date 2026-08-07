@@ -20,6 +20,20 @@ namespace osseus {
             return AABB{ position - extents, position + extents };
         }
 
+        // Furthest vertex along `direction`: each axis independently
+        // picks whichever face (+halfExtent or -halfExtent) is further
+        // along that axis's component of the direction. Same no-rotation
+        // caveat as ComputeBoundingBox above — this picks the corner in
+        // world axes, not the cube's own (currently identical) axes.
+        Vector3 Support(const Vector3 &position, const Vector3 &direction) const override {
+            const Vector3 corner(
+                direction.x >= 0.0 ? halfExtent : -halfExtent,
+                direction.y >= 0.0 ? halfExtent : -halfExtent,
+                direction.z >= 0.0 ? halfExtent : -halfExtent
+            );
+            return position + corner;
+        }
+
         double GetHalfExtent() const { return halfExtent; }
 
     private:

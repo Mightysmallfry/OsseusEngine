@@ -1,6 +1,4 @@
-add_library(Osseus
-        src/math/Quaternion.cpp
-        include/Osseus/math/Quaternion.h)
+add_library(Osseus)
 
 target_sources(Osseus
         PRIVATE
@@ -8,6 +6,10 @@ target_sources(Osseus
         # Math
         src/math/Vector3.cpp
         src/math/Solver.cpp
+        src/math/Quaternion.cpp
+        src/math/Collision/EPA.cpp
+        src/math/Collision/GJK.cpp
+
 
         # Integrators
         src/math/Integrators/IntegratorEulerCromer.cpp

@@ -14,11 +14,16 @@
 // --- math ---
 #include "math/Vector3.h"
 #include "math/Quaternion.h"
-
 #include "math/Solver.h"
 #include "math/Integrators/IntegratorEulerCromer.h"
 #include "math/Integrators/IntegratorRungeKutta4.h"
 
+// --- math / collision (GJK/EPA, support-function based) ---
+#include "math/Collision/Contact.h"
+#include "math/Collision/GJK.h"
+#include "math/Collision/EPA.h"
+
+// --- math / geometry (concrete convex shapes) ---
 #include "math/Geometry/ShapePoint.h"
 #include "math/Geometry/ShapeSphere.h"
 #include "math/Geometry/ShapeCube.h"
@@ -29,18 +34,15 @@
 #include "physics/Forces/ForceGravity.h"
 
 // --- system ---
+#include "system/AABB.h"
 #include "system/PhysicsHandle.h"
 #include "system/Registry.h"
 #include "system/SparseSet.h"
 #include "system/BodyData.h"
 #include "system/BodyManager.h"
-#include "system/AABB.h"
+#include "system/ShapeManager.h"
 #include "system/CollisionCandidatePair.h"
 #include "system/BroadPhase.h"
-#include "system/Contact.h"
 #include "system/NarrowPhase.h"
-
-
-
 
 #endif // OSSEUSENGINE_OSSEUS_H

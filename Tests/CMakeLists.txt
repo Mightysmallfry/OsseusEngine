@@ -11,7 +11,8 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(OsseusTests
         math/Rk4Tests.cpp
         math/EulerCromerTests.cpp
-        math/QuaternionTests.cpp)
+        math/QuaternionTests.cpp
+        math/CollisionTests.cpp)
 
 target_sources(OsseusTests
         PRIVATE
