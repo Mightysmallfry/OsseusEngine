@@ -1,36 +1,22 @@
-include(FetchContent)
+# include(FetchContent)
 
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.10.0
-)
+# FetchContent_Declare(
+#         Catch2
+#         GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+#         GIT_TAG v3.10.0
+# )
 
-FetchContent_MakeAvailable(Catch2)
+# FetchContent_MakeAvailable(Catch2)
+
+find_package(Catch2 3 REQUIRED)
 
 add_executable(OsseusTests
-        math/Rk4Tests.cpp
-        math/EulerCromerTests.cpp
-        math/QuaternionTests.cpp
-        math/CollisionTests.cpp)
-
-target_sources(OsseusTests
-        PRIVATE
-
-        Tests.cpp
-
-        # Math
-        math/Vector3Tests.cpp
         math/RK4Tests.cpp
         math/EulerCromerTests.cpp
         math/QuaternionTests.cpp
-
-        # Physics
-        # physics/PhysicsWorldTests.cpp
-
-        # System
-        # system/RegistryTests.cpp
-)
+        math/CollisionTests.cpp
+        math/Vector3Tests.cpp
+        )
 
 target_link_libraries(
         OsseusTests

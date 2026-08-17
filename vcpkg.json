@@ -1,0 +1,7 @@
+{
+	"name": "osseus-engine-lib",
+	"version-string": "0.0.1",
+	"dependencies" : [
+		"catch2"
+	]
+}

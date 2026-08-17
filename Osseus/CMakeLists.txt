@@ -10,7 +10,6 @@ target_sources(Osseus
         src/math/Collision/EPA.cpp
         src/math/Collision/GJK.cpp
 
-
         # Integrators
         src/math/Integrators/IntegratorEulerCromer.cpp
         src/math/Integrators/IntegratorRungeKutta4.cpp
