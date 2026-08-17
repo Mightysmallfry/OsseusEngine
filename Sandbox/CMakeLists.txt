@@ -1,9 +1,9 @@
-add_executable(Sandbox
+add_executable(osseus-sandbox
         src/main.cpp
 )
 
 target_link_libraries(
-        Sandbox
+        osseus-sandbox
         PRIVATE
             Osseus
 )

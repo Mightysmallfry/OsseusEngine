@@ -8,7 +8,7 @@
 
 #include <Osseus/Osseus.h>
 
-TEST_CASE("Euler-Cromer integrates constant gravity")
+TEST_CASE("Integrator - Euler-Cromer integrates constant gravity")
 {
     const double delta = 0.05;
 

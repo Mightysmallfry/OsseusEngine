@@ -5,7 +5,7 @@
 
 #include <Osseus/Osseus.h>
 
-TEST_CASE("RK4 integrates constant gravity")
+TEST_CASE("Integrator - RK4 integrates constant gravity")
 {
     const double delta = 0.05;
 

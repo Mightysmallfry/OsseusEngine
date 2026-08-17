@@ -45,7 +45,6 @@ namespace osseus {
         // Broad Phase
         std::vector<CollisionCandidatePair> candidates =
             broadPhase.FindCandidatePairs(bodyManager, shapeManager);
-        // Narrow Phase
 
         // Narrow Phase (GJK/EPA via IShape::Support)
         std::vector<Contact> contacts =

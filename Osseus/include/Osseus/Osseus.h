@@ -15,6 +15,8 @@
 #include "math/Vector3.h"
 #include "math/Quaternion.h"
 #include "math/Solver.h"
+
+// --- math / Integrator
 #include "math/Integrators/IntegratorEulerCromer.h"
 #include "math/Integrators/IntegratorRungeKutta4.h"
 
