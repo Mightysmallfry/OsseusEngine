@@ -35,9 +35,11 @@
 #include "physics/Forces/ForceComposite.h"
 #include "physics/Forces/ForceGravity.h"
 
+#include "physics/Octree.h"
+
 // --- system ---
 #include "system/AABB.h"
-#include "system/PhysicsHandle.h"
+#include "system/Handle.h"
 #include "system/Registry.h"
 #include "system/SparseSet.h"
 #include "system/BodyData.h"

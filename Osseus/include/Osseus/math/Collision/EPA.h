@@ -6,7 +6,7 @@
 #include "GJK.h"
 #include "Contact.h"
 #include "Osseus/interfaces/IShape.h"
-#include "Osseus/system/PhysicsHandle.h"
+#include "Osseus/system/Handle.h"
 
 namespace osseus {
     // Expanding Polytope Algorithm. Once GJK confirms an overlap it

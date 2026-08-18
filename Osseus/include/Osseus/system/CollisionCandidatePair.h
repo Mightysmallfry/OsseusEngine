@@ -4,7 +4,7 @@
 
 #ifndef OSSEUSENGINE_COLLISIONCANDIDATE_H
 #define OSSEUSENGINE_COLLISIONCANDIDATE_H
-#include "PhysicsHandle.h"
+#include "Handle.h"
 
 namespace osseus {
     struct CollisionCandidatePair {

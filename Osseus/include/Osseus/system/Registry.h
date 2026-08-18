@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "PhysicsHandle.h"
+#include "Handle.h"
 
 namespace osseus {
     class Registry {

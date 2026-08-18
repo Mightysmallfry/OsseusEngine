@@ -19,6 +19,8 @@ target_sources(Osseus
         src/physics/Forces/ForceGravity.cpp
         src/physics/Forces/ForceComposite.cpp
 
+        src/physics/Octree.cpp
+
         # System
         src/system/Registry.cpp
         src/system/BodyManager.cpp
