@@ -45,6 +45,7 @@
 #include "system/BodyData.h"
 #include "system/BodyManager.h"
 #include "system/ShapeManager.h"
+#include "system/ForceManager.h"
 #include "system/CollisionCandidatePair.h"
 #include "system/BroadPhase.h"
 #include "system/NarrowPhase.h"

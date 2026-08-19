@@ -16,10 +16,7 @@ void RunIdenticalBodiesSimulation()
         std::make_unique<osseus::IntegratorRungeKutta4>()
     );
 
-    world.AddForce(
-        std::make_unique<osseus::ForceGravity>()
-    );
-
+    
     constexpr double mass = 1.0;
     constexpr double inverseMass = 1.0 / mass;
 
@@ -57,10 +54,6 @@ void RunUniqueBodiesSimulation()
 
     world.SetIntegrator(
         std::make_unique<osseus::IntegratorRungeKutta4>()
-    );
-
-    world.AddForce(
-        std::make_unique<osseus::ForceGravity>()
     );
 
     for (int i = 0; i < bodyCount; ++i)

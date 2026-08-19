@@ -9,13 +9,18 @@
 #include <vector>
 
 #include "Osseus/interfaces/IIntegrator.h"
-#include "Osseus/physics/Forces/ForceComposite.h"
-#include "Osseus/math/Solver.h"
-#include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 #include "Osseus/system/BodyManager.h"
+#include "Osseus/system/ForceManager.h"
+#include "Osseus/system/ShapeManager.h"
+
+#include "Osseus/math/Solver.h"
+#include "Osseus/physics/Forces/ForceComposite.h"
+#include "Osseus/math/Integrators/IntegratorEulerCromer.h"
+
 #include "Osseus/system/BroadPhase.h"
 #include "Osseus/system/NarrowPhase.h"
 #include "Osseus/system/Registry.h"
+#include "Osseus/physics/Octree.h"
 
 namespace osseus {
 
@@ -28,8 +33,6 @@ namespace osseus {
         Handle CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape);
         void DestroyBody(Handle handle);
 
-        void AddForce(std::unique_ptr<IForceEvaluator> force);
-
         void AttachBody(Handle handle, BodyData bodyData);
         void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
 
@@ -41,18 +44,24 @@ namespace osseus {
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
 
+        ForceManager forceManager;
     private:
         std::unique_ptr<IIntegrator> integrator;
 
         Registry registry;
         BodyManager bodyManager;
         ShapeManager shapeManager;
+
         // ConstraintManager constraintManager;
 
+        // TODO: Remove and replace with the new ForceManager
         ForceComposite forces;
-        Solver solver;
+
+        Octree spatialTree;
+
         BroadPhase broadPhase;
         NarrowPhase narrowPhase;
+        Solver solver;
 
     };
 } // osseus

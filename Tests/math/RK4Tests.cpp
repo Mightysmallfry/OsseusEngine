@@ -12,14 +12,12 @@ TEST_CASE("Integrator - RK4 integrates constant gravity")
     osseus::PhysicsWorld world;
     world.SetIntegrator(std::make_unique<osseus::IntegratorRungeKutta4>());
 
-    world.AddForce(
-        std::make_unique<osseus::ForceGravity>()
-    );
-
+    
     osseus::Handle body = world.CreateBody(
         osseus::BodyData{
             osseus::Vector3(0.0, 10.0, 0.0),
             osseus::Vector3::Zero(),
+            1.0,
             1.0
         },
         std::make_unique<osseus::ShapePoint>()

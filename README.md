@@ -17,8 +17,14 @@ After receiving any collision candidates from the broadphase, we use the GJK(Gil
 
 > The Support() function handles the Minkowski Difference needed for the narrow phase pipeline, so no explicit construction needed
 
-### Resolution
+### Collision Resolution
 Any collisions found are numerically resolved and adjustments to trajectories are made.
+
+### Universal Forces
+All universal forces that are computationally heavy, and apply to the entire simulation go here. This is primarily for `Coulomb's Law` and the `Universal Gravitational Force` to be applied in particle physics. It uses a `Barnes-Hut` approach with an Octree to maintain an O(NlogN) performance.
+
+### Individual Forces
+
 
 ### Integration
 The bodies are now pushed through one step of the chosen integrator. That could be something like `4th order Runge-Kutta` for scientific endeavors or the `Euler-Cromer` method for something more akin to video games.

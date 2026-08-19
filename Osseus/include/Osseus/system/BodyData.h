@@ -8,9 +8,10 @@
 
 namespace osseus {
     struct BodyData {
-        Vector3 position;
-        Vector3 velocity;
-        double invMass;     // Inverse Mass 1/kg, 0 == inf
+        Vector3 position = Vector3::Zero();
+        Vector3 velocity = Vector3::Zero();
+        double mass = 1.0;
+        double invMass = 1.0;     // Inverse Mass 1/kg, 0 == inf
     };
 }
 

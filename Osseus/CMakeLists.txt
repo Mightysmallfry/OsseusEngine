@@ -24,6 +24,7 @@ target_sources(Osseus
         # System
         src/system/Registry.cpp
         src/system/BodyManager.cpp
+        src/system/ForceManager.cpp
         src/system/ShapeManager.cpp
         src/system/BroadPhase.cpp
         src/system/NarrowPhase.cpp

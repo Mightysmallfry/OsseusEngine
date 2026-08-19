@@ -162,6 +162,9 @@ namespace osseus {
 
     // ==================== Octree ====================
 
+    Octree::Octree()
+    : rootBounds(), root(std::make_unique<OctNode>(rootBounds)) {}
+
     Octree::Octree(const Bounds& rootBounds)
     : rootBounds(rootBounds), root(std::make_unique<OctNode>(rootBounds)) {}
 

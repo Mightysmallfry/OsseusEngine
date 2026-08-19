@@ -23,10 +23,6 @@ namespace osseus {
         registry.Destroy(handle);
     }
 
-    void PhysicsWorld::AddForce(std::unique_ptr<IForceEvaluator> force) {
-        forces.AddForce(std::move(force));
-    }
-
     void PhysicsWorld::AttachBody(Handle handle, BodyData bodyData) {
         if (!registry.IsValid(handle)) { return; }
         bodyManager.AddBody(handle, bodyData);
@@ -42,6 +38,8 @@ namespace osseus {
     }
 
     void PhysicsWorld::Step(double delta) {
+
+        // ============ Detect Collisions ============
         // Broad Phase
         std::vector<CollisionCandidatePair> candidates =
             broadPhase.FindCandidatePairs(bodyManager, shapeManager);
@@ -50,9 +48,20 @@ namespace osseus {
         std::vector<Contact> contacts =
             narrowPhase.GenerateContacts(candidates, bodyManager, shapeManager);
 
+        // ============ Resolve Collisions ============
         // Solver
         solver.ResolveContacts(contacts, bodyManager);
 
+
+        // =========== Apply Universal Forces ===========
+        // RebuildOctree();
+        // Apply Universal Forces Via Barnes Hut
+        // BarnesHut(forces, delta);
+
+        // =========== Apply Individual Forces ==========
+        // forces.add(handle, force); 
+
+        // ============ Resolve Trajectories ============
         // Integrator
         integrator->Step(bodyManager, forces, delta);
 

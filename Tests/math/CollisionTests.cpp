@@ -360,8 +360,8 @@ TEST_CASE("Collisions - BroadPhase finds candidate pairs for overlapping boundin
     Handle a{0, 0};
     Handle b{1, 0};
 
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
@@ -380,8 +380,8 @@ TEST_CASE("Collisions - BroadPhase excludes pairs with non-overlapping bounding 
     Handle a{0, 0};
     Handle b{1, 0};
 
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(100.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(100.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
@@ -402,8 +402,8 @@ TEST_CASE("Collisions - NarrowPhase produces a contact for an overlapping candid
     Handle a{0, 0};
     Handle b{1, 0};
 
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
@@ -423,8 +423,8 @@ TEST_CASE("Collisions - NarrowPhase produces no contact for a separated candidat
     Handle a{0, 0};
     Handle b{1, 0};
 
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(10.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(10.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
@@ -442,7 +442,7 @@ TEST_CASE("Collisions - NarrowPhase skips candidate pairs missing a body or shap
     Handle a{0, 0};
     Handle missing{99, 0}; // never registered with either manager
 
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 });
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
 
     NarrowPhase narrowPhase;
@@ -461,8 +461,8 @@ TEST_CASE("Collisions - Solver applies equal and opposite impulses to two dynami
     BodyManager bodyManager;
     Handle a{0, 0};
     Handle b{1, 0};
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(1.0, 0.0, 0.0), 1.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(1.0, 0.0, 0.0), Vector3(-1.0, 0.0, 0.0), 1.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(1.0, 0.0, 0.0), 1.0, 1.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(1.0, 0.0, 0.0), Vector3(-1.0, 0.0, 0.0), 1.0, 1.0 });
 
     Contact contact;
     contact.a = a;
@@ -489,8 +489,8 @@ TEST_CASE("Collisions - Solver leaves a static (infinite-mass) body untouched", 
     BodyManager bodyManager;
     Handle floor{0, 0};
     Handle ball{1, 0};
-    bodyManager.AddBody(floor, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 0.0 });
-    bodyManager.AddBody(ball, BodyData{ Vector3(0.0, 1.0, 0.0), Vector3(0.0, -2.0, 0.0), 1.0 });
+    bodyManager.AddBody(floor, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1000000.0, 0.0 });
+    bodyManager.AddBody(ball, BodyData{ Vector3(0.0, 1.0, 0.0), Vector3(0.0, -2.0, 0.0), 1.0, 1.0 });
 
     Contact contact;
     contact.a = floor;
@@ -518,8 +518,8 @@ TEST_CASE("Collisions - Solver does nothing when both bodies have infinite mass"
     BodyManager bodyManager;
     Handle a{0, 0};
     Handle b{1, 0};
-    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(5.0, 0.0, 0.0), 0.0 });
-    bodyManager.AddBody(b, BodyData{ Vector3(1.0, 0.0, 0.0), Vector3(-5.0, 0.0, 0.0), 0.0 });
+    bodyManager.AddBody(a, BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(5.0, 0.0, 0.0), 1000000, 0.0 });
+    bodyManager.AddBody(b, BodyData{ Vector3(1.0, 0.0, 0.0), Vector3(-5.0, 0.0, 0.0), 1000000, 0.0 });
 
     Contact contact;
     contact.a = a;
@@ -545,10 +545,10 @@ TEST_CASE("Collisions - PhysicsWorld Step separates two overlapping resting bodi
     PhysicsWorld world;
 
     Handle a = world.CreateBody(
-        BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0 },
+        BodyData{ Vector3(0.0, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 },
         std::make_unique<ShapeSphere>(1.0));
     Handle b = world.CreateBody(
-        BodyData{ Vector3(1.5, 0.0, 0.0), Vector3::Zero(), 1.0 },
+        BodyData{ Vector3(1.5, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 },
         std::make_unique<ShapeSphere>(1.0));
 
     world.Step(0.016);
@@ -569,10 +569,10 @@ TEST_CASE("Collisions - PhysicsWorld Step resolves a deep overlap with initial v
     PhysicsWorld world;
 
     Handle a = world.CreateBody(
-        BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(5.0, 0.0, 0.0), 1.0 },
+        BodyData{ Vector3(0.0, 0.0, 0.0), Vector3(5.0, 0.0, 0.0), 1.0, 1.0 },
         std::make_unique<ShapeSphere>(1.0));
     Handle b = world.CreateBody(
-        BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0 },
+        BodyData{ Vector3(0.5, 0.0, 0.0), Vector3::Zero(), 1.0, 1.0 },
         std::make_unique<ShapeSphere>(1.0));
 
     world.Step(0.016);

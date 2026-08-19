@@ -12,6 +12,21 @@ using namespace osseus;
 // Construction / initial state
 // ==========================================================================
 
+TEST_CASE("Octree - Default constructor creates an empty root node", "[octree]")
+{
+    Octree tree;
+
+    const OctNode& root = tree.GetRoot();
+
+    REQUIRE(root.IsLeaf());
+    REQUIRE(root.IsEmpty());
+    REQUIRE(root.GetBodyCount() == 0);
+    REQUIRE(root.GetTotalMass() == 0.0);
+    REQUIRE(root.GetCenterOfMass() == Vector3::Zero());
+    REQUIRE(root.GetBounds().center == Vector3::Zero());
+    REQUIRE(root.GetBounds().halfSize == Vector3::One());
+}
+
 TEST_CASE("Octree - Root node starts as an empty leaf", "[octree]")
 {
     const Bounds bounds{

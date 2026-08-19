@@ -11,8 +11,8 @@
 namespace osseus {
 
     struct Bounds {
-        Vector3 center;
-        Vector3 halfSize;
+        Vector3 center = Vector3::Zero();
+        Vector3 halfSize = Vector3::One();
     };
 
     class OctNode {
@@ -67,6 +67,7 @@ namespace osseus {
 
     class Octree {
     public:
+        Octree();
         explicit Octree(const Bounds& rootBounds);
 
         void Clear();
