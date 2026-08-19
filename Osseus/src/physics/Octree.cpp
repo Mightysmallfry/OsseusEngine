@@ -62,6 +62,18 @@ namespace osseus {
         return bodyCount == 0;
     }
 
+    bool OctNode::ContainsBody(Handle handle, const Vector3& position) const {
+    if (IsEmpty()) { return false; }
+    if (IsLeaf()) {
+        for (const Entry& entry : entries) {
+            if (entry.handle == handle) { return true; }
+        }
+        return false;
+    }
+    const std::size_t octant = GetOctantIndex(position);
+    return HasChild(octant) && children[octant]->ContainsBody(handle, position);
+}
+
     std::size_t OctNode::GetBodyCount() const {
         return bodyCount;
     }

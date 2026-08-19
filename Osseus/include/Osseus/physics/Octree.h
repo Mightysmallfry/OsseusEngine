@@ -21,10 +21,11 @@ namespace osseus {
 
         void Insert(Handle handle, const Vector3& position, double mass);
         bool Remove(Handle handle);
-
+        
         bool IsLeaf() const;
         bool IsEmpty() const;
-
+        bool ContainsBody(Handle handle, const Vector3& position) const;
+        
         std::size_t GetBodyCount() const;
         double GetTotalMass() const;
         const Vector3& GetCenterOfMass() const;

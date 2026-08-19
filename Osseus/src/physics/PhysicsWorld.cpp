@@ -2,6 +2,9 @@
 // Created by MightySmallFry on 7/16/2026.
 //
 
+#include <algorithm>
+#include <cstddef>
+
 #include "Osseus/physics/PhysicsWorld.h"
 
 namespace osseus {
@@ -71,7 +74,9 @@ namespace osseus {
         // =========== Apply Universal Forces ===========
         RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
-        barnesHut.evaluate(spatialTree, forceManager, delta);
+ 
+        // TODO: Build barnes hut evaluation.
+        barnesHut_.Evaluate(spatialTree, bodyManager, forceManager);
 
         // =========== Apply Individual Forces ==========
         // This is done via the public ForceManager

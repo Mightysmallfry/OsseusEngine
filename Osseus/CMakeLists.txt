@@ -20,6 +20,7 @@ target_sources(Osseus
         src/physics/Forces/ForceComposite.cpp
 
         src/physics/Octree.cpp
+        src/physics/BarnesHut.cpp
 
         # System
         src/system/Registry.cpp

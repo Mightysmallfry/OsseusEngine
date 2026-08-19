@@ -21,6 +21,7 @@
 #include "Osseus/system/NarrowPhase.h"
 #include "Osseus/system/Registry.h"
 #include "Osseus/physics/Octree.h"
+#include "Osseus/physics/BarnesHut.h"
 
 namespace osseus {
 
