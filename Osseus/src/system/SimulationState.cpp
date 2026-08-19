@@ -7,82 +7,41 @@
 
 namespace osseus {
 
-    SimulationState::SimulationState(const BodyManager& bodyManager)
+    SimulationState::SimulationState(const BodyManager& bodyManager, 
+        const ForceManager& forceManager)
     {
-        CopyFrom(bodyManager);
+        CopyFrom(bodyManager, forceManager);
     }
 
-    void SimulationState::CopyFrom(const BodyManager& bodyManager)
+    SimulationState::SimulationState(const SimulationState& other)
+    : bodyData(other.bodyData), handles(other.handles), netForces(other.netForces) {}
+
+    void SimulationState::CopyFrom(const BodyManager& bodyManager, const ForceManager& forceManager)
     {
-        Resize(bodyManager.Data().size());
+        bodyData = bodyManager.Data();
+        handles = bodyManager.Handles();
+        netForces = forceManager.NetForces();
 
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr)
-            {
-                continue;
-            }
-
-            positions_[handle.index] = body->position;
-            velocities_[handle.index] = body->velocity;
-        }
-
-        RebuildOctree(bodyManager);
+        RebuildOctree();
     }
 
-    void SimulationState::CopyState(const SimulationState& simState){
-        positions_ = simState.positions_;
-        velocities_= simState.velocities_;
-    }
 
-    void SimulationState::RebuildOctree(const BodyManager& bodyManager)
+    void SimulationState::RebuildOctree()
     {
         octree_.Clear();
 
-        for (Handle handle : bodyManager.Handles())
+        for (Handle handle : handles)
         {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr)
-            {
-                continue;
-            }
+            const BodyData& body = bodyData[handle.index];
 
             octree_.Insert(
                 handle,
-                positions_[handle.index],
-                body->mass
+                body.position,
+                body.mass
             );
         }
     }
 
-    void SimulationState::Resize(std::size_t size)
-    {
-        positions_.resize(size);
-        velocities_.resize(size);
-    }
-
-    Vector3& SimulationState::GetPosition(Handle handle)
-    {
-        return positions_[handle.index];
-    }
-
-    const Vector3& SimulationState::GetPosition(Handle handle) const
-    {
-        return positions_[handle.index];
-    }
-
-    Vector3& SimulationState::GetVelocity(Handle handle)
-    {
-        return velocities_[handle.index];
-    }
-
-    const Vector3& SimulationState::GetVelocity(Handle handle) const
-    {
-        return velocities_[handle.index];
-    }
 
     Octree& SimulationState::GetOctree()
     {
@@ -94,10 +53,6 @@ namespace osseus {
         return octree_;
     }
 
-    std::size_t SimulationState::Size() const
-    {
-        return positions_.size();
-    }
 
 } // namespace osseus
 

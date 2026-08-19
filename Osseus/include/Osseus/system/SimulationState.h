@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <vector>
 
+#include "Osseus/system/ForceManager.h"
+#include "Osseus/system/BodyManager.h"
 #include "Osseus/math/Vector3.h"
 #include "Osseus/system/Handle.h"
 #include "Osseus/physics/Octree.h"
@@ -16,30 +18,30 @@ namespace osseus {
     {
     public:
         SimulationState() = default;
+        
+        explicit SimulationState(const BodyManager& bodyManager, 
+            const ForceManager& forceManager);
+            
+        SimulationState(const SimulationState& other);
 
-        explicit SimulationState(const BodyManager& bodyManager);
+        void CopyFrom(const BodyManager& bodyManager, const ForceManager& forceManager);
 
-        void CopyFrom(const BodyManager& bodyManager);
-        void CopyState(const SimulationState& simState);
-
-        void RebuildOctree(const BodyManager& bodyManager);
+        void RebuildOctree();
 
         void Resize(std::size_t size);
-
-        Vector3& GetPosition(Handle handle);
-        const Vector3& GetPosition(Handle handle) const;
-
-        Vector3& GetVelocity(Handle handle);
-        const Vector3& GetVelocity(Handle handle) const;
+    
+        std::vector<BodyData>& GetBodies() { return bodyData; } 
+        std::vector<Handle>& GetHandles() { return handles; } 
+        std::vector<Vector3>& GetNetForces() { return netForces; } 
 
         Octree& GetOctree();
         const Octree& GetOctree() const;
 
-        std::size_t Size() const;
 
     private:
-        std::vector<Vector3> positions_;
-        std::vector<Vector3> velocities_;
+        std::vector<BodyData> bodyData;
+        std::vector<Handle> handles;
+        std::vector<Vector3> netForces;
 
         Octree octree_;
     };

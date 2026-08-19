@@ -26,6 +26,9 @@ TEST_CASE("Integrator - Euler-Cromer integrates constant gravity")
         std::make_unique<osseus::ShapePoint>()
     );
 
+
+    world.GetForceManager().Add(body, osseus::Vector3(0.0, -9.8, 0.0));
+
     world.Step(delta);
     auto result = world.GetBody(body);
 

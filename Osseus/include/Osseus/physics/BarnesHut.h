@@ -19,7 +19,8 @@ namespace osseus {
         // other body in `tree` and adds it into `forceManager` via
         // ForceManager::Add. Does not clear forceManager first --
         // callers own that decision.
-        void Evaluate(const Octree& tree, const BodyManager& bodyManager, ForceManager& forceManager) const;
+        void Evaluate(const Octree& tree, const std::vector<Handle>& handles,
+             const std::vector<BodyData>& bodies, std::vector<Vector3>& netForces);
 
         void SetTheta(double newTheta);
         [[nodiscard]] double GetTheta() const;

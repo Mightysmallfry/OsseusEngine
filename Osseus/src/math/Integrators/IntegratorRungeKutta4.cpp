@@ -6,274 +6,98 @@
 
 namespace osseus {
 
-    void IntegratorRungeKutta4::CopyState(SimulationState& state, const BodyManager& bodyManager)
-    {
-        state.Resize(bodyManager.Data().size());
+    DerivativeState IntegratorRungeKutta4::DerivativeOf(SimulationState& state){
+        DerivativeState derivative;
 
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-            
-            if (body == nullptr)
-            {
-                continue;
-            }
+        size_t stateSize = state.GetBodies().size();
+        derivative.velocities.resize(stateSize);
+        derivative.accelerations.resize(stateSize);
 
-            state.GetPosition(handle) = body->position;
-            state.GetVelocity(handle) = body->velocity;
+        std::vector<BodyData>& bodies = state.GetBodies();
+        std::vector<Vector3>& netForces = state.GetNetForces();
+
+        for (size_t i = 0; i < state.GetHandles().size(); i++){
+            derivative.velocities[i] = bodies[i].velocity;
+            derivative.accelerations[i] =  netForces[i] / bodies[i].mass;
         }
+
+        return derivative;
     }
-
-
-    
+        
     void IntegratorRungeKutta4::Step(BodyManager &bodyManager, ForceManager &forceManager, double delta) {
      
-        /*
-        * State at the beginning of the timestep.
-        */
-        SimulationState state1(bodyManager);
-
-        /*
-        * Temporary RK4 states.
-        */
-        SimulationState state2;
-        SimulationState state3;
-        SimulationState state4;
-
-        state2.CopyState(state1);
-        state3.CopyState(state1);
-        state4.CopyState(state1);
+        SimulationState state1(bodyManager, forceManager);
+        SimulationState state2 = state1;
+        SimulationState state3 = state1;
+        SimulationState state4 = state1;
+        size_t stateSize = state1.GetBodies().size();
 
         
-        /*
-        * Force managers for each RK4 stage.
-        *
-        * These contain independent force accumulators but
-        * reference the same universal force evaluators.
-        */
-        ForceManager force1 = forceManager;
-        ForceManager force2 = forceManager;
-        ForceManager force3 = forceManager;
-        ForceManager force4 = forceManager;
-
-        /*
-        * RK4 derivatives.
-        */
-        SimulationState k1(bodyManager);
-        SimulationState k2(bodyManager);
-        SimulationState k3(bodyManager);
-        SimulationState k4(bodyManager);
+        DerivativeState k1 = DerivativeOf(state1);
+        for (std::size_t i = 0; i < stateSize; ++i)
+        {
+            state2.GetBodies()[i].position += k1.velocities[i] * (delta * 0.5);
+            state2.GetBodies()[i].velocity += k1.accelerations[i] * (delta * 0.5);
+        }
+        state2.RebuildOctree();
         
-        /*
-        * The k states are only derivative containers, so their
-        * Octrees aren't needed.
-        */
-        
-          /*
-         * ---------------------------------------------------------
-         * Stage 1
-         * ---------------------------------------------------------
-         */
-
         barnesHut_.Evaluate(
-            state1.GetOctree(),
-            state1,
-            force1
-        );
-
-        for (Handle handle : bodyManager.Handles())
+            state2.GetOctree(), 
+            state2.GetHandles(), 
+            state2.GetBodies(), 
+            state2.GetNetForces());
+    
+        DerivativeState k2 = DerivativeOf(state2);
+        for (std::size_t i = 0; i < stateSize; ++i)
         {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            k1.GetPosition(handle) =
-                state1.GetVelocity(handle);
-
-            k1.GetVelocity(handle) =
-                force1.Get(handle) * body->invMass;
+            state3.GetBodies()[i].position += k2.velocities[i] * (delta * 0.5);
+            state3.GetBodies()[i].velocity += k2.accelerations[i] * (delta * 0.5);
         }
-
-        /*
-         * ---------------------------------------------------------
-         * Stage 2
-         * ---------------------------------------------------------
-         */
-
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            state2.GetPosition(handle) =
-                state1.GetPosition(handle)
-                + k1.GetPosition(handle) * (delta / 2.0);
-
-            state2.GetVelocity(handle) =
-                state1.GetVelocity(handle)
-                + k1.GetVelocity(handle) * (delta / 2.0);
-        }
-
-        state2.RebuildOctree(bodyManager);
-
-        barnesHut_.Evaluate(
-            state2.GetOctree(),
-            state2,
-            force2
-        );
-
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            k2.GetPosition(handle) =
-                state2.GetVelocity(handle);
-
-            k2.GetVelocity(handle) =
-                force2.Get(handle) * body->invMass;
-        }
-
-        /*
-         * ---------------------------------------------------------
-         * Stage 3
-         * ---------------------------------------------------------
-         */
-
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            state3.GetPosition(handle) =
-                state1.GetPosition(handle)
-                + k2.GetPosition(handle) * (delta / 2.0);
-
-            state3.GetVelocity(handle) =
-                state1.GetVelocity(handle)
-                + k2.GetVelocity(handle) * (delta / 2.0);
-        }
-
-        state3.RebuildOctree(bodyManager);
+        state3.RebuildOctree();
 
         barnesHut_.Evaluate(
             state3.GetOctree(),
-            state3,
-            force3
+            state3.GetHandles(),
+            state3.GetBodies(),
+            state3.GetNetForces()
         );
 
-        for (Handle handle : bodyManager.Handles())
+        DerivativeState k3 = DerivativeOf(state3);    
+        for (std::size_t i = 0; i < stateSize; ++i)
         {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            k3.GetPosition(handle) =
-                state3.GetVelocity(handle);
-
-            k3.GetVelocity(handle) =
-                force3.Get(handle) * body->invMass;
+            state4.GetBodies()[i].position += k3.velocities[i] * delta;
+            state4.GetBodies()[i].velocity += k3.accelerations[i] * delta;
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Stage 4
-         * ---------------------------------------------------------
-         */
-
-        for (Handle handle : bodyManager.Handles())
-        {
-            const BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            state4.GetPosition(handle) =
-                state1.GetPosition(handle)
-                + k3.GetPosition(handle) * delta;
-
-            state4.GetVelocity(handle) =
-                state1.GetVelocity(handle)
-                + k3.GetVelocity(handle) * delta;
-        }
-
-        state4.RebuildOctree(bodyManager);
+        state4.RebuildOctree();
 
         barnesHut_.Evaluate(
             state4.GetOctree(),
-            state4,
-            force4
+            state4.GetHandles(),
+            state4.GetBodies(),
+            state4.GetNetForces()
         );
 
-        for (Handle handle : bodyManager.Handles())
+        DerivativeState k4 = DerivativeOf(state4);
+
+    
+        std::vector<BodyData>& bodies = bodyManager.Data();
+
+        for (std::size_t i = 0; i < bodies.size(); ++i)
         {
-            const BodyData* body = bodyManager.GetBody(handle);
+            bodies[i].position +=
+                (k1.velocities[i]
+                + 2.0 * k2.velocities[i]
+                + 2.0 * k3.velocities[i]
+                + k4.velocities[i]) * (delta / 6.0);
 
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            k4.GetPosition(handle) =
-                state4.GetVelocity(handle);
-
-            k4.GetVelocity(handle) =
-                force4.Get(handle) * body->invMass;
+            bodies[i].velocity +=
+                (k1.accelerations[i]
+                + 2.0 * k2.accelerations[i]
+                + 2.0 * k3.accelerations[i]
+                + k4.accelerations[i]) * (delta / 6.0);
         }
 
-        /*
-         * ---------------------------------------------------------
-         * Final RK4 combination
-         * ---------------------------------------------------------
-         */
 
-        for (Handle handle : bodyManager.Handles())
-        {
-            BodyData* body = bodyManager.GetBody(handle);
-
-            if (body == nullptr || body->invMass == 0.0)
-            {
-                continue;
-            }
-
-            body->position =
-                state1.GetPosition(handle)
-                + (
-                    k1.GetPosition(handle)
-                    + k2.GetPosition(handle) * 2.0
-                    + k3.GetPosition(handle) * 2.0
-                    + k4.GetPosition(handle)
-                ) * (delta / 6.0);
-
-            body->velocity =
-                state1.GetVelocity(handle)
-                + (
-                    k1.GetVelocity(handle)
-                    + k2.GetVelocity(handle) * 2.0
-                    + k3.GetVelocity(handle) * 2.0
-                    + k4.GetVelocity(handle)
-                ) * (delta / 6.0);
-        }
-        
     }
 } // osseus

@@ -36,6 +36,7 @@
 #include "physics/Forces/ForceGravity.h"
 
 #include "physics/Octree.h"
+#include "physics/BarnesHut.h"
 
 // --- system ---
 #include "system/AABB.h"

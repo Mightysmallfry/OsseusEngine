@@ -12,6 +12,8 @@ namespace osseus {
     class ForceManager
     {
     public:
+        ForceManager() = default;
+
         void Resize(std::size_t count);
 
         void Clear();
@@ -28,6 +30,9 @@ namespace osseus {
         const std::vector<UniversalForceEvaluator*>&
         GetUniversals() const;
 
+        std::vector<Vector3>& NetForces() { return netForces_; }
+        const std::vector<Vector3>& NetForces() const { return netForces_; }
+        
     private:
         std::vector<Vector3> netForces_;
         std::vector<UniversalForceEvaluator*> universalForces_;

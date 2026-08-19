@@ -8,16 +8,18 @@ namespace osseus {
     BarnesHut::BarnesHut(double theta, double G, double softening)
         : theta_(theta), G_(G), softening_(softening) {}
 
-    void BarnesHut::Evaluate(const Octree& tree, const BodyManager& bodyManager, ForceManager& forceManager) const {
+    void BarnesHut::Evaluate(const Octree& tree, const std::vector<Handle>& handles,
+             const std::vector<BodyData>& bodies, std::vector<Vector3>& netForces) {
         const OctNode& root = tree.GetRoot();
 
-        for (Handle handle : bodyManager.Handles()) {
-            const BodyData* body = bodyManager.GetBody(handle);
-            if (body == nullptr) { continue; }
-            if (body->invMass == 0.0) { continue; } // static bodies don't move; no force needed
+        const std::size_t count = std::min(handles.size(), bodies.size());
+        for (std::size_t i = 0; i < count; ++i) {
+            const Handle handle = handles[i];
+            const BodyData& body = bodies[i];
+            if (body.invMass == 0.0) { continue; } // static bodies don't move; no force needed
 
-            const Vector3 force = CalculateForce(root, handle, body->position, body->mass);
-            forceManager.Add(handle, force);
+            const Vector3 force = CalculateForce(root, handle, body.position, body.mass);
+            netForces[handle.index] += force;
         }
     }
 

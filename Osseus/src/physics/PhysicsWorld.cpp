@@ -75,8 +75,9 @@ namespace osseus {
         RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
  
-        // TODO: Build barnes hut evaluation.
-        barnesHut_.Evaluate(spatialTree, bodyManager, forceManager);
+        // Build barnes hut evaluation.
+        barnesHut_.Evaluate(spatialTree, bodyManager.Handles(), 
+            bodyManager.Data(), forceManager.NetForces());
 
         // =========== Apply Individual Forces ==========
         // This is done via the public ForceManager
