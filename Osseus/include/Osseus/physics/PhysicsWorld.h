@@ -44,18 +44,21 @@ namespace osseus {
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
 
-        ForceManager forceManager;
-    private:
-        std::unique_ptr<IIntegrator> integrator;
+        void RebuildOctree();
 
+        ForceManager& GetForceManager();
+
+        private:
+        std::unique_ptr<IIntegrator> integrator;
+        
         Registry registry;
         BodyManager bodyManager;
+        ForceManager forceManager;
         ShapeManager shapeManager;
 
-        // ConstraintManager constraintManager;
+        BarnesHut barnesHut_;
 
-        // TODO: Remove and replace with the new ForceManager
-        ForceComposite forces;
+        // ConstraintManager constraintManager;
 
         Octree spatialTree;
 

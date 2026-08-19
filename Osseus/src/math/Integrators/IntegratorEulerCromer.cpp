@@ -5,13 +5,15 @@
 #include "../../../include/Osseus/math/Integrators/IntegratorEulerCromer.h"
 
 namespace osseus {
-    void IntegratorEulerCromer::Step(BodyManager &manager, const IForceEvaluator &forces, double delta) {
-        for (BodyData& body : manager.Data()) {
-            if (body.invMass == 0.0) { continue; }
+    void IntegratorEulerCromer::Step(BodyManager &bodyManager, ForceManager &forceManager, double delta) {
+        for (Handle handle : bodyManager.Handles()) {
+            BodyData* body = bodyManager.GetBody(handle);
 
-            Vector3 acceleration = forces.CalculateAcceleration(body);
-            body.velocity += acceleration * delta;
-            body.position += body.velocity * delta;
+            if (body->invMass == 0.0) { continue; }
+
+            Vector3 acceleration = forceManager.Get(handle) / body->mass;
+            body->velocity += acceleration * delta;
+            body->position += body->velocity * delta;
         }
     }
 } // osseus

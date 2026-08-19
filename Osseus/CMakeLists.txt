@@ -28,6 +28,7 @@ target_sources(Osseus
         src/system/ShapeManager.cpp
         src/system/BroadPhase.cpp
         src/system/NarrowPhase.cpp
+        src/system/SimulationState.cpp
 
         # Interfaces
         src/interfaces/IIntegrator.cpp

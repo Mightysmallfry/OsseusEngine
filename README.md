@@ -23,8 +23,12 @@ Any collisions found are numerically resolved and adjustments to trajectories ar
 ### Universal Forces
 All universal forces that are computationally heavy, and apply to the entire simulation go here. This is primarily for `Coulomb's Law` and the `Universal Gravitational Force` to be applied in particle physics. It uses a `Barnes-Hut` approach with an Octree to maintain an O(NlogN) performance.
 
-### Individual Forces
+These would be the force at a distance laws that effect everything.
+- Gravity
+- Electromagnetism
 
+### Individual Forces
+You can also add forces to individual bodies in which case you can see if there is a force evaluator already made for it. If there isn't feel free to write your own or just manually add the force. These forces are only around for one iteration of the loop so if you want force to be distributed or applied for a set duration, you will have to track the elapsed time by tracking the time `delta` for a number of cycles.
 
 ### Integration
 The bodies are now pushed through one step of the chosen integrator. That could be something like `4th order Runge-Kutta` for scientific endeavors or the `Euler-Cromer` method for something more akin to video games.

@@ -17,6 +17,8 @@ namespace osseus {
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
 
+        
+
         std::vector<BodyData>& Data() { return bodies.Data(); }
         const std::vector<BodyData>& Data() const { return bodies.Data(); }
         const std::vector<Handle>& Handles() const { return bodies.Handles(); }

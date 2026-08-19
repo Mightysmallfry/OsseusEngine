@@ -37,6 +37,22 @@ namespace osseus {
         integrator = std::move(newIntegrator);
     }
 
+    
+    void PhysicsWorld::RebuildOctree() {
+        spatialTree.Clear();
+        
+        // An Octree of Handles.
+        for (auto& handle : bodyManager.Handles()){
+            BodyData* body = bodyManager.GetBody(handle);
+            spatialTree.Insert(handle, body->position, body->mass);
+        }
+    }
+
+    ForceManager& PhysicsWorld::GetForceManager(){
+        return forceManager;
+    }
+
+
     void PhysicsWorld::Step(double delta) {
 
         // ============ Detect Collisions ============
@@ -52,18 +68,17 @@ namespace osseus {
         // Solver
         solver.ResolveContacts(contacts, bodyManager);
 
-
         // =========== Apply Universal Forces ===========
-        // RebuildOctree();
+        RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
-        // BarnesHut(forces, delta);
+        barnesHut.evaluate(spatialTree, forceManager, delta);
 
         // =========== Apply Individual Forces ==========
-        // forces.add(handle, force); 
+        // This is done via the public ForceManager
 
         // ============ Resolve Trajectories ============
         // Integrator
-        integrator->Step(bodyManager, forces, delta);
+        integrator->Step(bodyManager, forceManager, delta);
 
         // Sync State
     }

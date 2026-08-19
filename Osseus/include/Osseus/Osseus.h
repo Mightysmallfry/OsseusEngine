@@ -49,5 +49,6 @@
 #include "system/CollisionCandidatePair.h"
 #include "system/BroadPhase.h"
 #include "system/NarrowPhase.h"
+#include "system/SimulationState.h"
 
 #endif // OSSEUSENGINE_OSSEUS_H
