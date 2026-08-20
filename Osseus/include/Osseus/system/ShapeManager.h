@@ -8,12 +8,15 @@
 #include "SparseSet.h"
 
 #include "Osseus/interfaces/IShape.h"
+#include "Osseus/math/Geometry/ShapePoint.h"
 
 namespace osseus {
     class ShapeManager {
     public:
         void AddShape(Handle handle, std::unique_ptr<IShape> shape);
         void RemoveShape(Handle handle);
+
+        void Register(Handle handle);
 
         IShape* GetShape(Handle handle);
         const IShape* GetShape(Handle handle) const;

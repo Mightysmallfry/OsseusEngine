@@ -14,7 +14,6 @@
 #include "Osseus/system/ShapeManager.h"
 
 #include "Osseus/math/Solver.h"
-#include "Osseus/physics/Forces/ForceComposite.h"
 #include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 
 #include "Osseus/system/BroadPhase.h"
@@ -31,38 +30,45 @@ namespace osseus {
 
         Handle CreateHandle();
 
+        Handle CreateBody();
         Handle CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape);
-        void DestroyBody(Handle handle);
-
-        void AttachBody(Handle handle, BodyData bodyData);
-        void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
-
-
+        
+        // Try to queue the destroy body more often
+        void DestroyBody(Handle handle); 
+        void QueueDestroyBody(Handle handle); 
+        
         void SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator);
-
+        
         void Step(double delta);
-
+        
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
-
+        
+        
         void RebuildOctree();
-
-        ForceManager& GetForceManager();
-
+        
+        ForceManager& GetForceManager() { return forceManager; }
+        BodyManager& GetBodyManager() { return bodyManager; }
+        ShapeManager& GetShapeManager() { return shapeManager; }
+        
         private:
+        void AttachBody(Handle handle, BodyData bodyData);
+        void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
+        
+
+        void SyncState();
+
+        std::vector<Handle> destructionQueue;
+
         std::unique_ptr<IIntegrator> integrator;
         
         Registry registry;
         BodyManager bodyManager;
         ForceManager forceManager;
         ShapeManager shapeManager;
-
-        BarnesHut barnesHut_;
-
-        // ConstraintManager constraintManager;
-
         Octree spatialTree;
 
+        BarnesHut barnesHut_;
         BroadPhase broadPhase;
         NarrowPhase narrowPhase;
         Solver solver;

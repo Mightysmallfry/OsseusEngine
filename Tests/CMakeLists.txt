@@ -17,6 +17,7 @@ add_executable(OsseusTests
         math/CollisionTests.cpp
         math/Vector3Tests.cpp
         physics/OctreeTests.cpp
+        system/LockstepTests.cpp
         )
 
 target_link_libraries(

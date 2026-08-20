@@ -12,6 +12,7 @@ namespace osseus {
         Vector3 velocity = Vector3::Zero();
         double mass = 1.0;
         double invMass = 1.0;     // Inverse Mass 1/kg, 0 == inf
+        double charge = 0.0;
     };
 }
 

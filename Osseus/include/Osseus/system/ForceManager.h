@@ -6,6 +6,7 @@
 #include "Osseus/math/Vector3.h"
 #include "Osseus/system/Handle.h"
 #include "Osseus/physics/UniversalForce.h"
+#include "Osseus/system/BodyManager.h"
 
 namespace osseus {
 
@@ -13,6 +14,9 @@ namespace osseus {
     {
     public:
         ForceManager() = default;
+        explicit ForceManager(const BodyManager& bodyManager);
+
+        void Register(Handle handle);
 
         void Resize(std::size_t count);
 
@@ -22,17 +26,17 @@ namespace osseus {
 
         void ClearUniversals();
         int AddUniversal(UniversalForceEvaluator* universalForce);
+        bool HasUniversals();
 
         [[nodiscard]]
         const Vector3& Get(Handle handle) const;
 
-        [[nodiscard]]
-        const std::vector<UniversalForceEvaluator*>&
-        GetUniversals() const;
+        std::vector<UniversalForceEvaluator*>& GetUniversals() { return universalForces_; }
+        const std::vector<UniversalForceEvaluator*>& GetUniversals() const { return universalForces_; }
 
         std::vector<Vector3>& NetForces() { return netForces_; }
         const std::vector<Vector3>& NetForces() const { return netForces_; }
-        
+
     private:
         std::vector<Vector3> netForces_;
         std::vector<UniversalForceEvaluator*> universalForces_;

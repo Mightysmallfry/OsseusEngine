@@ -42,6 +42,7 @@ namespace osseus {
         std::vector<BodyData> bodyData;
         std::vector<Handle> handles;
         std::vector<Vector3> netForces;
+        std::vector<UniversalForceEvaluator*> universalForces_;
 
         Octree octree_;
     };

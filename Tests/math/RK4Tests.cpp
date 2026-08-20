@@ -27,9 +27,11 @@ TEST_CASE("Integrator - RK4 integrates constant gravity")
 
     REQUIRE(result != nullptr);
 
-    // Gravity should accelerate downward
-    REQUIRE(result->velocity.y < 0.0);
 
     // Body should have moved downward
     REQUIRE(result->position.y < 10.0);
+    
+    // Gravity should accelerate downward
+    REQUIRE(result->velocity.y < 0.0);
+
 }

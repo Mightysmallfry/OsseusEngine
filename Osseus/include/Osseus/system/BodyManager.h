@@ -14,6 +14,9 @@ namespace osseus {
         void AddBody(Handle handle, BodyData bodyData);
         void RemoveBody(Handle handle);
 
+        void Register(Handle handle);
+
+
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
 

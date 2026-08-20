@@ -13,6 +13,12 @@ namespace osseus {
         bodies.Remove(handle);
     }
 
+    void BodyManager::Register(Handle handle)
+    {
+        BodyData bodyData{};
+        AddBody(handle, bodyData);
+    }  
+
     BodyData* BodyManager::GetBody(Handle handle) {
         return bodies.Get(handle);
     }

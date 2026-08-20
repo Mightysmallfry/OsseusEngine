@@ -13,6 +13,10 @@ namespace osseus {
         shapes.Remove(handle);
     }
 
+    void ShapeManager::Register(Handle handle) {
+        AddShape(handle, std::make_unique<ShapePoint>());
+    }
+
     IShape* ShapeManager::GetShape(Handle handle) {
         std::unique_ptr<IShape>* slot = shapes.Get(handle);
         return slot ? slot->get() : nullptr;

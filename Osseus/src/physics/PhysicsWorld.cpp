@@ -12,10 +12,19 @@ namespace osseus {
         return registry.CreateHandle();
     }
 
+    Handle PhysicsWorld::CreateBody(){
+        Handle handle = CreateHandle();
+        bodyManager.Register(handle);
+        forceManager.Register(handle);
+        shapeManager.Register(handle);
+        return handle;
+    }
+
     Handle PhysicsWorld::CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape) {
         Handle handle = CreateHandle();
         AttachBody(handle, bodyData);
         AttachShape(handle, std::move(shape));
+        forceManager.Register(handle);
         return handle;
     }
 
@@ -24,11 +33,18 @@ namespace osseus {
         bodyManager.RemoveBody(handle);
         shapeManager.RemoveShape(handle);
         registry.Destroy(handle);
+        forceManager.ClearForceOf(handle);
+    }
+
+    void PhysicsWorld::QueueDestroyBody(Handle handle) {
+        if (!registry.IsValid(handle)) { return; }
+        destructionQueue.push_back(handle);
     }
 
     void PhysicsWorld::AttachBody(Handle handle, BodyData bodyData) {
         if (!registry.IsValid(handle)) { return; }
         bodyManager.AddBody(handle, bodyData);
+        forceManager.Add(handle, Vector3::Zero());
     }
 
     void PhysicsWorld::AttachShape(Handle handle, std::unique_ptr<IShape> shape) {
@@ -51,9 +67,6 @@ namespace osseus {
         }
     }
 
-    ForceManager& PhysicsWorld::GetForceManager(){
-        return forceManager;
-    }
 
 
     void PhysicsWorld::Step(double delta) {
@@ -77,7 +90,7 @@ namespace osseus {
  
         // Build barnes hut evaluation.
         barnesHut_.Evaluate(spatialTree, bodyManager.Handles(), 
-            bodyManager.Data(), forceManager.NetForces());
+            bodyManager.Data(), forceManager);
 
         // =========== Apply Individual Forces ==========
         // This is done via the public ForceManager
@@ -87,6 +100,7 @@ namespace osseus {
         integrator->Step(bodyManager, forceManager, delta);
 
         // Sync State
+        SyncState();
     }
 
     BodyData * PhysicsWorld::GetBody(Handle handle) {
@@ -98,4 +112,14 @@ namespace osseus {
         if (!registry.IsValid(handle)) { return nullptr; }
         return bodyManager.GetBody(handle);
     }
+
+    void PhysicsWorld::SyncState(){
+        if (destructionQueue.size() > 0){
+            for (Handle handle : destructionQueue)
+            {
+                DestroyBody(handle);
+            }
+        }
+    }
+
 } // osseus

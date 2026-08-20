@@ -30,8 +30,9 @@ namespace osseus {
         SimulationState state2 = state1;
         SimulationState state3 = state1;
         SimulationState state4 = state1;
-        size_t stateSize = state1.GetBodies().size();
 
+        size_t stateSize = state1.GetBodies().size();
+        ForceManager forceMan = forceManager;
         
         DerivativeState k1 = DerivativeOf(state1);
         for (std::size_t i = 0; i < stateSize; ++i)
@@ -45,7 +46,8 @@ namespace osseus {
             state2.GetOctree(), 
             state2.GetHandles(), 
             state2.GetBodies(), 
-            state2.GetNetForces());
+            forceMan
+        );
     
         DerivativeState k2 = DerivativeOf(state2);
         for (std::size_t i = 0; i < stateSize; ++i)
@@ -59,7 +61,7 @@ namespace osseus {
             state3.GetOctree(),
             state3.GetHandles(),
             state3.GetBodies(),
-            state3.GetNetForces()
+            forceMan
         );
 
         DerivativeState k3 = DerivativeOf(state3);    
@@ -75,7 +77,7 @@ namespace osseus {
             state4.GetOctree(),
             state4.GetHandles(),
             state4.GetBodies(),
-            state4.GetNetForces()
+            forceMan
         );
 
         DerivativeState k4 = DerivativeOf(state4);

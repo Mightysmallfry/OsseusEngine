@@ -8,14 +8,24 @@
 
 namespace osseus {
 
+    ForceManager::ForceManager(const BodyManager& bodyManager){
+        Resize(bodyManager.Data().size());
+    }
+
     const Vector3& ForceManager::Get(Handle handle) const
     {
         return netForces_[handle.index];
     }
 
+    void ForceManager::Register(Handle handle){
+        if (handle.index >= netForces_.size()){
+            Resize(handle.index + 1);
+        }
+    }
+
     void ForceManager::Resize(std::size_t count)
     {
-        netForces_.resize(count);
+        netForces_.resize(count, Vector3::Zero());
     }
 
     void ForceManager::Clear()
@@ -29,12 +39,15 @@ namespace osseus {
 
     void ForceManager::Add(Handle handle, const Vector3& force)
     {
-        netForces_[handle.index] += force;
+        if (handle.index >= netForces_.size()){
+            Resize(handle.index + 1);
+        }
+        netForces_.at(handle.index) += force;
     }
 
     void ForceManager::ClearForceOf(Handle handle)
     {
-        netForces_[handle.index] = Vector3::Zero();
+        netForces_.at(handle.index) = Vector3::Zero();
     }
 
     void ForceManager::ClearUniversals()
@@ -57,11 +70,10 @@ namespace osseus {
         return 0;
     }
 
-    const std::vector<UniversalForceEvaluator*>&
-    ForceManager::GetUniversals() const
-    {
-        return universalForces_;
+    bool ForceManager::HasUniversals() {
+        return universalForces_.size() > 0;
     }
+
 
 }
 

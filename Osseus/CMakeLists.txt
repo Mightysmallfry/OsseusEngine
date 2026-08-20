@@ -16,8 +16,6 @@ target_sources(Osseus
 
         # Physics
         src/physics/PhysicsWorld.cpp
-        src/physics/Forces/ForceGravity.cpp
-        src/physics/Forces/ForceComposite.cpp
 
         src/physics/Octree.cpp
         src/physics/BarnesHut.cpp

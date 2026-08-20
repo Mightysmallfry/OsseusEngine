@@ -32,8 +32,6 @@
 
 // --- physics ---
 #include "physics/PhysicsWorld.h"
-#include "physics/Forces/ForceComposite.h"
-#include "physics/Forces/ForceGravity.h"
 
 #include "physics/Octree.h"
 #include "physics/BarnesHut.h"

@@ -9,7 +9,11 @@ namespace osseus {
         : theta_(theta), G_(G), softening_(softening) {}
 
     void BarnesHut::Evaluate(const Octree& tree, const std::vector<Handle>& handles,
-             const std::vector<BodyData>& bodies, std::vector<Vector3>& netForces) {
+             const std::vector<BodyData>& bodies, ForceManager& forceManager) {
+
+        if (!forceManager.HasUniversals()) { return; }
+        // TODO: Make universal force evaluators for gravity and EM
+                
         const OctNode& root = tree.GetRoot();
 
         const std::size_t count = std::min(handles.size(), bodies.size());
@@ -19,7 +23,7 @@ namespace osseus {
             if (body.invMass == 0.0) { continue; } // static bodies don't move; no force needed
 
             const Vector3 force = CalculateForce(root, handle, body.position, body.mass);
-            netForces[handle.index] += force;
+            forceManager.NetForces()[handle.index] += force;
         }
     }
 

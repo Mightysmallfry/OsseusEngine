@@ -21,6 +21,7 @@ namespace osseus {
         bodyData = bodyManager.Data();
         handles = bodyManager.Handles();
         netForces = forceManager.NetForces();
+        universalForces_ = forceManager.GetUniversals();
 
         RebuildOctree();
     }
