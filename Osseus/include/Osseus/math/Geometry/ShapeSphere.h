@@ -10,11 +10,11 @@
 namespace osseus {
     class ShapeSphere : public IShape {
     public:
-        explicit ShapeSphere(double _radius) : radius(_radius) {}
+        explicit ShapeSphere(double _radius) : radius_(_radius) {}
 
         AABB ComputeBoundingBox(const Vector3 &position) const override {
-            return AABB{ position - Vector3(radius, radius, radius),
-                position + Vector3(radius, radius, radius) };
+            return AABB{ position - Vector3(radius_, radius_, radius_),
+                position + Vector3(radius_, radius_, radius_) };
         }
 
         // Furthest point on a sphere along `direction` is just the
@@ -24,12 +24,12 @@ namespace osseus {
             const Vector3 unitDirection = (lengthSq > Vector3::TOLERANCE)
                 ? direction * (1.0 / std::sqrt(lengthSq))
                 : Vector3::UnitX();
-            return position + unitDirection * radius;
+            return position + unitDirection * radius_;
         }
 
-        double GetRadius() const { return radius; }
+        double GetRadius() const { return radius_; }
     private:
-        double radius{ 1.0 };
+        double radius_{ 1.0 };
     };
 } // osseus
 

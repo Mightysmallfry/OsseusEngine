@@ -28,9 +28,9 @@ namespace osseus {
         size_t size() const;
 
     private:
-        std::vector<uint32_t> sparseData;       // Handle.index -> position for dense
-        std::vector<Handle> denseHandles;       // Position in dense -> owning handle
-        std::vector<T> dense;                   // The Actual Data, no gaps
+        std::vector<uint32_t> sparseData_;       // Handle.index -> position for dense
+        std::vector<Handle> denseHandles_;       // Position in dense -> owning handle
+        std::vector<T> dense_;                   // The Actual Data, no gaps
     };
 } // osseus
 

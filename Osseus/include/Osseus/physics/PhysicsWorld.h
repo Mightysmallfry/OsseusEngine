@@ -26,7 +26,7 @@ namespace osseus {
 
     class PhysicsWorld {
     public:
-        PhysicsWorld() : integrator(std::make_unique<IntegratorEulerCromer>()) {}
+        PhysicsWorld() : integrator_(std::make_unique<IntegratorEulerCromer>()) {}
 
         Handle CreateHandle();
 
@@ -47,9 +47,9 @@ namespace osseus {
         
         void RebuildOctree();
         
-        ForceManager& GetForceManager() { return forceManager; }
-        BodyManager& GetBodyManager() { return bodyManager; }
-        ShapeManager& GetShapeManager() { return shapeManager; }
+        ForceManager& GetForceManager() { return forceManager_; }
+        BodyManager& GetBodyManager() { return bodyManager_; }
+        ShapeManager& GetShapeManager() { return shapeManager_; }
         
         private:
         void AttachBody(Handle handle, BodyData bodyData);
@@ -58,20 +58,20 @@ namespace osseus {
 
         void SyncState();
 
-        std::vector<Handle> destructionQueue;
+        std::vector<Handle> destructionQueue_;
 
-        std::unique_ptr<IIntegrator> integrator;
+        std::unique_ptr<IIntegrator> integrator_;
         
-        Registry registry;
-        BodyManager bodyManager;
-        ForceManager forceManager;
-        ShapeManager shapeManager;
-        Octree spatialTree;
+        Registry registry_;
+        BodyManager bodyManager_;
+        ForceManager forceManager_;
+        ShapeManager shapeManager_;
+        Octree spatialTree_;
 
         BarnesHut barnesHut_;
-        BroadPhase broadPhase;
-        NarrowPhase narrowPhase;
-        Solver solver;
+        BroadPhase broadPhase_;
+        NarrowPhase narrowPhase_;
+        Solver solver_;
 
     };
 } // osseus

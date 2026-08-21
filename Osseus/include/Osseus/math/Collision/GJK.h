@@ -23,24 +23,24 @@ namespace osseus {
     class GJKSimplex {
     public:
         void PushFront(const GJKSupportPoint& point) {
-            points = { point, points[0], points[1], points[2] };
-            count = count < 4 ? count + 1 : 4;
+            points_ = { point, points_[0], points_[1], points_[2] };
+            count_ = count_ < 4 ? count_ + 1 : 4;
         }
 
         void Set(std::initializer_list<GJKSupportPoint> newPoints) {
-            count = 0;
+            count_ = 0;
             for (const auto& p : newPoints) {
-                points[count++] = p;
+                points_[count_++] = p;
             }
         }
 
-        GJKSupportPoint& operator[](size_t index) { return points[index]; }
-        const GJKSupportPoint& operator[](size_t index) const { return points[index]; }
-        size_t Size() const { return count; }
+        GJKSupportPoint& operator[](size_t index) { return points_[index]; }
+        const GJKSupportPoint& operator[](size_t index) const { return points_[index]; }
+        size_t Size() const { return count_; }
 
     private:
-        std::array<GJKSupportPoint, 4> points{};
-        size_t count{ 0 };
+        std::array<GJKSupportPoint, 4> points_{};
+        size_t count_{ 0 };
     };
 
     // Generic Gilbert-Johnson-Keerthi intersection test. It only ever

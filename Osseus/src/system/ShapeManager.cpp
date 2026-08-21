@@ -6,11 +6,11 @@
 
 namespace osseus {
     void ShapeManager::AddShape(Handle handle, std::unique_ptr<IShape> shape) {
-        shapes.Insert(handle, std::move(shape));
+        shapes_.Insert(handle, std::move(shape));
     }
 
     void ShapeManager::RemoveShape(Handle handle) {
-        shapes.Remove(handle);
+        shapes_.Remove(handle);
     }
 
     void ShapeManager::Register(Handle handle) {
@@ -18,12 +18,12 @@ namespace osseus {
     }
 
     IShape* ShapeManager::GetShape(Handle handle) {
-        std::unique_ptr<IShape>* slot = shapes.Get(handle);
+        std::unique_ptr<IShape>* slot = shapes_.Get(handle);
         return slot ? slot->get() : nullptr;
     }
 
     const IShape* ShapeManager::GetShape(Handle handle) const {
-        const std::unique_ptr<IShape>* slot = shapes.Get(handle);
+        const std::unique_ptr<IShape>* slot = shapes_.Get(handle);
         return slot ? slot->get() : nullptr;
     }
 } // osseus

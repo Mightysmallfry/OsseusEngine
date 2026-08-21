@@ -21,11 +21,11 @@ namespace osseus {
         IShape* GetShape(Handle handle);
         const IShape* GetShape(Handle handle) const;
 
-        const std::vector<std::unique_ptr<IShape>>& Data() const { return shapes.Data(); }
-        const std::vector<Handle>& Handles() const { return shapes.Handles(); }
+        const std::vector<std::unique_ptr<IShape>>& Data() const { return shapes_.Data(); }
+        const std::vector<Handle>& Handles() const { return shapes_.Handles(); }
 
     private:
-        SparseSet<std::unique_ptr<IShape>> shapes;
+        SparseSet<std::unique_ptr<IShape>> shapes_;
     };
 } // osseus
 

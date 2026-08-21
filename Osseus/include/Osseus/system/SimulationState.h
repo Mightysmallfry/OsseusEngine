@@ -30,18 +30,18 @@ namespace osseus {
 
         void Resize(std::size_t size);
     
-        std::vector<BodyData>& GetBodies() { return bodyData; } 
-        std::vector<Handle>& GetHandles() { return handles; } 
-        std::vector<Vector3>& GetNetForces() { return netForces; } 
+        std::vector<BodyData>& GetBodies() { return bodyData_; }
+        std::vector<Handle>& GetHandles() { return handles_; }
+        std::vector<Vector3>& GetNetForces() { return netForces_; }
 
         Octree& GetOctree();
         const Octree& GetOctree() const;
 
 
     private:
-        std::vector<BodyData> bodyData;
-        std::vector<Handle> handles;
-        std::vector<Vector3> netForces;
+        std::vector<BodyData> bodyData_;
+        std::vector<Handle> handles_;
+        std::vector<Vector3> netForces_;
         std::vector<UniversalForceEvaluator*> universalForces_;
 
         Octree octree_;

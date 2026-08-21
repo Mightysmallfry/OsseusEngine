@@ -13,10 +13,10 @@ namespace osseus {
     // broad phase.
     class ShapeCube : public IShape {
     public:
-        explicit ShapeCube(double _halfExtent = 0.5) : halfExtent(_halfExtent) {}
+        explicit ShapeCube(double _halfExtent = 0.5) : halfExtent_(_halfExtent) {}
 
         AABB ComputeBoundingBox(const Vector3 &position) const override {
-            const Vector3 extents(halfExtent, halfExtent, halfExtent);
+            const Vector3 extents(halfExtent_, halfExtent_, halfExtent_);
             return AABB{ position - extents, position + extents };
         }
 
@@ -27,17 +27,17 @@ namespace osseus {
         // world axes, not the cube's own (currently identical) axes.
         Vector3 Support(const Vector3 &position, const Vector3 &direction) const override {
             const Vector3 corner(
-                direction.x >= 0.0 ? halfExtent : -halfExtent,
-                direction.y >= 0.0 ? halfExtent : -halfExtent,
-                direction.z >= 0.0 ? halfExtent : -halfExtent
+                direction.x >= 0.0 ? halfExtent_ : -halfExtent_,
+                direction.y >= 0.0 ? halfExtent_ : -halfExtent_,
+                direction.z >= 0.0 ? halfExtent_ : -halfExtent_
             );
             return position + corner;
         }
 
-        double GetHalfExtent() const { return halfExtent; }
+        double GetHalfExtent() const { return halfExtent_; }
 
     private:
-        double halfExtent;
+        double halfExtent_;
     };
 } // osseus
 

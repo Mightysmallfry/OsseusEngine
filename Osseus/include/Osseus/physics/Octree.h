@@ -54,16 +54,16 @@ namespace osseus {
         void UpdateMassProperties();
         bool RemoveFromEntries(Handle handle);
 
-        Bounds bounds;
-        OctNode* parent;
-        int depth;
+        Bounds bounds_;
+        OctNode* parent_;
+        int depth_;
 
-        std::array<std::unique_ptr<OctNode>, 8> children;
-        std::vector<Entry> entries;
+        std::array<std::unique_ptr<OctNode>, 8> children_;
+        std::vector<Entry> entries_;
 
-        std::size_t bodyCount;
-        double totalMass;
-        Vector3 centerOfMass;
+        std::size_t bodyCount_;
+        double totalMass_;
+        Vector3 centerOfMass_;
     };
 
     class Octree {
@@ -78,8 +78,8 @@ namespace osseus {
         const OctNode& GetRoot() const;
 
     private:
-        Bounds rootBounds;
-        std::unique_ptr<OctNode> root;
+        Bounds rootBounds_;
+        std::unique_ptr<OctNode> root_;
     };
 
 } // osseus

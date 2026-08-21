@@ -16,7 +16,7 @@ namespace osseus {
             double velocityAlongNormal = relativeVelocity.Dot(contact.normal);
 
             if (velocityAlongNormal <= 0.0) {
-                double impulseMagnitude = -(1.0 + restitution) * velocityAlongNormal / invMassSum;
+                double impulseMagnitude = -(1.0 + restitution_) * velocityAlongNormal / invMassSum;
                 Vector3 impulse = contact.normal * impulseMagnitude;
 
                 bodyA->velocity -= impulse * bodyA->invMass;
@@ -26,8 +26,8 @@ namespace osseus {
             // Positional correction: push the bodies apart directly rather
             // than relying on velocity alone, so residual penetration from
             // a discrete step doesn't accumulate frame over frame.
-            double correctionMagnitude = std::max(contact.penetration - positionalSlop, 0.0)
-                                          / invMassSum * positionalCorrectionPercent;
+            double correctionMagnitude = std::max(contact.penetration - positionalSlop_, 0.0)
+                                          / invMassSum * positionalCorrectionPercent_;
             Vector3 correction = contact.normal * correctionMagnitude;
 
             bodyA->position -= correction * bodyA->invMass;

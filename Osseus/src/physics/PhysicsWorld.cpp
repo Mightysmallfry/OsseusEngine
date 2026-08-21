@@ -9,14 +9,14 @@
 
 namespace osseus {
     Handle PhysicsWorld::CreateHandle() {
-        return registry.CreateHandle();
+        return registry_.CreateHandle();
     }
 
     Handle PhysicsWorld::CreateBody(){
         Handle handle = CreateHandle();
-        bodyManager.Register(handle);
-        forceManager.Register(handle);
-        shapeManager.Register(handle);
+        bodyManager_.Register(handle);
+        forceManager_.Register(handle);
+        shapeManager_.Register(handle);
         return handle;
     }
 
@@ -24,46 +24,46 @@ namespace osseus {
         Handle handle = CreateHandle();
         AttachBody(handle, bodyData);
         AttachShape(handle, std::move(shape));
-        forceManager.Register(handle);
+        forceManager_.Register(handle);
         return handle;
     }
 
     void PhysicsWorld::DestroyBody(Handle handle) {
-        if (!registry.IsValid(handle)) { return; }
-        bodyManager.RemoveBody(handle);
-        shapeManager.RemoveShape(handle);
-        registry.Destroy(handle);
-        forceManager.ClearForceOf(handle);
+        if (!registry_.IsValid(handle)) { return; }
+        bodyManager_.RemoveBody(handle);
+        shapeManager_.RemoveShape(handle);
+        registry_.Destroy(handle);
+        forceManager_.ClearForceOf(handle);
     }
 
     void PhysicsWorld::QueueDestroyBody(Handle handle) {
-        if (!registry.IsValid(handle)) { return; }
-        destructionQueue.push_back(handle);
+        if (!registry_.IsValid(handle)) { return; }
+        destructionQueue_.push_back(handle);
     }
 
     void PhysicsWorld::AttachBody(Handle handle, BodyData bodyData) {
-        if (!registry.IsValid(handle)) { return; }
-        bodyManager.AddBody(handle, bodyData);
-        forceManager.Add(handle, Vector3::Zero());
+        if (!registry_.IsValid(handle)) { return; }
+        bodyManager_.AddBody(handle, bodyData);
+        forceManager_.Add(handle, Vector3::Zero());
     }
 
     void PhysicsWorld::AttachShape(Handle handle, std::unique_ptr<IShape> shape) {
-        if (!registry.IsValid(handle)) { return; }
-        shapeManager.AddShape(handle, std::move(shape));
+        if (!registry_.IsValid(handle)) { return; }
+        shapeManager_.AddShape(handle, std::move(shape));
     }
 
     void PhysicsWorld::SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator) {
-        integrator = std::move(newIntegrator);
+        integrator_ = std::move(newIntegrator);
     }
 
     
     void PhysicsWorld::RebuildOctree() {
-        spatialTree.Clear();
+        spatialTree_.Clear();
         
         // An Octree of Handles.
-        for (auto& handle : bodyManager.Handles()){
-            BodyData* body = bodyManager.GetBody(handle);
-            spatialTree.Insert(handle, body->position, body->mass);
+        for (auto& handle : bodyManager_.Handles()){
+            BodyData* body = bodyManager_.GetBody(handle);
+            spatialTree_.Insert(handle, body->position, body->mass);
         }
     }
 
@@ -74,48 +74,48 @@ namespace osseus {
         // ============ Detect Collisions ============
         // Broad Phase
         std::vector<CollisionCandidatePair> candidates =
-            broadPhase.FindCandidatePairs(bodyManager, shapeManager);
+            broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
         // Narrow Phase (GJK/EPA via IShape::Support)
         std::vector<Contact> contacts =
-            narrowPhase.GenerateContacts(candidates, bodyManager, shapeManager);
+            narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_);
 
         // ============ Resolve Collisions ============
         // Solver
-        solver.ResolveContacts(contacts, bodyManager);
+        solver_.ResolveContacts(contacts, bodyManager_);
 
         // =========== Apply Universal Forces ===========
         RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
  
         // Build barnes hut evaluation.
-        barnesHut_.Evaluate(spatialTree, bodyManager.Handles(), 
-            bodyManager.Data(), forceManager);
+        barnesHut_.Evaluate(spatialTree_, bodyManager_.Handles(), 
+            bodyManager_.Data(), forceManager_);
 
         // =========== Apply Individual Forces ==========
         // This is done via the public ForceManager
 
         // ============ Resolve Trajectories ============
         // Integrator
-        integrator->Step(bodyManager, forceManager, delta);
+        integrator_->Step(bodyManager_, forceManager_, delta);
 
         // Sync State
         SyncState();
     }
 
     BodyData * PhysicsWorld::GetBody(Handle handle) {
-        if (!registry.IsValid(handle)) { return nullptr; }
-        return bodyManager.GetBody(handle);
+        if (!registry_.IsValid(handle)) { return nullptr; }
+        return bodyManager_.GetBody(handle);
     }
 
     const BodyData* PhysicsWorld::GetBody(Handle handle) const {
-        if (!registry.IsValid(handle)) { return nullptr; }
-        return bodyManager.GetBody(handle);
+        if (!registry_.IsValid(handle)) { return nullptr; }
+        return bodyManager_.GetBody(handle);
     }
 
     void PhysicsWorld::SyncState(){
-        if (destructionQueue.size() > 0){
-            for (Handle handle : destructionQueue)
+        if (destructionQueue_.size() > 0){
+            for (Handle handle : destructionQueue_)
             {
                 DestroyBody(handle);
             }

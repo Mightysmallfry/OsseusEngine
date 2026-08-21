@@ -8,31 +8,31 @@ namespace osseus {
     Handle Registry::CreateHandle() {
         uint32_t index;
 
-        if (!freeList.empty()) {
-            index = freeList.back();
-            freeList.pop_back();
-            alive[index] = true;
+        if (!freeList_.empty()) {
+            index = freeList_.back();
+            freeList_.pop_back();
+            alive_[index] = true;
         } else {
-            index = static_cast<uint32_t>(generations.size());
-            generations.push_back(0);
-            alive.push_back(true);
+            index = static_cast<uint32_t>(generations_.size());
+            generations_.push_back(0);
+            alive_.push_back(true);
         }
 
-        return Handle{ .index = index, .generation = generations[index] };
+        return Handle{ .index = index, .generation = generations_[index] };
     }
 
     void Registry::Destroy(Handle handle) {
         if (!IsValid(handle)) { return; }
 
-        alive[handle.index] = false;
-        generations[handle.index]++;
-        freeList.push_back(handle.index);
+        alive_[handle.index] = false;
+        generations_[handle.index]++;
+        freeList_.push_back(handle.index);
     }
 
     bool Registry::IsValid(Handle handle) const {
-        if (handle.index >= generations.size()) {
+        if (handle.index >= generations_.size()) {
             return false;
         }
-        return alive[handle.index] && generations[handle.index] == handle.generation;
+        return alive_[handle.index] && generations_[handle.index] == handle.generation;
     }
 } // osseus

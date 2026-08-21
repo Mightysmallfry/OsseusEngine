@@ -15,15 +15,15 @@ namespace osseus {
     // otherwise leave behind.
     class Solver {
     public:
-        void SetRestitution(double newRestitution) { restitution = newRestitution; }
-        double GetRestitution() const { return restitution; }
+        void SetRestitution(double newRestitution) { restitution_ = newRestitution; }
+        double GetRestitution() const { return restitution_; }
 
         void ResolveContacts(const std::vector<Contact>& contacts, BodyManager& bodyManager) const;
 
     private:
-        double restitution{ 0.2 };
-        double positionalCorrectionPercent{ 0.8 };
-        double positionalSlop{ 0.01 };
+        double restitution_{ 0.2 };
+        double positionalCorrectionPercent_{ 0.8 };
+        double positionalSlop_{ 0.01 };
     };
 } // osseus
 

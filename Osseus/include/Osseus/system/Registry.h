@@ -17,9 +17,9 @@ namespace osseus {
         void Destroy(Handle handle);
         bool IsValid(Handle handle) const;
     private:
-        std::vector<uint32_t> generations;
-        std::vector<uint32_t> freeList;
-        std::vector<bool> alive;
+        std::vector<uint32_t> generations_;
+        std::vector<uint32_t> freeList_;
+        std::vector<bool> alive_;
     };
 } // osseus
 

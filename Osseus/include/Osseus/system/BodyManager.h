@@ -22,12 +22,12 @@ namespace osseus {
 
         
 
-        std::vector<BodyData>& Data() { return bodies.Data(); }
-        const std::vector<BodyData>& Data() const { return bodies.Data(); }
-        const std::vector<Handle>& Handles() const { return bodies.Handles(); }
+        std::vector<BodyData>& Data() { return bodies_.Data(); }
+        const std::vector<BodyData>& Data() const { return bodies_.Data(); }
+        const std::vector<Handle>& Handles() const { return bodies_.Handles(); }
 
     private:
-        SparseSet<BodyData> bodies;
+        SparseSet<BodyData> bodies_;
     };
 } // osseus
 
