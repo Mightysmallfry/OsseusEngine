@@ -15,6 +15,13 @@ namespace osseus {
         Vector3 halfSize = Vector3::One();
     };
 
+    struct Entry {
+        Handle handle;
+        Vector3 position;
+        double mass;
+        double charge;
+    };
+        
     class OctNode {
     public:
         static constexpr double kChargeEpsilon = 1e-9;
@@ -46,12 +53,6 @@ namespace osseus {
         int GetDepth() const;
 
     private:
-        struct Entry {
-            Handle handle;
-            Vector3 position;
-            double mass;
-            double charge;
-        };
 
         static constexpr std::size_t MaxBodiesPerNode = 1;
         static constexpr int MaxDepth = 32;
@@ -89,6 +90,7 @@ namespace osseus {
         explicit Octree(const Bounds& rootBounds);
 
         void Clear();
+        void Insert(Entry entry);
         void Insert(Handle handle, const Vector3& position, double mass, double charge);
         void Remove(Handle handle);
 

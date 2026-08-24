@@ -257,6 +257,10 @@ namespace osseus {
         root_ = std::make_unique<OctNode>(rootBounds_);
     }
 
+    void Octree::Insert(Entry entry) {
+        Insert(entry.handle, entry.position, entry.mass, entry.charge);
+    }
+
     void Octree::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         root_->Insert(handle, position, mass, charge);
     }

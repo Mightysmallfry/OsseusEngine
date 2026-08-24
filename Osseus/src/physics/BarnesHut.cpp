@@ -8,9 +8,7 @@ namespace osseus {
     void BarnesHut::Evaluate(const Octree& tree, const std::vector<Handle>& handles,
              const std::vector<BodyData>& bodies, ForceManager& forceManager) {
 
-        if (!forceManager.HasUniversals()) { return; }
-        // TODO: Make universal force evaluator for EM
-                
+        if (!forceManager.HasUniversals()) { return; }                
         const OctNode& root = tree.GetRoot();
 
         const std::size_t count = std::min(handles.size(), bodies.size());

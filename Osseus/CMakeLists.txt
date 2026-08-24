@@ -20,6 +20,7 @@ target_sources(Osseus
         src/physics/Octree.cpp
         src/physics/BarnesHut.cpp
 
+        src/physics/UniversalForce.cpp
         src/physics/Forces/UniversalGravityForce.cpp
         src/physics/Forces/UniversalEMForce.cpp
 
