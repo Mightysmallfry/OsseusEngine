@@ -20,6 +20,9 @@ target_sources(Osseus
         src/physics/Octree.cpp
         src/physics/BarnesHut.cpp
 
+        src/physics/Forces/UniversalGravityForce.cpp
+        src/physics/Forces/UniversalEMForce.cpp
+
         # System
         src/system/Registry.cpp
         src/system/BodyManager.cpp

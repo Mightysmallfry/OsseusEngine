@@ -14,13 +14,13 @@ namespace osseus {
     }
 
     SimulationState::SimulationState(const SimulationState& other)
-    : bodyData(other.bodyData), handles(other.handles), netForces(other.netForces) {}
+    : bodyData_(other.bodyData_), handles_(other.handles_), netForces_(other.netForces_) {}
 
     void SimulationState::CopyFrom(const BodyManager& bodyManager, const ForceManager& forceManager)
     {
-        bodyData = bodyManager.Data();
-        handles = bodyManager.Handles();
-        netForces = forceManager.NetForces();
+        bodyData_ = bodyManager.Data();
+        handles_ = bodyManager.Handles();
+        netForces_ = forceManager.NetForces();
         universalForces_ = forceManager.GetUniversals();
 
         RebuildOctree();
@@ -31,14 +31,15 @@ namespace osseus {
     {
         octree_.Clear();
 
-        for (Handle handle : handles)
+        for (Handle handle : handles_)
         {
-            const BodyData& body = bodyData[handle.index];
+            const BodyData& body = bodyData_[handle.index];
 
             octree_.Insert(
                 handle,
                 body.position,
-                body.mass
+                body.mass,
+                body.charge
             );
         }
     }

@@ -123,7 +123,7 @@ TEST_CASE("Octree - Inserting a body makes the root non-empty", "[octree][insert
 
     Handle handle{0, 0};
 
-    tree.Insert(handle, Vector3(1.0, 1.0, 1.0), 1.0);
+    tree.Insert(handle, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
 
@@ -140,10 +140,10 @@ TEST_CASE("Octree - Inserting multiple bodies tracks the body count", "[octree][
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0);
-    tree.Insert(Handle{3, 0}, Vector3(10.0, 10.0, -10.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{3, 0}, Vector3(10.0, 10.0, -10.0), 1.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
 
@@ -160,7 +160,7 @@ TEST_CASE("Octree - Inserting a static body (zero mass) is excluded from the tre
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 0.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 0.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
 
@@ -178,7 +178,7 @@ TEST_CASE("Octree - Inserting a body with negative mass is excluded from the tre
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), -5.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), -5.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
 
@@ -195,9 +195,9 @@ TEST_CASE("Octree - A mix of static and dynamic bodies only counts the dynamic o
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-10.0, -10.0, -10.0), 0.0);   // static, excluded
-    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 2.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-10.0, -10.0, -10.0), 0.0, 0.0);   // static, excluded
+    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 2.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
 
@@ -218,9 +218,9 @@ TEST_CASE("Octree - Total mass accumulates the sum of inserted body masses", "[o
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 2.0);
-    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 3.0);
-    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 5.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 2.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 3.0, 0.0);
+    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 5.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetTotalMass() == 10.0);
 }
@@ -235,7 +235,7 @@ TEST_CASE("Octree - Center of mass of a single body equals that body's position"
     Octree tree(bounds);
 
     const Vector3 position(2.0, -3.0, 4.0);
-    tree.Insert(Handle{0, 0}, position, 5.0);
+    tree.Insert(Handle{0, 0}, position, 5.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetCenterOfMass() == position);
 }
@@ -251,8 +251,8 @@ TEST_CASE("Octree - Center of mass is the mass-weighted average of symmetric bod
 
     // Two equal masses placed symmetrically about the origin along X
     // should average out to a center of mass at the origin.
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetCenterOfMass() == Vector3::Zero());
 }
@@ -268,8 +268,8 @@ TEST_CASE("Octree - Center of mass weights heavier bodies more strongly", "[octr
 
     // Body A at +5 with mass 1, body B at -5 with mass 3.
     // Weighted average: (5*1 + -5*3) / 4 = -2.5
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 0.0, 0.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, 0.0, 0.0), 3.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 0.0, 0.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, 0.0, 0.0), 3.0, 0.0);
 
     const Vector3 expected(-2.5, 0.0, 0.0);
     REQUIRE(tree.GetRoot().GetCenterOfMass() == expected);
@@ -289,8 +289,8 @@ TEST_CASE("Octree - Root stays a leaf while bodies occupy the same octant", "[oc
     Octree tree(bounds);
 
     // Both positions fall in the same (+,+,+) octant.
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(2.0, 2.0, 2.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(2.0, 2.0, 2.0), 1.0, 0.0);
 
     // Bodies sharing an octant force recursive subdivision past a single
     // node, so the root itself is expected to have subdivided into
@@ -309,8 +309,8 @@ TEST_CASE("Octree - Root subdivides once bodies occupy different octants", "[oct
 
     REQUIRE(tree.GetRoot().IsLeaf());
 
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     REQUIRE_FALSE(tree.GetRoot().IsLeaf());
     REQUIRE(tree.GetRoot().HasChild(0));  // (-,-,-) octant per GetOctantIndex bit layout
@@ -328,8 +328,8 @@ TEST_CASE("Octree - A body exactly on the center boundary resolves deterministic
 
     // Position lies exactly on all three axis planes. GetOctantIndex uses
     // >=, so this should deterministically resolve to octant 7 (+,+,+).
-    tree.Insert(Handle{0, 0}, Vector3(0.0, 0.0, 0.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(0.0, 0.0, 0.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     REQUIRE_FALSE(tree.GetRoot().IsLeaf());
     REQUIRE(tree.GetRoot().GetBodyCount() == 2);
@@ -348,9 +348,9 @@ TEST_CASE("Octree - Coincident positions terminate subdivision at max depth inst
 
     // All bodies land in the exact same point, which would force infinite
     // subdivision without a MaxDepth guard on OctNode::Insert.
-    tree.Insert(Handle{0, 0}, samePosition, 1.0);
-    tree.Insert(Handle{1, 0}, samePosition, 1.0);
-    tree.Insert(Handle{2, 0}, samePosition, 1.0);
+    tree.Insert(Handle{0, 0}, samePosition, 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, samePosition, 1.0, 0.0);
+    tree.Insert(Handle{2, 0}, samePosition, 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 3);
     REQUIRE(tree.GetRoot().GetTotalMass() == 3.0);
@@ -371,7 +371,7 @@ TEST_CASE("Octree - Removing the only body makes the root empty", "[octree][remo
 
     const Handle handle{0, 0};
 
-    tree.Insert(handle, Vector3(1.0, 1.0, 1.0), 1.0);
+    tree.Insert(handle, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
     REQUIRE(tree.GetRoot().GetBodyCount() == 1);
 
     tree.Remove(handle);
@@ -395,9 +395,9 @@ TEST_CASE("Octree - Removing one body leaves the remaining bodies in the tree", 
     const Handle b{1, 0};
     const Handle c{2, 0};
 
-    tree.Insert(a, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(b, Vector3(-10.0, 10.0, 10.0), 1.0);
-    tree.Insert(c, Vector3(10.0, -10.0, 10.0), 1.0);
+    tree.Insert(a, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(b, Vector3(-10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(c, Vector3(10.0, -10.0, 10.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 3);
 
@@ -416,7 +416,7 @@ TEST_CASE("Octree - Removing a handle that was never inserted is a safe no-op", 
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 1);
 
@@ -437,8 +437,8 @@ TEST_CASE("Octree - Removing a handle that was excluded for being static is a sa
 
     const Handle staticHandle{1, 0};
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(staticHandle, Vector3(-10.0, -10.0, -10.0), 0.0); // excluded
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(staticHandle, Vector3(-10.0, -10.0, -10.0), 0.0, 0.0); // excluded
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 1);
 
@@ -461,9 +461,9 @@ TEST_CASE("Octree - Clear removes all bodies from the tree", "[octree][clear]")
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 3);
 
@@ -497,8 +497,8 @@ TEST_CASE("Octree - Tree can be reused after Clear", "[octree][clear][regression
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(10.0, 10.0, 10.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-10.0, 10.0, 10.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 2);
 
@@ -506,7 +506,7 @@ TEST_CASE("Octree - Tree can be reused after Clear", "[octree][clear][regression
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 0);
 
-    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0);
+    tree.Insert(Handle{2, 0}, Vector3(10.0, -10.0, 10.0), 1.0, 0.0);
 
     REQUIRE(tree.GetRoot().GetBodyCount() == 1);
     REQUIRE_FALSE(tree.GetRoot().IsEmpty());
@@ -552,8 +552,8 @@ TEST_CASE("Octree - Child nodes created by subdivision point back to their paren
     Octree tree(bounds);
 
     // Two bodies in different octants force the root to subdivide.
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
     REQUIRE_FALSE(root.IsLeaf());
@@ -577,8 +577,8 @@ TEST_CASE("Octree - Child depth is one greater than parent depth", "[octree][par
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
     const OctNode* child = root.GetChild(7);
@@ -599,8 +599,8 @@ TEST_CASE("Octree - Parent chain is consistent across multiple levels of subdivi
     // Two bodies close together but not coincident, positioned so they
     // share several levels of octant nesting before finally separating,
     // forcing subdivision more than one level deep.
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0, 0.0);
 
     const OctNode& root = tree.GetRoot();
     REQUIRE_FALSE(root.IsLeaf());
@@ -629,8 +629,8 @@ TEST_CASE("Octree - Clear resets the root to have no parent", "[octree][parent][
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     tree.Clear();
 
@@ -647,8 +647,8 @@ TEST_CASE("Octree - Probe: nested octant descent for closely-spaced bodies", "[o
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0, 0.0);
 
     // Descend through whichever single child is populated at each level.
     // The two bodies stay in the same octant for several levels before
@@ -703,8 +703,8 @@ TEST_CASE("Octree - GetRoot returns the same node instance across multiple calls
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     const OctNode& firstCall = tree.GetRoot();
     const OctNode& secondCall = tree.GetRoot();
@@ -730,11 +730,11 @@ TEST_CASE("Octree - GetRoot reference is invalidated only by Clear, not by other
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(5.0, 5.0, 5.0), 1.0, 0.0);
 
     const OctNode* beforeSecondInsert = &tree.GetRoot();
 
-    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0);
+    tree.Insert(Handle{1, 0}, Vector3(-5.0, -5.0, -5.0), 1.0, 0.0);
 
     // Insert triggers subdivision internally but should never replace the
     // root OctNode instance itself -- only Clear() does that, by
@@ -752,8 +752,8 @@ TEST_CASE("Octree - Closely-spaced bodies split into separate leaves at the veri
 
     Octree tree(bounds);
 
-    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0);
-    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0);
+    tree.Insert(Handle{0, 0}, Vector3(1.0, 1.0, 1.0), 1.0, 0.0);
+    tree.Insert(Handle{1, 0}, Vector3(1.5, 1.5, 1.5), 1.0, 0.0);
 
     // Values pinned via direct probe of Insert/Subdivide/GetOctantIndex
     // against these exact positions: the two bodies travel together

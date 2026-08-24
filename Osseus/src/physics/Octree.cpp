@@ -5,39 +5,40 @@ namespace osseus {
     // ==================== OctNode ====================
 
     OctNode::OctNode(const Bounds& bounds, OctNode* parent, int depth)
-        : bounds(bounds), parent(parent), depth(depth),
-        bodyCount(0), totalMass(0.0), centerOfMass(Vector3::Zero()) {}
+        : bounds_(bounds), parent_(parent), depth_(depth) {}
 
 
-    void OctNode::Insert(Handle handle, const Vector3& position, double mass) {
+    void OctNode::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         if (mass <= 0.0) { return; }
 
         if (IsLeaf()) {
-            if (entries.size() < MaxBodiesPerNode || depth >= MaxDepth) {
-                entries.push_back(Entry{ handle, position, mass });
+            if (entries_.size() < MaxBodiesPerNode || depth_ >= MaxDepth) {
+                entries_.push_back(Entry{ handle, position, mass, charge });
                 UpdateMassProperties();
+                UpdateChargeProperties();
                 return;
             }
         Subdivide();
     }
 
     const std::size_t octant = GetOctantIndex(position);
-        if (!children[octant]) {
-            children[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth + 1);
+        if (!children_[octant]) {
+            children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
         }
-        children[octant]->Insert(handle, position, mass);
+        children_[octant]->Insert(handle, position, mass, charge);
 
         UpdateMassProperties();
+        UpdateChargeProperties();
     }
 
     bool OctNode::Remove(Handle handle) {
         if (IsLeaf()) {
             const bool removed = RemoveFromEntries(handle);
-            if (removed) { UpdateMassProperties(); }
+            if (removed) { UpdateMassProperties(); UpdateChargeProperties(); }
             return removed;
         }
 
-        for (auto& child : children) {
+        for (auto& child : children_) {
             if (!child) { continue; }
 
             if (child->Remove(handle)) {
@@ -45,6 +46,7 @@ namespace osseus {
                     child.reset();
                 }
                 UpdateMassProperties();
+                UpdateChargeProperties();
                 return true;
             }
         }
@@ -52,120 +54,191 @@ namespace osseus {
     }
 
     bool OctNode::IsLeaf() const {
-        for (const auto& child : children) {
+        for (const auto& child : children_) {
             if (child) { return false; }
         }
         return true;
     }
 
     bool OctNode::IsEmpty() const {
-        return bodyCount == 0;
+        return bodyCount_ == 0;
     }
 
     bool OctNode::ContainsBody(Handle handle, const Vector3& position) const {
     if (IsEmpty()) { return false; }
     if (IsLeaf()) {
-        for (const Entry& entry : entries) {
+        for (const Entry& entry : entries_) {
             if (entry.handle == handle) { return true; }
         }
         return false;
     }
     const std::size_t octant = GetOctantIndex(position);
-    return HasChild(octant) && children[octant]->ContainsBody(handle, position);
+    return HasChild(octant) && children_[octant]->ContainsBody(handle, position);
 }
 
     std::size_t OctNode::GetBodyCount() const {
-        return bodyCount;
+        return bodyCount_;
     }
 
     double OctNode::GetTotalMass() const {
-        return totalMass;
+        return totalMass_;
     }
 
     const Vector3& OctNode::GetCenterOfMass() const {
-        return centerOfMass;
+        return centerOfMass_;
+    }
+
+    double OctNode::GetTotalCharge() const {
+        return totalCharge_;
+    }
+
+    const Vector3& OctNode::GetCenterOfCharge() const {
+        return centerOfCharge_;
+    }
+
+    const Vector3& OctNode::GetDipoleMoment() const {
+        return dipoleMoment_;
     }
 
     const Bounds& OctNode::GetBounds() const {
-        return bounds;
+        return bounds_;
     }
 
     const OctNode* OctNode::GetChild(std::size_t index) const {
-        return children.at(index).get();
+        return children_.at(index).get();
     }
 
     bool OctNode::HasChild(std::size_t index) const {
-        return children.at(index) != nullptr;
+        return children_.at(index) != nullptr;
     }
 
     std::size_t OctNode::GetOctantIndex(const Vector3& position) const {
         std::size_t index = 0;
-        if (position.x >= bounds.center.x) { index |= 1; }
-        if (position.y >= bounds.center.y) { index |= 2; }
-        if (position.z >= bounds.center.z) { index |= 4; }
+        if (position.x >= bounds_.center.x) { index |= 1; }
+        if (position.y >= bounds_.center.y) { index |= 2; }
+        if (position.z >= bounds_.center.z) { index |= 4; }
         return index;
     }
 
     Bounds OctNode::ComputeChildBounds(std::size_t octant) const {
-        const Vector3 quarter = bounds.halfSize * 0.5;
+        const Vector3 quarter = bounds_.halfSize * 0.5;
         const Vector3 offset(
             (octant & 1) ? quarter.x : -quarter.x,
             (octant & 2) ? quarter.y : -quarter.y,
             (octant & 4) ? quarter.z : -quarter.z
         );
-        return Bounds{ bounds.center + offset, quarter };
+        return Bounds{ bounds_.center + offset, quarter };
     }
 
     void OctNode::Subdivide() {
-        std::vector<Entry> existingEntries = std::move(entries);
-        entries.clear();
+        std::vector<Entry> existingEntries = std::move(entries_);
+        entries_.clear();
 
         for (const Entry& entry : existingEntries) {
             const std::size_t octant = GetOctantIndex(entry.position);
-            if (!children[octant]) {
-                children[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth + 1);
+            if (!children_[octant]) {
+                children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
             }
-            children[octant]->Insert(entry.handle, entry.position, entry.mass);
+            children_[octant]->Insert(entry.handle, entry.position, entry.mass, entry.charge);
         }
     }
 
     const OctNode* OctNode::GetParent() const {
-        return parent;
+        return parent_;
     }
 
     int OctNode::GetDepth() const {
-        return depth;
+        return depth_;
     }
 
     void OctNode::UpdateMassProperties() {
-        totalMass = 0.0;
-        centerOfMass = Vector3::Zero();
-        bodyCount = 0;
+        totalMass_ = 0.0;
+        centerOfMass_ = Vector3::Zero();
+        bodyCount_ = 0;
 
         if (IsLeaf()) {
-            for (const Entry& entry : entries) {
-                totalMass += entry.mass;
-                centerOfMass += entry.position * entry.mass;
+            for (const Entry& entry : entries_) {
+                totalMass_ += entry.mass;
+                centerOfMass_ += entry.position * entry.mass;
             }
-            bodyCount = entries.size();
+            bodyCount_ = entries_.size();
         } else {
-            for (const auto& child : children) {
+            for (const auto& child : children_) {
                 if (!child) { continue; }
-                totalMass += child->totalMass;
-                centerOfMass += child->centerOfMass * child->totalMass;
-                bodyCount += child->bodyCount;
+                totalMass_ += child->totalMass_;
+                centerOfMass_ += child->centerOfMass_ * child->totalMass_;
+                bodyCount_ += child->bodyCount_;
             }
         }
 
-        if (totalMass > 0.0) {
-            centerOfMass /= totalMass;
+        if (totalMass_ > 0.0) {
+            centerOfMass_ /= totalMass_;
         }
     }
 
+    void OctNode::UpdateChargeProperties() {
+        totalCharge_ = 0.0;
+        centerOfCharge_ = Vector3::Zero();
+        dipoleMoment_ = Vector3::Zero();
+
+        if (IsLeaf()) {
+            // Pass 1: total charge + charge-weighted center
+            Vector3 geometricCenter = Vector3::Zero();
+            for (const Entry& entry : entries_) {
+                totalCharge_ += entry.charge;
+                centerOfCharge_ += entry.position * entry.charge;
+                geometricCenter += entry.position;
+            }
+            if (!entries_.empty()) {
+                geometricCenter /= static_cast<double>(entries_.size());
+            }
+
+            if (std::abs(totalCharge_) > kChargeEpsilon) {
+                centerOfCharge_ /= totalCharge_;
+            } else {
+                centerOfCharge_ = geometricCenter;
+            }
+
+            // Pass 2: dipole moment about the now-finalized centerOfCharge_
+            for (const Entry& entry : entries_) {
+                dipoleMoment_ += (entry.position - centerOfCharge_) * entry.charge;
+            }
+       } else {
+            // Pass 1: total charge + charge-weighted center from children
+            Vector3 geometricCenter = Vector3::Zero();
+            int childCount = 0;
+            for (const auto& child : children_) {
+                if (!child) { continue; }
+                totalCharge_ += child->totalCharge_;
+                centerOfCharge_ += child->centerOfCharge_ * child->totalCharge_;
+                geometricCenter += child->centerOfCharge_;
+                ++childCount;
+            }
+            if (childCount > 0) {
+                geometricCenter /= static_cast<double>(childCount);
+            }
+
+            if (std::abs(totalCharge_) > kChargeEpsilon) {
+                centerOfCharge_ /= totalCharge_;
+            } else {
+                centerOfCharge_ = geometricCenter;
+            }
+
+            // Pass 2: shift each child's dipole moment to the parent's center
+            // (parallel-axis correction) and accumulate.
+            for (const auto& child : children_) {
+                if (!child) { continue; }
+                dipoleMoment_ += child->dipoleMoment_
+                               + child->totalCharge_ * (child->centerOfCharge_ - centerOfCharge_);
+            }
+        }
+
+    }
+
     bool OctNode::RemoveFromEntries(Handle handle) {
-    for (auto it = entries.begin(); it != entries.end(); ++it) {
+    for (auto it = entries_.begin(); it != entries_.end(); ++it) {
         if (it->handle == handle) {
-            entries.erase(it);
+            entries_.erase(it);
             return true;
         }
     }
@@ -175,25 +248,25 @@ namespace osseus {
     // ==================== Octree ====================
 
     Octree::Octree()
-    : rootBounds(), root(std::make_unique<OctNode>(rootBounds)) {}
+    : rootBounds_(), root_(std::make_unique<OctNode>(rootBounds_)) {}
 
     Octree::Octree(const Bounds& rootBounds)
-    : rootBounds(rootBounds), root(std::make_unique<OctNode>(rootBounds)) {}
+    : rootBounds_(rootBounds), root_(std::make_unique<OctNode>(rootBounds)) {}
 
     void Octree::Clear() {
-        root = std::make_unique<OctNode>(rootBounds);
+        root_ = std::make_unique<OctNode>(rootBounds_);
     }
 
-    void Octree::Insert(Handle handle, const Vector3& position, double mass) {
-        root->Insert(handle, position, mass);
+    void Octree::Insert(Handle handle, const Vector3& position, double mass, double charge) {
+        root_->Insert(handle, position, mass, charge);
     }
 
     void Octree::Remove(Handle handle) {
-        root->Remove(handle);
+        root_->Remove(handle);
     }
 
     const OctNode& Octree::GetRoot() const {
-        return *root;
+        return *root_;
     }
 
 } // osseus

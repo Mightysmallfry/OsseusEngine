@@ -17,9 +17,11 @@ namespace osseus {
 
     class OctNode {
     public:
+        static constexpr double kChargeEpsilon = 1e-9;
+
         explicit OctNode(const Bounds& bounds, OctNode* parent = nullptr, int depth = 0);
 
-        void Insert(Handle handle, const Vector3& position, double mass);
+        void Insert(Handle handle, const Vector3& position, double mass, double charge);
         bool Remove(Handle handle);
         
         bool IsLeaf() const;
@@ -27,8 +29,14 @@ namespace osseus {
         bool ContainsBody(Handle handle, const Vector3& position) const;
         
         std::size_t GetBodyCount() const;
+        
+        
         double GetTotalMass() const;
         const Vector3& GetCenterOfMass() const;
+        double GetTotalCharge() const;
+        const Vector3& GetCenterOfCharge() const;
+        const Vector3& GetDipoleMoment() const;
+
         const Bounds& GetBounds() const;
 
         const OctNode* GetChild(std::size_t index) const;
@@ -42,6 +50,7 @@ namespace osseus {
             Handle handle;
             Vector3 position;
             double mass;
+            double charge;
         };
 
         static constexpr std::size_t MaxBodiesPerNode = 1;
@@ -52,6 +61,10 @@ namespace osseus {
 
         void Subdivide();
         void UpdateMassProperties();
+        
+        // TODO: Implement Charge Property Tracking
+        void UpdateChargeProperties();
+
         bool RemoveFromEntries(Handle handle);
 
         Bounds bounds_;
@@ -61,9 +74,13 @@ namespace osseus {
         std::array<std::unique_ptr<OctNode>, 8> children_;
         std::vector<Entry> entries_;
 
-        std::size_t bodyCount_;
-        double totalMass_;
-        Vector3 centerOfMass_;
+        std::size_t bodyCount_{ 0 };
+        double totalMass_{ 0.0 };
+        Vector3 centerOfMass_{ Vector3::Zero() };
+
+        double totalCharge_{ 0.0 };
+        Vector3 centerOfCharge_{ Vector3::Zero() };
+        Vector3 dipoleMoment_{ Vector3::Zero() };
     };
 
     class Octree {
@@ -72,7 +89,7 @@ namespace osseus {
         explicit Octree(const Bounds& rootBounds);
 
         void Clear();
-        void Insert(Handle handle, const Vector3& position, double mass);
+        void Insert(Handle handle, const Vector3& position, double mass, double charge);
         void Remove(Handle handle);
 
         const OctNode& GetRoot() const;

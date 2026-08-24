@@ -36,6 +36,10 @@
 #include "physics/Octree.h"
 #include "physics/BarnesHut.h"
 
+#include "physics/UniversalForce.h"
+#include "physics/Forces/UniversalGravityForce.h"
+#include "physics/Forces/UniversalEMForce.h"
+
 // --- system ---
 #include "system/AABB.h"
 #include "system/Handle.h"

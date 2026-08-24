@@ -7,7 +7,6 @@ namespace osseus {
     class IForceEvaluator {
     public:
         virtual ~IForceEvaluator() = default;
-        virtual Vector3 CalculateAcceleration(const BodyData& body) const = 0;
     };
 } // osseus
 

@@ -63,7 +63,7 @@ namespace osseus {
         // An Octree of Handles.
         for (auto& handle : bodyManager_.Handles()){
             BodyData* body = bodyManager_.GetBody(handle);
-            spatialTree_.Insert(handle, body->position, body->mass);
+            spatialTree_.Insert(handle, body->position, body->mass, body->charge);
         }
     }
 
