@@ -20,6 +20,14 @@ namespace osseus {
         return handle;
     }
 
+    Handle PhysicsWorld::CreateBody(BodyData bodyData){
+        Handle handle = CreateHandle();
+        AttachBody(handle, bodyData);
+        forceManager_.Register(handle);
+        shapeManager_.Register(handle);
+        return handle;
+    }
+
     Handle PhysicsWorld::CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape) {
         Handle handle = CreateHandle();
         AttachBody(handle, bodyData);

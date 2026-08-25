@@ -31,6 +31,7 @@ namespace osseus {
         Handle CreateHandle();
 
         Handle CreateBody();
+        Handle CreateBody(BodyData bodyData);
         Handle CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape);
         
         // Try to queue the destroy body more often

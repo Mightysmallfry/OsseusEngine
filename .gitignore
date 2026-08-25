@@ -2,3 +2,6 @@
 /vcpkg_installed/
 /.idea/
 /.vscode/
+# Profiling
+callgrind.out.*
+profile.txt
