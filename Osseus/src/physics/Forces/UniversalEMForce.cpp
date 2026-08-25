@@ -8,8 +8,10 @@ namespace osseus {
         Vector3 queryPosition = body.position;
         double queryCharge = body.charge;
 
+        const bool inBounds = sourceNode.GetBounds().Contains(queryPosition);
+
         if (sourceNode.IsLeaf()) {
-            if (sourceNode.ContainsBody(handle, queryPosition)) { return Vector3::Zero(); }
+            if (inBounds && sourceNode.ContainsBody(handle, queryPosition)) { return Vector3::Zero(); }
             return PointForce(sourceNode.GetCenterOfCharge(), sourceNode.GetTotalCharge(), queryPosition, queryCharge);
         }
 
@@ -22,7 +24,7 @@ namespace osseus {
 
         const bool farEnough = dist > 1e-12 && (width / dist) < theta_;
 
-        if (farEnough && !sourceNode.ContainsBody(handle, queryPosition)) {
+        if (farEnough && !(inBounds && sourceNode.ContainsBody(handle, queryPosition))) {
             Vector3 monopole = PointForce(sourceNode.GetCenterOfCharge(), sourceNode.GetTotalCharge(), queryPosition, queryCharge);
             
             Vector3 dipole = DipoleForce(sourceNode.GetDipoleMoment(), 

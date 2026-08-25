@@ -13,6 +13,13 @@ namespace osseus {
     struct Bounds {
         Vector3 center = Vector3::Zero();
         Vector3 halfSize = Vector3::One();
+
+        bool Contains(const Vector3& point) const {
+            return std::abs(point.x - center.x) <= halfSize.x
+                && std::abs(point.y - center.y) <= halfSize.y
+                && std::abs(point.z - center.z) <= halfSize.z;
+        }
+
     };
 
     struct Entry {

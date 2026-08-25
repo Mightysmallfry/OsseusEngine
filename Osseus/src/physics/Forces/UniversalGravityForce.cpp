@@ -8,8 +8,11 @@ namespace osseus {
         Vector3 queryPosition = body.position;
         double queryMass = body.mass;
 
+        const bool inBounds = sourceNode.GetBounds().Contains(queryPosition);
+
+
         if (sourceNode.IsLeaf()) {
-            if (sourceNode.ContainsBody(handle, queryPosition)) { return Vector3::Zero(); }
+            if (inBounds && sourceNode.ContainsBody(handle, queryPosition)) { return Vector3::Zero(); }
             return PointForce(sourceNode.GetCenterOfMass(), sourceNode.GetTotalMass(), queryPosition, queryMass);
         }
 
@@ -22,7 +25,7 @@ namespace osseus {
 
         const bool farEnough = dist > 1e-12 && (width / dist) < theta_;
 
-        if (farEnough && !sourceNode.ContainsBody(handle, queryPosition)) {
+        if (farEnough && !(inBounds && sourceNode.ContainsBody(handle, queryPosition))) {
             return PointForce(sourceNode.GetCenterOfMass(), sourceNode.GetTotalMass(), queryPosition, queryMass);
         }
 
