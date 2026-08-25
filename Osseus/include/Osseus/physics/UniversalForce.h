@@ -20,8 +20,8 @@ namespace osseus {
         [[nodiscard]] double GetSoftening() const;
     
     protected:
-        double theta_; // Accuracy or Speed, 0 -> 1.0, strict to loose
-        double softening_; // Softens distance calculations
+        double theta_{ 0.25 }; // Accuracy or Speed, 0 -> 1.0, strict to loose
+        double softening_{ 0.0 }; // Softens distance calculations
     
     };
 
