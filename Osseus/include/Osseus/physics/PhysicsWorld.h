@@ -42,18 +42,18 @@ namespace osseus {
 
         void Step(double delta);
 
-        BodyData *GetBody(Handle handle);
-        const BodyData *GetBody(Handle handle) const;
+        BodyData* GetBody(Handle handle);
+        const BodyData* GetBody(Handle handle) const;
 
         void RebuildOctree();
 
-        ForceManager &GetForceManager() {
+        ForceManager& GetForceManager() {
             return forceManager_;
         }
-        BodyManager &GetBodyManager() {
+        BodyManager& GetBodyManager() {
             return bodyManager_;
         }
-        ShapeManager &GetShapeManager() {
+        ShapeManager& GetShapeManager() {
             return shapeManager_;
         }
 

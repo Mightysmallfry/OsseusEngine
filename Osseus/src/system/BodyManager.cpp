@@ -13,11 +13,10 @@ namespace osseus {
         bodies_.Remove(handle);
     }
 
-    void BodyManager::Register(Handle handle)
-    {
+    void BodyManager::Register(Handle handle) {
         BodyData bodyData{};
         AddBody(handle, bodyData);
-    }  
+    }
 
     BodyData* BodyManager::GetBody(Handle handle) {
         return bodies_.Get(handle);
@@ -26,4 +25,4 @@ namespace osseus {
     const BodyData* BodyManager::GetBody(Handle handle) const {
         return bodies_.Get(handle);
     }
-} // osseus
+} // namespace osseus

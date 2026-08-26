@@ -14,8 +14,8 @@ namespace osseus {
     // touching this class.
     class NarrowPhase {
         public:
-        std::vector<Contact> GenerateContacts(const std::vector<CollisionCandidatePair> &candidates,
-                                              BodyManager &bodyManager, ShapeManager &shapeManager) const;
+        std::vector<Contact> GenerateContacts(const std::vector<CollisionCandidatePair>& candidates,
+                                              BodyManager& bodyManager, ShapeManager& shapeManager) const;
     };
 } // namespace osseus
 

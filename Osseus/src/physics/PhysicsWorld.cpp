@@ -28,8 +28,7 @@ namespace osseus {
         return handle;
     }
 
-    Handle PhysicsWorld::CreateBody(BodyData bodyData,
-                                    std::unique_ptr<IShape> shape) {
+    Handle PhysicsWorld::CreateBody(BodyData bodyData, std::unique_ptr<IShape> shape) {
         Handle handle = CreateHandle();
         AttachBody(handle, bodyData);
         AttachShape(handle, std::move(shape));
@@ -62,16 +61,14 @@ namespace osseus {
         forceManager_.Add(handle, Vector3::Zero());
     }
 
-    void PhysicsWorld::AttachShape(Handle handle,
-                                   std::unique_ptr<IShape> shape) {
+    void PhysicsWorld::AttachShape(Handle handle, std::unique_ptr<IShape> shape) {
         if (!registry_.IsValid(handle)) {
             return;
         }
         shapeManager_.AddShape(handle, std::move(shape));
     }
 
-    void
-    PhysicsWorld::SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator) {
+    void PhysicsWorld::SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator) {
         integrator_ = std::move(newIntegrator);
     }
 
@@ -79,10 +76,9 @@ namespace osseus {
         spatialTree_.Clear();
 
         // An Octree of Handles.
-        for (auto &handle : bodyManager_.Handles()) {
-            BodyData *body = bodyManager_.GetBody(handle);
-            spatialTree_.Insert(handle, body->position, body->mass,
-                                body->charge);
+        for (auto& handle : bodyManager_.Handles()) {
+            BodyData* body = bodyManager_.GetBody(handle);
+            spatialTree_.Insert(handle, body->position, body->mass, body->charge);
         }
         spatialTree_.UpdateProperties();
     }
@@ -91,12 +87,10 @@ namespace osseus {
 
         // ============ Detect Collisions ============
         // Broad Phase
-        std::vector<CollisionCandidatePair> candidates =
-            broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
+        std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
         // Narrow Phase (GJK/EPA via IShape::Support)
-        std::vector<Contact> contacts = narrowPhase_.GenerateContacts(
-            candidates, bodyManager_, shapeManager_);
+        std::vector<Contact> contacts = narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_);
 
         // ============ Resolve Collisions ============
         // Solver
@@ -107,8 +101,7 @@ namespace osseus {
         // Apply Universal Forces Via Barnes Hut
 
         // Build barnes hut evaluation.
-        barnesHut_.Evaluate(spatialTree_, bodyManager_.Handles(),
-                            bodyManager_.Data(), forceManager_);
+        barnesHut_.Evaluate(spatialTree_, bodyManager_.Handles(), bodyManager_.Data(), forceManager_);
 
         // =========== Apply Individual Forces ==========
         // This is done via the public ForceManager
@@ -121,14 +114,14 @@ namespace osseus {
         SyncState();
     }
 
-    BodyData *PhysicsWorld::GetBody(Handle handle) {
+    BodyData* PhysicsWorld::GetBody(Handle handle) {
         if (!registry_.IsValid(handle)) {
             return nullptr;
         }
         return bodyManager_.GetBody(handle);
     }
 
-    const BodyData *PhysicsWorld::GetBody(Handle handle) const {
+    const BodyData* PhysicsWorld::GetBody(Handle handle) const {
         if (!registry_.IsValid(handle)) {
             return nullptr;
         }

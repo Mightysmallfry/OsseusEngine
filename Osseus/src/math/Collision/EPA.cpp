@@ -19,7 +19,7 @@ namespace osseus {
             // to the real surface. Keep it out of the closest-face search
             // entirely rather than let it masquerade as a converged hit;
             // the edge-patching step will supersede it as the polytope grows.
-            return Face{ a, b, c, Vector3::Zero(), std::numeric_limits<double>::max() };
+            return Face{a, b, c, Vector3::Zero(), std::numeric_limits<double>::max()};
         }
         normal = normal / std::sqrt(lengthSq);
 
@@ -32,7 +32,7 @@ namespace osseus {
             std::swap(b, c);
         }
 
-        return Face{ a, b, c, normal, distance };
+        return Face{a, b, c, normal, distance};
     }
 
     void EPA::AddUniqueEdge(std::vector<std::pair<int, int>>& edges, int a, int b) {
@@ -46,8 +46,8 @@ namespace osseus {
         }
     }
 
-    Contact EPA::BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face,
-                               Handle handleA, Handle handleB) {
+    Contact EPA::BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face, Handle handleA,
+                              Handle handleB) {
         Vector3 pa = polytope[face.a].point;
         Vector3 pb = polytope[face.b].point;
         Vector3 pc = polytope[face.c].point;
@@ -84,19 +84,13 @@ namespace osseus {
         return contact;
     }
 
-    Contact EPA::Resolve(const IShape& shapeA, const Vector3& posA, Handle handleA,
-                          const IShape& shapeB, const Vector3& posB, Handle handleB,
-                          const GJKSimplex& startingSimplex) {
-        std::vector<GJKSupportPoint> polytope = {
-            startingSimplex[0], startingSimplex[1], startingSimplex[2], startingSimplex[3]
-        };
+    Contact EPA::Resolve(const IShape& shapeA, const Vector3& posA, Handle handleA, const IShape& shapeB,
+                         const Vector3& posB, Handle handleB, const GJKSimplex& startingSimplex) {
+        std::vector<GJKSupportPoint> polytope = {startingSimplex[0], startingSimplex[1], startingSimplex[2],
+                                                 startingSimplex[3]};
 
-        std::vector<Face> faces = {
-            MakeFace(polytope, 0, 1, 2),
-            MakeFace(polytope, 0, 2, 3),
-            MakeFace(polytope, 0, 3, 1),
-            MakeFace(polytope, 1, 3, 2)
-        };
+        std::vector<Face> faces = {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
+                                   MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)};
 
         constexpr int maxIterations = 64;
         constexpr double epsilon = 1e-8;
@@ -129,7 +123,7 @@ namespace osseus {
             // Remove every face visible from the new point, recording the
             // silhouette edges left behind so we can patch the hole.
             std::vector<std::pair<int, int>> uniqueEdges;
-            for (auto it = faces.begin(); it != faces.end(); ) {
+            for (auto it = faces.begin(); it != faces.end();) {
                 Vector3 faceToPoint = newPoint.point - polytope[it->a].point;
                 if (it->normal.Dot(faceToPoint) > 0.0) {
                     AddUniqueEdge(uniqueEdges, it->a, it->b);
@@ -148,4 +142,4 @@ namespace osseus {
 
         return BuildContact(polytope, closest, handleA, handleB);
     }
-} // osseus
+} // namespace osseus

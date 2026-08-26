@@ -8,8 +8,7 @@ namespace osseus {
     class IIntegrator {
         public:
         virtual ~IIntegrator() = default;
-        virtual void Step(BodyManager &bodyManager, ForceManager &forceManager,
-                          double delta) = 0;
+        virtual void Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) = 0;
     };
 } // namespace osseus
 

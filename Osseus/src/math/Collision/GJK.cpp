@@ -3,17 +3,15 @@
 #include <cmath>
 
 namespace osseus {
-    GJKSupportPoint GJK::Support(const IShape& shapeA, const Vector3& posA,
-                                  const IShape& shapeB, const Vector3& posB,
-                                  const Vector3& direction) {
+    GJKSupportPoint GJK::Support(const IShape& shapeA, const Vector3& posA, const IShape& shapeB, const Vector3& posB,
+                                 const Vector3& direction) {
         Vector3 pointA = shapeA.Support(posA, direction);
         Vector3 pointB = shapeB.Support(posB, -direction);
-        return GJKSupportPoint{ pointA - pointB, pointA, pointB };
+        return GJKSupportPoint{pointA - pointB, pointA, pointB};
     }
 
-    bool GJK::Intersect(const IShape& shapeA, const Vector3& posA,
-                         const IShape& shapeB, const Vector3& posB,
-                         GJKSimplex& outSimplex) {
+    bool GJK::Intersect(const IShape& shapeA, const Vector3& posA, const IShape& shapeB, const Vector3& posB,
+                        GJKSimplex& outSimplex) {
         Vector3 direction = posB - posA;
         if (direction.LengthSquared() < Vector3::TOLERANCE) {
             direction = Vector3::UnitX();
@@ -50,10 +48,14 @@ namespace osseus {
 
     bool GJK::NextSimplex(GJKSimplex& simplex, Vector3& direction) {
         switch (simplex.Size()) {
-            case 2: return Line(simplex, direction);
-            case 3: return Triangle(simplex, direction);
-            case 4: return Tetrahedron(simplex, direction);
-            default: return false;
+        case 2:
+            return Line(simplex, direction);
+        case 3:
+            return Triangle(simplex, direction);
+        case 4:
+            return Tetrahedron(simplex, direction);
+        default:
+            return false;
         }
     }
 
@@ -63,7 +65,8 @@ namespace osseus {
 
     Vector3 GJK::ArbitraryPerpendicular(const Vector3& v) {
         Vector3 reference = (std::abs(v.x) < 0.9 * std::sqrt(v.LengthSquared() + Vector3::TOLERANCE))
-            ? Vector3::UnitX() : Vector3::UnitY();
+                                ? Vector3::UnitX()
+                                : Vector3::UnitY();
         Vector3 perp = v.Cross(reference);
         if (perp.LengthSquared() < Vector3::TOLERANCE) {
             perp = v.Cross(Vector3::UnitZ());
@@ -83,10 +86,9 @@ namespace osseus {
             // double-cross to zero - the origin sits exactly on the line.
             // Any direction perpendicular to ab is a valid way to keep
             // searching outward.
-            direction = (candidate.LengthSquared() > Vector3::TOLERANCE)
-                ? candidate : ArbitraryPerpendicular(ab);
+            direction = (candidate.LengthSquared() > Vector3::TOLERANCE) ? candidate : ArbitraryPerpendicular(ab);
         } else {
-            simplex.Set({ a });
+            simplex.Set({a});
             direction = ao;
         }
         return false;
@@ -104,20 +106,20 @@ namespace osseus {
 
         if (SameDirection(abc.Cross(ac), ao)) {
             if (SameDirection(ac, ao)) {
-                simplex.Set({ a, c });
+                simplex.Set({a, c});
                 direction = ac.Cross(ao).Cross(ac);
             } else {
-                simplex.Set({ a, b });
+                simplex.Set({a, b});
                 return Line(simplex, direction);
             }
         } else if (SameDirection(ab.Cross(abc), ao)) {
-            simplex.Set({ a, b });
+            simplex.Set({a, b});
             return Line(simplex, direction);
         } else {
             if (SameDirection(abc, ao)) {
                 direction = abc;
             } else {
-                simplex.Set({ a, c, b });
+                simplex.Set({a, c, b});
                 direction = -abc;
             }
         }
@@ -140,18 +142,18 @@ namespace osseus {
         Vector3 adb = ad.Cross(ab);
 
         if (SameDirection(abc, ao)) {
-            simplex.Set({ a, b, c });
+            simplex.Set({a, b, c});
             return Triangle(simplex, direction);
         }
         if (SameDirection(acd, ao)) {
-            simplex.Set({ a, c, d });
+            simplex.Set({a, c, d});
             return Triangle(simplex, direction);
         }
         if (SameDirection(adb, ao)) {
-            simplex.Set({ a, d, b });
+            simplex.Set({a, d, b});
             return Triangle(simplex, direction);
         }
 
         return true; // origin is enclosed by the tetrahedron - overlap confirmed
     }
-} // osseus
+} // namespace osseus

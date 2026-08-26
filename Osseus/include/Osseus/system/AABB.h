@@ -11,6 +11,6 @@ namespace osseus {
         Vector3 min;
         Vector3 max;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_AABB_H
+#endif // OSSEUSENGINE_AABB_H

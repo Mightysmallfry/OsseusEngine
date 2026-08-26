@@ -7,285 +7,193 @@
 #include <cmath>
 #include <ostream>
 
-namespace osseus
-{
+namespace osseus {
 
-Quaternion::Quaternion()
-    : w(1.0), x(0.0), y(0.0), z(0.0)
-{
-}
-
-Quaternion::Quaternion(double _w, double _x, double _y, double _z)
-    : w(_w), x(_x), y(_y), z(_z)
-{
-}
-
-Quaternion Quaternion::Identity()
-{
-    return Quaternion(1.0, 0.0, 0.0, 0.0);
-}
-
-Quaternion Quaternion::FromAxisAngle(const Vector3& axis, double angleRadians)
-{
-    constexpr double epsilon = 1e-12;
-
-    double lengthSquared =
-        axis.x * axis.x +
-        axis.y * axis.y +
-        axis.z * axis.z;
-
-    // Zero-length axis means no rotation.
-    if (lengthSquared <= epsilon)
-    {
-        return Identity();
+    Quaternion::Quaternion() : w(1.0), x(0.0), y(0.0), z(0.0) {
     }
 
-    double inverseLength = 1.0 / std::sqrt(lengthSquared);
-
-    double halfAngle = angleRadians * 0.5;
-    double sinHalfAngle = std::sin(halfAngle);
-
-    return Quaternion(
-        std::cos(halfAngle),
-        axis.x * inverseLength * sinHalfAngle,
-        axis.y * inverseLength * sinHalfAngle,
-        axis.z * inverseLength * sinHalfAngle
-    );
-}
-
-double Quaternion::Magnitude() const
-{
-    return std::sqrt(MagnitudeSquared());
-}
-
-double Quaternion::MagnitudeSquared() const
-{
-    return w * w +
-           x * x +
-           y * y +
-           z * z;
-}
-
-void Quaternion::Normalize()
-{
-    constexpr double epsilon = 1e-12;
-
-    double magnitudeSquared = MagnitudeSquared();
-
-    if (magnitudeSquared <= epsilon)
-    {
-        *this = Identity();
-        return;
+    Quaternion::Quaternion(double _w, double _x, double _y, double _z) : w(_w), x(_x), y(_y), z(_z) {
     }
 
-    double inverseMagnitude = 1.0 / std::sqrt(magnitudeSquared);
-
-    w *= inverseMagnitude;
-    x *= inverseMagnitude;
-    y *= inverseMagnitude;
-    z *= inverseMagnitude;
-}
-
-Quaternion Quaternion::Normalized() const
-{
-    Quaternion result(*this);
-    result.Normalize();
-    return result;
-}
-
-Quaternion Quaternion::Conjugate() const
-{
-    return Quaternion(
-        w,
-        -x,
-        -y,
-        -z
-    );
-}
-
-Quaternion Quaternion::Inverse() const
-{
-    constexpr double epsilon = 1e-12;
-
-    double magnitudeSquared = MagnitudeSquared();
-
-    if (magnitudeSquared <= epsilon)
-    {
-        return Identity();
+    Quaternion Quaternion::Identity() {
+        return Quaternion(1.0, 0.0, 0.0, 0.0);
     }
 
-    return Conjugate() / magnitudeSquared;
-}
+    Quaternion Quaternion::FromAxisAngle(const Vector3& axis, double angleRadians) {
+        constexpr double epsilon = 1e-12;
 
-double Quaternion::Dot(const Quaternion& other) const
-{
-    return w * other.w +
-           x * other.x +
-           y * other.y +
-           z * other.z;
-}
+        double lengthSquared = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
 
-Quaternion Quaternion::operator+(const Quaternion& other) const
-{
-    return Quaternion(
-        w + other.w,
-        x + other.x,
-        y + other.y,
-        z + other.z
-    );
-}
+        // Zero-length axis means no rotation.
+        if (lengthSquared <= epsilon) {
+            return Identity();
+        }
 
-Quaternion Quaternion::operator-(const Quaternion& other) const
-{
-    return Quaternion(
-        w - other.w,
-        x - other.x,
-        y - other.y,
-        z - other.z
-    );
-}
+        double inverseLength = 1.0 / std::sqrt(lengthSquared);
 
-Quaternion Quaternion::operator*(double scalar) const
-{
-    return Quaternion(
-        w * scalar,
-        x * scalar,
-        y * scalar,
-        z * scalar
-    );
-}
+        double halfAngle = angleRadians * 0.5;
+        double sinHalfAngle = std::sin(halfAngle);
 
-Quaternion Quaternion::operator/(double scalar) const
-{
-    constexpr double epsilon = 1e-12;
-
-    if (std::abs(scalar) <= epsilon)
-    {
-        return Identity();
+        return Quaternion(std::cos(halfAngle), axis.x * inverseLength * sinHalfAngle,
+                          axis.y * inverseLength * sinHalfAngle, axis.z * inverseLength * sinHalfAngle);
     }
 
-    return Quaternion(
-        w / scalar,
-        x / scalar,
-        y / scalar,
-        z / scalar
-    );
-}
+    double Quaternion::Magnitude() const {
+        return std::sqrt(MagnitudeSquared());
+    }
 
-Quaternion& Quaternion::operator+=(const Quaternion& other)
-{
-    w += other.w;
-    x += other.x;
-    y += other.y;
-    z += other.z;
+    double Quaternion::MagnitudeSquared() const {
+        return w * w + x * x + y * y + z * z;
+    }
 
-    return *this;
-}
+    void Quaternion::Normalize() {
+        constexpr double epsilon = 1e-12;
 
-Quaternion& Quaternion::operator-=(const Quaternion& other)
-{
-    w -= other.w;
-    x -= other.x;
-    y -= other.y;
-    z -= other.z;
+        double magnitudeSquared = MagnitudeSquared();
 
-    return *this;
-}
+        if (magnitudeSquared <= epsilon) {
+            *this = Identity();
+            return;
+        }
 
-Quaternion& Quaternion::operator*=(double scalar)
-{
-    w *= scalar;
-    x *= scalar;
-    y *= scalar;
-    z *= scalar;
+        double inverseMagnitude = 1.0 / std::sqrt(magnitudeSquared);
 
-    return *this;
-}
+        w *= inverseMagnitude;
+        x *= inverseMagnitude;
+        y *= inverseMagnitude;
+        z *= inverseMagnitude;
+    }
 
-Quaternion& Quaternion::operator/=(double scalar)
-{
-    constexpr double epsilon = 1e-12;
+    Quaternion Quaternion::Normalized() const {
+        Quaternion result(*this);
+        result.Normalize();
+        return result;
+    }
 
-    if (std::abs(scalar) <= epsilon)
-    {
-        *this = Identity();
+    Quaternion Quaternion::Conjugate() const {
+        return Quaternion(w, -x, -y, -z);
+    }
+
+    Quaternion Quaternion::Inverse() const {
+        constexpr double epsilon = 1e-12;
+
+        double magnitudeSquared = MagnitudeSquared();
+
+        if (magnitudeSquared <= epsilon) {
+            return Identity();
+        }
+
+        return Conjugate() / magnitudeSquared;
+    }
+
+    double Quaternion::Dot(const Quaternion& other) const {
+        return w * other.w + x * other.x + y * other.y + z * other.z;
+    }
+
+    Quaternion Quaternion::operator+(const Quaternion& other) const {
+        return Quaternion(w + other.w, x + other.x, y + other.y, z + other.z);
+    }
+
+    Quaternion Quaternion::operator-(const Quaternion& other) const {
+        return Quaternion(w - other.w, x - other.x, y - other.y, z - other.z);
+    }
+
+    Quaternion Quaternion::operator*(double scalar) const {
+        return Quaternion(w * scalar, x * scalar, y * scalar, z * scalar);
+    }
+
+    Quaternion Quaternion::operator/(double scalar) const {
+        constexpr double epsilon = 1e-12;
+
+        if (std::abs(scalar) <= epsilon) {
+            return Identity();
+        }
+
+        return Quaternion(w / scalar, x / scalar, y / scalar, z / scalar);
+    }
+
+    Quaternion& Quaternion::operator+=(const Quaternion& other) {
+        w += other.w;
+        x += other.x;
+        y += other.y;
+        z += other.z;
+
         return *this;
     }
 
-    w /= scalar;
-    x /= scalar;
-    y /= scalar;
-    z /= scalar;
+    Quaternion& Quaternion::operator-=(const Quaternion& other) {
+        w -= other.w;
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
 
-    return *this;
-}
+        return *this;
+    }
 
-Quaternion Quaternion::operator*(const Quaternion& other) const
-{
-    return Quaternion(
-        w * other.w -
-        x * other.x -
-        y * other.y -
-        z * other.z,
+    Quaternion& Quaternion::operator*=(double scalar) {
+        w *= scalar;
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
 
-        w * other.x +
-        x * other.w +
-        y * other.z -
-        z * other.y,
+        return *this;
+    }
 
-        w * other.y -
-        x * other.z +
-        y * other.w +
-        z * other.x,
+    Quaternion& Quaternion::operator/=(double scalar) {
+        constexpr double epsilon = 1e-12;
 
-        w * other.z +
-        x * other.y -
-        y * other.x +
-        z * other.w
-    );
-}
+        if (std::abs(scalar) <= epsilon) {
+            *this = Identity();
+            return *this;
+        }
 
-Quaternion& Quaternion::operator*=(const Quaternion& other)
-{
-    *this = *this * other;
-    return *this;
-}
+        w /= scalar;
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
 
-bool Quaternion::operator==(const Quaternion& other) const
-{
-    constexpr double epsilon = 1e-10;
+        return *this;
+    }
 
-    return std::abs(w - other.w) <= epsilon &&
-           std::abs(x - other.x) <= epsilon &&
-           std::abs(y - other.y) <= epsilon &&
-           std::abs(z - other.z) <= epsilon;
-}
+    Quaternion Quaternion::operator*(const Quaternion& other) const {
+        return Quaternion(w * other.w - x * other.x - y * other.y - z * other.z,
 
-bool Quaternion::operator!=(const Quaternion& other) const
-{
-    return !(*this == other);
-}
+                          w * other.x + x * other.w + y * other.z - z * other.y,
 
-bool Quaternion::IsNormalized(double epsilon) const
-{
-    return std::abs(MagnitudeSquared() - 1.0) <= epsilon;
-}
+                          w * other.y - x * other.z + y * other.w + z * other.x,
 
-Quaternion operator*(double scalar, const Quaternion& quaternion)
-{
-    return quaternion * scalar;
-}
+                          w * other.z + x * other.y - y * other.x + z * other.w);
+    }
 
-std::ostream& operator<<(std::ostream& stream, const Quaternion& quaternion)
-{
-    stream << "Quaternion("
-           << quaternion.w << ", "
-           << quaternion.x << ", "
-           << quaternion.y << ", "
-           << quaternion.z
-           << ")";
+    Quaternion& Quaternion::operator*=(const Quaternion& other) {
+        *this = *this * other;
+        return *this;
+    }
 
-    return stream;
-}
+    bool Quaternion::operator==(const Quaternion& other) const {
+        constexpr double epsilon = 1e-10;
+
+        return std::abs(w - other.w) <= epsilon && std::abs(x - other.x) <= epsilon &&
+               std::abs(y - other.y) <= epsilon && std::abs(z - other.z) <= epsilon;
+    }
+
+    bool Quaternion::operator!=(const Quaternion& other) const {
+        return !(*this == other);
+    }
+
+    bool Quaternion::IsNormalized(double epsilon) const {
+        return std::abs(MagnitudeSquared() - 1.0) <= epsilon;
+    }
+
+    Quaternion operator*(double scalar, const Quaternion& quaternion) {
+        return quaternion * scalar;
+    }
+
+    std::ostream& operator<<(std::ostream& stream, const Quaternion& quaternion) {
+        stream << "Quaternion(" << quaternion.w << ", " << quaternion.x << ", " << quaternion.y << ", " << quaternion.z
+               << ")";
+
+        return stream;
+    }
 
 } // namespace osseus

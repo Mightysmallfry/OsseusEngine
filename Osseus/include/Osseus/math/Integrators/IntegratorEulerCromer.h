@@ -8,9 +8,9 @@
 
 namespace osseus {
     class IntegratorEulerCromer : public IIntegrator {
-    public:
-        void Step(BodyManager &bodymanager, ForceManager &forceManager, double delta) override;
+        public:
+        void Step(BodyManager& bodymanager, ForceManager& forceManager, double delta) override;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_INTEGRATOREULERCROMER_H
+#endif // OSSEUSENGINE_INTEGRATOREULERCROMER_H

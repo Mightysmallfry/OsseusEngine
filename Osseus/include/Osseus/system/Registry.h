@@ -5,22 +5,23 @@
 #ifndef OSSEUSENGINE_REGISTRY_H
 #define OSSEUSENGINE_REGISTRY_H
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 #include "Handle.h"
 
 namespace osseus {
     class Registry {
-    public:
+        public:
         Handle CreateHandle();
         void Destroy(Handle handle);
         bool IsValid(Handle handle) const;
-    private:
+
+        private:
         std::vector<uint32_t> generations_;
         std::vector<uint32_t> freeList_;
         std::vector<bool> alive_;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_REGISTRY_H
+#endif // OSSEUSENGINE_REGISTRY_H

@@ -14,17 +14,21 @@ namespace osseus {
     // correction to counteract the sinking that discrete timesteps
     // otherwise leave behind.
     class Solver {
-    public:
-        void SetRestitution(double newRestitution) { restitution_ = newRestitution; }
-        double GetRestitution() const { return restitution_; }
+        public:
+        void SetRestitution(double newRestitution) {
+            restitution_ = newRestitution;
+        }
+        double GetRestitution() const {
+            return restitution_;
+        }
 
         void ResolveContacts(const std::vector<Contact>& contacts, BodyManager& bodyManager) const;
 
-    private:
-        double restitution_{ 0.2 };
-        double positionalCorrectionPercent_{ 0.8 };
-        double positionalSlop_{ 0.01 };
+        private:
+        double restitution_{0.2};
+        double positionalCorrectionPercent_{0.8};
+        double positionalSlop_{0.01};
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_SOLVER_H
+#endif // OSSEUSENGINE_SOLVER_H

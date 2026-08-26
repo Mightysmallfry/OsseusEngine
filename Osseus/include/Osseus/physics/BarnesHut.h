@@ -9,15 +9,14 @@ namespace osseus {
 
     // Approximates n-body gravitational forces by walking an Octree
     // once per body. A node is treated as a single point mass at its
-    // center of mass when it's small/far enough (width / distance 
+    // center of mass when it's small/far enough (width / distance
     // theta); otherwise the walk recurses into its children.
     class BarnesHut {
-    public:
-        void Evaluate(const Octree& tree, const std::vector<Handle>& handles,
-             const std::vector<BodyData>& bodies, ForceManager& forceManager);
-
+        public:
+        void Evaluate(const Octree& tree, const std::vector<Handle>& handles, const std::vector<BodyData>& bodies,
+                      ForceManager& forceManager);
     };
 
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_BARNESHUT_H
+#endif // OSSEUSENGINE_BARNESHUT_H

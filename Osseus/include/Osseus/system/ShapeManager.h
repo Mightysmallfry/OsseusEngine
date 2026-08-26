@@ -4,15 +4,15 @@
 
 #ifndef OSSEUSENGINE_SHAPEMANAGER_H
 #define OSSEUSENGINE_SHAPEMANAGER_H
-#include <memory>
 #include "SparseSet.h"
+#include <memory>
 
 #include "Osseus/interfaces/IShape.h"
 #include "Osseus/math/Geometry/ShapePoint.h"
 
 namespace osseus {
     class ShapeManager {
-    public:
+        public:
         void AddShape(Handle handle, std::unique_ptr<IShape> shape);
         void RemoveShape(Handle handle);
 
@@ -21,12 +21,16 @@ namespace osseus {
         IShape* GetShape(Handle handle);
         const IShape* GetShape(Handle handle) const;
 
-        const std::vector<std::unique_ptr<IShape>>& Data() const { return shapes_.Data(); }
-        const std::vector<Handle>& Handles() const { return shapes_.Handles(); }
+        const std::vector<std::unique_ptr<IShape>>& Data() const {
+            return shapes_.Data();
+        }
+        const std::vector<Handle>& Handles() const {
+            return shapes_.Handles();
+        }
 
-    private:
+        private:
         SparseSet<std::unique_ptr<IShape>> shapes_;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_SHAPEMANAGER_H
+#endif // OSSEUSENGINE_SHAPEMANAGER_H

@@ -3,8 +3,8 @@
 #include <utility>
 #include <vector>
 
-#include "GJK.h"
 #include "Contact.h"
+#include "GJK.h"
 #include "Osseus/interfaces/IShape.h"
 #include "Osseus/system/Handle.h"
 
@@ -15,12 +15,11 @@ namespace osseus {
     // penetration depth, separating normal, and contact points. Like
     // GJK, it only calls IShape::Support, so it works for any shape pair.
     class EPA {
-    public:
-        static Contact Resolve(const IShape& shapeA, const Vector3& posA, Handle handleA,
-                                const IShape& shapeB, const Vector3& posB, Handle handleB,
-                                const GJKSimplex& startingSimplex);
+        public:
+        static Contact Resolve(const IShape& shapeA, const Vector3& posA, Handle handleA, const IShape& shapeB,
+                               const Vector3& posB, Handle handleB, const GJKSimplex& startingSimplex);
 
-    private:
+        private:
         struct Face {
             int a;
             int b;
@@ -31,9 +30,9 @@ namespace osseus {
 
         static Face MakeFace(const std::vector<GJKSupportPoint>& polytope, int a, int b, int c);
         static void AddUniqueEdge(std::vector<std::pair<int, int>>& edges, int a, int b);
-        static Contact BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face,
-                                     Handle handleA, Handle handleB);
+        static Contact BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face, Handle handleA,
+                                    Handle handleB);
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_EPA_H
+#endif // OSSEUSENGINE_EPA_H

@@ -9,7 +9,7 @@ namespace osseus {
     // requires a ComputeBoundingBox and a Support function here -
     // GJK, EPA, and the narrow phase never need to know it exists.
     class IShape {
-    public:
+        public:
         virtual ~IShape() = default;
 
         // Axis-Aligned Bounding-Box, used by the broad phase.
@@ -21,6 +21,6 @@ namespace osseus {
         // and resolve collisions against any other IShape.
         virtual Vector3 Support(const Vector3& position, const Vector3& direction) const = 0;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_ISHAPE_H
+#endif // OSSEUSENGINE_ISHAPE_H

@@ -5,17 +5,16 @@
 #ifndef OSSEUSENGINE_VECTOR3_H
 #define OSSEUSENGINE_VECTOR3_H
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <iosfwd>
 #include <stdexcept>
 #include <string>
 
 namespace osseus {
 
-    class Vector3
-    {
-    public:
+    class Vector3 {
+        public:
         double x;
         double y;
         double z;
@@ -24,25 +23,35 @@ namespace osseus {
 
         // ==================== Constructors ====================
 
-        constexpr Vector3() noexcept : x(0.0), y(0.0), z(0.0) {}
+        constexpr Vector3() noexcept : x(0.0), y(0.0), z(0.0) {
+        }
 
-        constexpr Vector3(double x, double y) noexcept
-            : x(x), y(y), z(0.0) {}
+        constexpr Vector3(double x, double y) noexcept : x(x), y(y), z(0.0) {
+        }
 
-        constexpr Vector3(double x, double y, double z) noexcept
-            : x(x), y(y), z(z) {}
+        constexpr Vector3(double x, double y, double z) noexcept : x(x), y(y), z(z) {
+        }
 
         // Rule of zero: trivial members, compiler-generated copy/move/dtor
         // are already correct and already constexpr-eligible.
 
         // ==================== Named constants ====================
 
-        static constexpr Vector3 Zero()  { return {0.0, 0.0, 0.0}; }
-        static constexpr Vector3 One()   { return {1.0, 1.0, 1.0}; }
-        static constexpr Vector3 UnitX() { return {1.0, 0.0, 0.0}; }
-        static constexpr Vector3 UnitY() { return {0.0, 1.0, 0.0}; }
-        static constexpr Vector3 UnitZ() { return {0.0, 0.0, 1.0}; }
-
+        static constexpr Vector3 Zero() {
+            return {0.0, 0.0, 0.0};
+        }
+        static constexpr Vector3 One() {
+            return {1.0, 1.0, 1.0};
+        }
+        static constexpr Vector3 UnitX() {
+            return {1.0, 0.0, 0.0};
+        }
+        static constexpr Vector3 UnitY() {
+            return {0.0, 1.0, 0.0};
+        }
+        static constexpr Vector3 UnitZ() {
+            return {0.0, 0.0, 1.0};
+        }
 
         // ==================== Arithmetic operators ====================
 
@@ -50,7 +59,9 @@ namespace osseus {
             return Vector3(x + other.x, y + other.y, z + other.z);
         }
         constexpr Vector3& operator+=(const Vector3& other) noexcept {
-            x += other.x; y += other.y; z += other.z;
+            x += other.x;
+            y += other.y;
+            z += other.z;
             return *this;
         }
 
@@ -58,7 +69,9 @@ namespace osseus {
             return Vector3(x - other.x, y - other.y, z - other.z);
         }
         constexpr Vector3& operator-=(const Vector3& other) noexcept {
-            x -= other.x; y -= other.y; z -= other.z;
+            x -= other.x;
+            y -= other.y;
+            z -= other.z;
             return *this;
         }
 
@@ -69,31 +82,27 @@ namespace osseus {
             return v * scalar;
         }
         constexpr Vector3& operator*=(double scalar) noexcept {
-            x *= scalar; y *= scalar; z *= scalar;
+            x *= scalar;
+            y *= scalar;
+            z *= scalar;
             return *this;
         }
 
         // Policy: division by zero produces inf/nan (IEEE 754 behavior),
         // Callers who need strict validation should check
         // the scalar themselves before dividing.
-        [[nodiscard]] Vector3 operator/(double scalar) const
-        {
-            if (std::abs(scalar) < 1e-12)
-            {
-                throw std::runtime_error(
-                    "Cannot divide Vector3 by zero."
-                );
+        [[nodiscard]] Vector3 operator/(double scalar) const {
+            if (std::abs(scalar) < 1e-12) {
+                throw std::runtime_error("Cannot divide Vector3 by zero.");
             }
 
-            return Vector3(
-                x / scalar,
-                y / scalar,
-                z / scalar
-            );
+            return Vector3(x / scalar, y / scalar, z / scalar);
         }
 
         constexpr Vector3& operator/=(double scalar) noexcept {
-            x /= scalar; y /= scalar; z /= scalar;
+            x /= scalar;
+            y /= scalar;
+            z /= scalar;
             return *this;
         }
 
@@ -101,16 +110,17 @@ namespace osseus {
             return Vector3(-x, -y, -z);
         }
         constexpr void Reverse() noexcept {
-            x = -x; y = -y; z = -z;
+            x = -x;
+            y = -y;
+            z = -z;
         }
 
         // ==================== Comparison operators ====================
 
         // Fuzzy equality — see RelDiff below.
         [[nodiscard]] constexpr bool operator==(const Vector3& other) const noexcept {
-            return RelDiff(x, other.x) < TOLERANCE
-                && RelDiff(y, other.y) < TOLERANCE
-                && RelDiff(z, other.z) < TOLERANCE;
+            return RelDiff(x, other.x) < TOLERANCE && RelDiff(y, other.y) < TOLERANCE &&
+                   RelDiff(z, other.z) < TOLERANCE;
         }
         [[nodiscard]] constexpr bool operator!=(const Vector3& other) const noexcept {
             return !(*this == other);
@@ -135,7 +145,6 @@ namespace osseus {
         // Not constexpr: routes through Normalize() -> Length() -> std::sqrt.
         [[nodiscard]] Vector3 Normalized() const noexcept;
 
-
         [[nodiscard]] constexpr double Dot(const Vector3& other) const noexcept {
             return (x * other.x) + (y * other.y) + (z * other.z);
         }
@@ -148,18 +157,14 @@ namespace osseus {
         }
 
         [[nodiscard]] constexpr Vector3 Cross(const Vector3& other) const noexcept {
-            return Vector3(
-                y * other.z - z * other.y,
-                z * other.x - x * other.z,
-                x * other.y - y * other.x
-            );
+            return Vector3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
         }
 
         // Not constexpr: std::stringstream isn't constexpr-friendly.
         // Defined in Vector3.cpp.
         [[nodiscard]] std::string ToString() const;
 
-    private:
+        private:
         // Relative Difference — used for fuzzy floating-point equality.
         // Ref. Knuth Sec. 4.2.2 pp. 217-8
         [[nodiscard]] static constexpr double RelDiff(double a, double b) noexcept {
@@ -167,8 +172,6 @@ namespace osseus {
             return diff == 0.0 ? 0.0 : std::abs(a - b) / diff;
         }
     };
-
-
 
     // ==================== Free functions ====================
 
@@ -192,4 +195,4 @@ namespace osseus {
 
 } // namespace osseus
 
-#endif //OSSEUSENGINE_VECTOR3_H
+#endif // OSSEUSENGINE_VECTOR3_H

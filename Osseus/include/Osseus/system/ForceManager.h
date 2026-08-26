@@ -4,15 +4,14 @@
 #include <vector>
 
 #include "Osseus/math/Vector3.h"
-#include "Osseus/system/Handle.h"
 #include "Osseus/physics/UniversalForce.h"
 #include "Osseus/system/BodyManager.h"
+#include "Osseus/system/Handle.h"
 
 namespace osseus {
 
-    class ForceManager
-    {
-    public:
+    class ForceManager {
+        public:
         ForceManager() = default;
         explicit ForceManager(const BodyManager& bodyManager);
 
@@ -31,17 +30,25 @@ namespace osseus {
         [[nodiscard]]
         const Vector3& Get(Handle handle) const;
 
-        std::vector<UniversalForceEvaluator*>& GetUniversals() { return universalForces_; }
-        const std::vector<UniversalForceEvaluator*>& GetUniversals() const { return universalForces_; }
+        std::vector<UniversalForceEvaluator*>& GetUniversals() {
+            return universalForces_;
+        }
+        const std::vector<UniversalForceEvaluator*>& GetUniversals() const {
+            return universalForces_;
+        }
 
-        std::vector<Vector3>& NetForces() { return netForces_; }
-        const std::vector<Vector3>& NetForces() const { return netForces_; }
+        std::vector<Vector3>& NetForces() {
+            return netForces_;
+        }
+        const std::vector<Vector3>& NetForces() const {
+            return netForces_;
+        }
 
-    private:
+        private:
         std::vector<Vector3> netForces_;
         std::vector<UniversalForceEvaluator*> universalForces_;
     };
 
-}
+} // namespace osseus
 
 #endif

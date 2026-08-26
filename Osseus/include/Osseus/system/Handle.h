@@ -19,8 +19,6 @@ namespace osseus {
             return !(*this == other);
         }
     };
-}
+} // namespace osseus
 
-
-
-#endif //OSSEUSENGINE_PHYSICSHANDLE_H
+#endif // OSSEUSENGINE_PHYSICSHANDLE_H

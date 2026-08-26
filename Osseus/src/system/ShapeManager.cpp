@@ -26,4 +26,4 @@ namespace osseus {
         const std::unique_ptr<IShape>* slot = shapes_.Get(handle);
         return slot ? slot->get() : nullptr;
     }
-} // osseus
+} // namespace osseus

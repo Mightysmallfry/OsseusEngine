@@ -10,9 +10,8 @@
 #include "Handle.h"
 
 namespace osseus {
-    template<typename T>
-    class SparseSet {
-    public:
+    template <typename T> class SparseSet {
+        public:
         void Insert(Handle handle, T value);
         void Remove(Handle handle);
 
@@ -27,13 +26,13 @@ namespace osseus {
 
         size_t size() const;
 
-    private:
-        std::vector<uint32_t> sparseData_;       // Handle.index -> position for dense
-        std::vector<Handle> denseHandles_;       // Position in dense -> owning handle
-        std::vector<T> dense_;                   // The Actual Data, no gaps
+        private:
+        std::vector<uint32_t> sparseData_; // Handle.index -> position for dense
+        std::vector<Handle> denseHandles_; // Position in dense -> owning handle
+        std::vector<T> dense_;             // The Actual Data, no gaps
     };
-} // osseus
+} // namespace osseus
 
 #include "SparseSet.tpp"
 
-#endif //OSSEUSENGINE_SPARSESET_H
+#endif // OSSEUSENGINE_SPARSESET_H

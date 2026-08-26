@@ -5,23 +5,19 @@
 #include "Osseus/system/SparseSet.h"
 
 namespace osseus {
-    template<typename T>
-    std::vector<T>& SparseSet<T>::Data() {
+    template <typename T> std::vector<T>& SparseSet<T>::Data() {
         return dense_;
     }
 
-    template<typename T>
-    const std::vector<T>& SparseSet<T>::Data() const {
+    template <typename T> const std::vector<T>& SparseSet<T>::Data() const {
         return dense_;
     }
 
-    template<typename T>
-    const std::vector<Handle>& SparseSet<T>::Handles() const {
+    template <typename T> const std::vector<Handle>& SparseSet<T>::Handles() const {
         return denseHandles_;
     }
-    
-    template<typename T>
-    void SparseSet<T>::Insert(Handle handle, T value) {
+
+    template <typename T> void SparseSet<T>::Insert(Handle handle, T value) {
         if (Contains(handle)) {
             dense_[sparseData_[handle.index]] = std::move(value);
             return;
@@ -34,9 +30,10 @@ namespace osseus {
         dense_.push_back(std::move(value));
     }
 
-    template<typename T>
-    void SparseSet<T>::Remove(Handle handle) {
-        if (!Contains(handle)) { return; }
+    template <typename T> void SparseSet<T>::Remove(Handle handle) {
+        if (!Contains(handle)) {
+            return;
+        }
 
         uint32_t removedIndex = sparseData_[handle.index];
         uint32_t lastIndex = static_cast<uint32_t>(dense_.size() - 1);
@@ -50,20 +47,21 @@ namespace osseus {
         denseHandles_.pop_back();
     }
 
-    template<typename T>
-    T * SparseSet<T>::Get(Handle handle) {
-        if (!Contains(handle)) { return nullptr; }
+    template <typename T> T* SparseSet<T>::Get(Handle handle) {
+        if (!Contains(handle)) {
+            return nullptr;
+        }
         return &dense_[sparseData_[handle.index]];
     }
 
-    template<typename T>
-    const T * SparseSet<T>::Get(Handle handle) const {
-        if (!Contains(handle)) { return nullptr; }
+    template <typename T> const T* SparseSet<T>::Get(Handle handle) const {
+        if (!Contains(handle)) {
+            return nullptr;
+        }
         return &dense_[sparseData_[handle.index]];
     }
 
-    template<typename T>
-    bool SparseSet<T>::Contains(Handle handle) const {
+    template <typename T> bool SparseSet<T>::Contains(Handle handle) const {
         if (handle.index >= sparseData_.size()) {
             return false;
         }
@@ -76,8 +74,7 @@ namespace osseus {
         return denseHandles_[index].index == handle.index;
     }
 
-    template<typename T>
-    size_t SparseSet<T>::size() const {
+    template <typename T> size_t SparseSet<T>::size() const {
         return dense_.size();
     }
-}
+} // namespace osseus

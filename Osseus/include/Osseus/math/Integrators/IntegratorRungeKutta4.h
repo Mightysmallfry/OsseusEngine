@@ -6,28 +6,27 @@
 #define OSSEUSENGINE_INTEGRATORRUNGEKUTTA4_H
 
 #include "Osseus/interfaces/IIntegrator.h"
-#include "Osseus/system/SimulationState.h"
 #include "Osseus/physics/BarnesHut.h"
+#include "Osseus/system/SimulationState.h"
 
 namespace osseus {
-        
+
     struct DerivativeState {
         std::vector<Vector3> velocities;
         std::vector<Vector3> accelerations;
     };
 
-    
-    class IntegratorRungeKutta4 : public IIntegrator{
+    class IntegratorRungeKutta4 : public IIntegrator {
         public:
-            void Step(BodyManager &bodyManager, ForceManager &forceManager, double delta) override;
+        void Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) override;
 
         private:
-            DerivativeState DerivativeOf(SimulationState& state);
+        DerivativeState DerivativeOf(SimulationState& state);
 
-            void CopyState(SimulationState& state, const BodyManager& bodyManager);
+        void CopyState(SimulationState& state, const BodyManager& bodyManager);
 
-            BarnesHut barnesHut_;
+        BarnesHut barnesHut_;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_INTEGRATORRUNGEKUTTA4_H
+#endif // OSSEUSENGINE_INTEGRATORRUNGEKUTTA4_H

@@ -18,11 +18,13 @@ namespace osseus {
             alive_.push_back(true);
         }
 
-        return Handle{ .index = index, .generation = generations_[index] };
+        return Handle{.index = index, .generation = generations_[index]};
     }
 
     void Registry::Destroy(Handle handle) {
-        if (!IsValid(handle)) { return; }
+        if (!IsValid(handle)) {
+            return;
+        }
 
         alive_[handle.index] = false;
         generations_[handle.index]++;
@@ -35,4 +37,4 @@ namespace osseus {
         }
         return alive_[handle.index] && generations_[handle.index] == handle.generation;
     }
-} // osseus
+} // namespace osseus

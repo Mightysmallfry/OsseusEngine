@@ -9,11 +9,9 @@
 
 #include "Vector3.h"
 
-namespace osseus
-{
-    class Quaternion
-    {
-    public:
+namespace osseus {
+    class Quaternion {
+        public:
         double w;
         double x;
         double y;

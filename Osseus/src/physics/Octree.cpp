@@ -8,8 +8,7 @@ namespace osseus {
         : bounds_(bounds), parent_(parent), depth_(depth) {
     }
 
-    void OctNode::Insert(Handle handle, const Vector3& position, double mass,
-                         double charge) {
+    void OctNode::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         if (mass <= 0.0) {
             return;
         }
@@ -24,8 +23,7 @@ namespace osseus {
 
         const std::size_t octant = GetOctantIndex(position);
         if (!children_[octant]) {
-            children_[octant] = std::make_unique<OctNode>(
-                ComputeChildBounds(octant), this, depth_ + 1);
+            children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
         }
         children_[octant]->Insert(handle, position, mass, charge);
     }
@@ -77,8 +75,7 @@ namespace osseus {
             return false;
         }
         const std::size_t octant = GetOctantIndex(position);
-        return HasChild(octant) &&
-               children_[octant]->ContainsBody(handle, position);
+        return HasChild(octant) && children_[octant]->ContainsBody(handle, position);
     }
 
     std::size_t OctNode::GetBodyCount() const {
@@ -133,8 +130,7 @@ namespace osseus {
 
     Bounds OctNode::ComputeChildBounds(std::size_t octant) const {
         const Vector3 quarter = bounds_.halfSize * 0.5;
-        const Vector3 offset((octant & 1) ? quarter.x : -quarter.x,
-                             (octant & 2) ? quarter.y : -quarter.y,
+        const Vector3 offset((octant & 1) ? quarter.x : -quarter.x, (octant & 2) ? quarter.y : -quarter.y,
                              (octant & 4) ? quarter.z : -quarter.z);
         return Bounds{bounds_.center + offset, quarter};
     }
@@ -146,11 +142,9 @@ namespace osseus {
         for (const Entry& entry : existingEntries) {
             const std::size_t octant = GetOctantIndex(entry.position);
             if (!children_[octant]) {
-                children_[octant] = std::make_unique<OctNode>(
-                    ComputeChildBounds(octant), this, depth_ + 1);
+                children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
             }
-            children_[octant]->Insert(entry.handle, entry.position, entry.mass,
-                                      entry.charge);
+            children_[octant]->Insert(entry.handle, entry.position, entry.mass, entry.charge);
         }
     }
 
@@ -220,14 +214,12 @@ namespace osseus {
                 for (const Entry& entry : entries_) {
                     geometricCenter += entry.position;
                 }
-                centerOfCharge_ =
-                    geometricCenter / static_cast<double>(bodyCount_);
+                centerOfCharge_ = geometricCenter / static_cast<double>(bodyCount_);
             }
 
             // Compute dipole moment about the finalized center
             for (const Entry& entry : entries_) {
-                dipoleMoment_ +=
-                    (entry.position - centerOfCharge_) * entry.charge;
+                dipoleMoment_ += (entry.position - centerOfCharge_) * entry.charge;
             }
 
             return;
@@ -239,7 +231,7 @@ namespace osseus {
                 continue;
             }
 
-            child->UpdateProperties();  // bottom-up recursion
+            child->UpdateProperties(); // bottom-up recursion
 
             totalCharge_ += child->totalCharge_;
             centerOfCharge_ += child->centerOfCharge_ * child->totalCharge_;
@@ -260,8 +252,7 @@ namespace osseus {
                 childCount++;
             }
             if (childCount > 0) {
-                centerOfCharge_ =
-                    geometricCenter / static_cast<double>(childCount);
+                centerOfCharge_ = geometricCenter / static_cast<double>(childCount);
             }
         }
 
@@ -271,9 +262,7 @@ namespace osseus {
                 continue;
             }
 
-            dipoleMoment_ += child->dipoleMoment_ +
-                             child->totalCharge_ *
-                                 (child->centerOfCharge_ - centerOfCharge_);
+            dipoleMoment_ += child->dipoleMoment_ + child->totalCharge_ * (child->centerOfCharge_ - centerOfCharge_);
         }
     }
 
@@ -292,13 +281,10 @@ namespace osseus {
 
     // ==================== Octree ====================
 
-    Octree::Octree()
-        : rootBounds_(), root_(std::make_unique<OctNode>(rootBounds_)) {
+    Octree::Octree() : rootBounds_(), root_(std::make_unique<OctNode>(rootBounds_)) {
     }
 
-    Octree::Octree(const Bounds& rootBounds)
-        : rootBounds_(rootBounds),
-          root_(std::make_unique<OctNode>(rootBounds)) {
+    Octree::Octree(const Bounds& rootBounds) : rootBounds_(rootBounds), root_(std::make_unique<OctNode>(rootBounds)) {
     }
 
     void Octree::Clear() {
@@ -309,8 +295,7 @@ namespace osseus {
         Insert(entry.handle, entry.position, entry.mass, entry.charge);
     }
 
-    void Octree::Insert(Handle handle, const Vector3& position, double mass,
-                        double charge) {
+    void Octree::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         root_->Insert(handle, position, mass, charge);
     }
 
@@ -328,4 +313,4 @@ namespace osseus {
         return *root_;
     }
 
-}  // namespace osseus
+} // namespace osseus

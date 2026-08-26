@@ -11,6 +11,6 @@ namespace osseus {
         Handle a;
         Handle b;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_COLLISIONCANDIDATE_H
+#endif // OSSEUSENGINE_COLLISIONCANDIDATE_H
