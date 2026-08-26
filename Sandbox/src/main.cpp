@@ -34,7 +34,7 @@ int main()
     const float maxFrameDelta = 0.25;
     const int maxPhysicsSteps = 5;
     
-    const double physicsDelta = 1.0 / 120.0; // 60 Hz
+    const double physicsDelta = 1.0 / 60.0; // 120-60 Hz
     
     sf::Text statisticsText(font, "", 18);
     statisticsText.setFillColor(sf::Color::White);
@@ -53,14 +53,15 @@ int main()
     std::random_device rd;
     std::mt19937 generator(rd());
 
-    const double rangeBound = 100.0;
+    const double rangeBound = 200.0;
     std::uniform_real_distribution<double> distribution(-rangeBound, rangeBound);
 
 
     // ===== Create all bodies for simulation
     std::vector<osseus::Handle> particleHandles;
-    const size_t bodyCount = 100;
-    
+    const size_t bodyCount = 1000;
+    const double mass = 1.0;
+
     for (int i = 0; i < bodyCount; i++){
         double randX = distribution(generator);
         double randY = distribution(generator);
@@ -69,8 +70,8 @@ int main()
         osseus::BodyData body {
             randPosition,                   // Position
             osseus::Vector3::Zero(),        // Velocity
-            1.0,                            // Mass
-            1.0,                            // InvMass
+            mass,                           // Mass
+            1.0 / mass,                     // InvMass
             0.0                             // Charge
         };
         
@@ -153,6 +154,7 @@ int main()
 
         std::string statistics =
             "FPS: " + std::to_string(static_cast<int>(fps)) +
+            "\nParticle Position: " + world.GetBody(particleHandles[0])->position.ToString() +
             "\nPhysics Time: " + std::to_string(physicsMs) + " ms"
             "\nFrame: " + std::to_string(frameMs) + " ms" +
             "\nPhysics: " + std::to_string(static_cast<int>(1.0 / physicsDelta)) + " Hz" +

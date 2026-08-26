@@ -6,10 +6,11 @@
 
 namespace osseus {
     class IIntegrator {
-    public:
+        public:
         virtual ~IIntegrator() = default;
-        virtual void Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) = 0;
+        virtual void Step(BodyManager &bodyManager, ForceManager &forceManager,
+                          double delta) = 0;
     };
-} // osseus
+} // namespace osseus
 
-#endif //OSSEUSENGINE_INTEGRATOR_H
+#endif // OSSEUSENGINE_INTEGRATOR_H

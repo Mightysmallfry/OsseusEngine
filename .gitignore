@@ -5,3 +5,4 @@
 # Profiling
 callgrind.out.*
 profile.txt
+.clang-format

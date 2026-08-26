@@ -5,9 +5,9 @@
 
 namespace osseus {
     class IForceEvaluator {
-    public:
+       public:
         virtual ~IForceEvaluator() = default;
     };
-} // osseus
+}  // namespace osseus
 
-#endif //OSSEUSENGINE_FORCEEVALUATOR_H
+#endif  // OSSEUSENGINE_FORCEEVALUATOR_H
