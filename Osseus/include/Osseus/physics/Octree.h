@@ -66,12 +66,13 @@ namespace osseus {
         Bounds ComputeChildBounds(std::size_t octant) const;
 
         void Subdivide();
-        void UpdateMassProperties();
 
-        // TODO: Implement Charge Property Tracking
-        void UpdateChargeProperties();
+        // Incremental (O(1)) property updates, applied per-node during Insert/Remove traversal.
+        void AccumulateEntry(const Entry& entry);
+        void RemoveEntryProperties(const Entry& entry);
 
-        bool RemoveFromEntries(Handle handle);
+        bool RemoveInternal(Handle handle, Entry& outRemoved);
+        bool RemoveFromEntries(Handle handle, Entry& outRemoved);
 
         Bounds bounds_;
         OctNode* parent_;
@@ -87,6 +88,9 @@ namespace osseus {
         double totalCharge_{0.0};
         Vector3 centerOfCharge_{Vector3::Zero()};
         Vector3 dipoleMoment_{Vector3::Zero()};
+
+        // Unweighted running average of positions; fallback center when totalCharge_ ~ 0.
+        Vector3 geometricCenter_{Vector3::Zero()};
     };
 
     class Octree {
