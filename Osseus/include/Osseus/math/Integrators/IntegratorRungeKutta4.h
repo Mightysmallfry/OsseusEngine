@@ -26,6 +26,12 @@ namespace osseus {
 
         void CopyState(SimulationState& state, const BodyManager& bodyManager);
 
+        // Re-evaluates universal (position-dependent) forces against this
+        // stage's rebuilt octree, on top of the constant individual-force
+        // contribution, and syncs the result into the stage's SimulationState.
+        void EvaluateStageForces(SimulationState& state, const std::vector<Vector3>& individualForces,
+                                  const ForceManager& universalTemplate);
+
         BarnesHut barnesHut_;
     };
 } // namespace osseus

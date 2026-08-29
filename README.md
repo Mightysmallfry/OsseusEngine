@@ -1,35 +1,122 @@
 # OsseusEngine
-A physics engine, built with the flexibility for both Science and Game Development
+OsseusEngine is a C++20 physics engine focused on real-time rigid-body and particle simulation. It provides a modular physics architecture with numerical integration, collision detection, spatial acceleration structures, and extensible force systems.
 
+The engine is currently under active development.
 
+## Features
+- C++20 physics engine
+- Rigid-body and particle simulation
+- Multiple numerical integrators
+    - Euler-Cromer
+    - Runge-Kutta 4 (RK4)
+- 3D vector mathematics
+- Collision detection and resolution
+    - GJK/EPA collision detection
+- Octree spatial partitioning
+- Barnes-Hut force approximation
+- Extensible force system
+    - Universal and per-body forces
+- Catch2-based physics tests
+- SFML-based simulation sandbox
 
-## How it works
-Osseus runs a pretty similar process to alot of other engines. You can add whichever bodies you want to a `PhysicsWorld`. Following that the physics world simulates each step by doing the following process.
+## Building Requirements
+- C++20-compatible compiler
+- CMake
+- Ninja
+- vcpkg
 
-### Broadphase 
-Focuses on broad collision using bounding boxes around shapes and bodies.
+The project uses CMake presets and vcpkg for dependency management.
 
-### Narrowphase
-After receiving any collision candidates from the broadphase, we use the GJK(Gilbert-Johnson-Keerthi)/EPA(Expanding Polytop Algorithm) method of determining precise collisions.
+## Project Structure
+```
+OsseusEngine/
+├── Osseus/
+│   └── Include/
+│   └── Osseus/
+│   └── Osseus.h    // Main Include file You Want!
+├── Tests/          // Catch2 Test Suite For the Library
+├── Sandbox/        // Example Code and Dashboard for view engine telemetry
+├── CMakeLists.txt
+├── CMakePresets.json
+└── vcpkg.json
+```
 
-- GJK focuses on if two convex shapes overlap, giving shortest distance between the two in the case of no collision.
-- EPA focuses on how much depth and direction of a collision.
+### Architecture
+OsseusEngine is organized around a few core systems:
 
-> The Support() function handles the Minkowski Difference needed for the narrow phase pipeline, so no explicit construction needed
+| Component | Responsibility |
+|-----------|----------------|
+| **PhysicsWorld**  | Owns and coordinates the simulation. |
+| **BodyManager**   | Creates, stores, and manages physics bodies. |
+| **ForceManager**  | Manages forces applied to individual bodies and universal force evaluators. |
+| **Integrators**   | Advance the simulation state using numerical integration methods. |
+| **Octree**        | Provides spatial partitioning for efficient spatial queries and force calculations. |
+| **Barnes-Hut**    | Approximates long-range forces for large numbers of bodies. |
+| **Collision System** | Detects and resolves collisions between supported shapes. |
 
-### Collision Resolution
-Any collisions found are numerically resolved and adjustments to trajectories are made.
+The architecture is designed so that individual systems can be developed and tested independently.
 
-### Universal Forces
-All universal forces that are computationally heavy, and apply to the entire simulation go here. This is primarily for `Coulomb's Law` and the `Universal Gravitational Force` to be applied in particle physics. It uses a `Barnes-Hut` approach with an Octree to maintain an O(NlogN) performance.
+## Numerical Integration
+The engine currently supports multiple integration methods.
 
-These would be the force at a distance laws that effect everything.
-- Gravity
-- Electromagnetism
+### Euler-Cromer
+Euler-Cromer is a simple, inexpensive integrator that is particularly useful for simulations where computational cost is important.
 
-### Individual Forces
-You can also add forces to individual bodies in which case you can see if there is a force evaluator already made for it. If there isn't feel free to write your own or just manually add the force. These forces are only around for one iteration of the loop so if you want force to be distributed or applied for a set duration, you will have to track the elapsed time by tracking the time `delta` for a number of cycles.
+### Runge-Kutta 4
+RK4 provides significantly greater numerical accuracy by evaluating the system derivative at multiple intermediate states during each timestep.
 
-### Integration
-The bodies are now pushed through one step of the chosen integrator. That could be something like `4th order Runge-Kutta` for scientific endeavors or the `Euler-Cromer` method for something more akin to video games.
+## Forces
+Forces can be applied directly to individual bodies or through universal force evaluators.
 
+Per-body forces can be added directly:
+
+``` C++
+world.GetForceManager().Add(
+    objectHandle,
+    osseus::Vector3(0.0, -9.8, 0.0)
+);
+```
+
+Universal forces operate across the simulation and are useful for interactions such as gravity or electromagnetic effects.
+
+``` C++
+osseus::UniversalGravity gravity;
+
+world.GetForceManager().AddUniversal(&gravity);
+```
+
+This separation allows forces that affect specific objects to coexist with forces that govern the entire simulation.
+
+## Spatial Acceleration
+OsseusEngine uses an **octree** to organize bodies spatially.
+
+The octree provides the foundation for efficient spatial queries and is used by the Barnes-Hut force solver to approximate long-range interactions.
+
+This allows the engine to avoid evaluating every possible pair of bodies when simulating large systems. Effectively going from `O(N^2)` time complexity to `O(NlogN)` complexity.
+
+## Collision Detection
+Collision detection is based on convex-shape algorithms that revolve around the Minkowski difference, including:
+
+- [x] GJK (Gilbert-Johnson-Keerthi)
+- [x] EPA (Expanding Polytope Algorithm)
+
+These algorithms provide collision detection and penetration information for supported convex shapes.
+
+## How The Engine works
+Most of the compute time, the engine will likely be going through the `PhysicsWorld::Step(delta)` function. Top down, the step function performs the simulation in this order:
+- Broad Phase collision finds candidates using Axis-Aligned Bounding Boxes
+- Narrow Phase collision confirms which of the broad phase candidates do collide.
+- CollisionSolver resolves the collisions and adjusts object properties (position, velocity etc.)
+- The Octree is rebuilt since object positions could have changed due to collision.
+- Barnes-Hut Evaluates all the bodies in the Octree, applying any universal force currently active.
+- Whichever chosen integrator (Euler-Cromer by default) then moves all non-static objects.
+
+### Static/Stationary Objects
+Currently how stationary Objects are defined is super poor. Each object has a `BodyData` struct object associated with them in the `BodyManager` of their respective physics world. This `BodyData` object tracks both **Mass** and **InvMass** (inverse of mass). These are not dependent on each other... 
+
+A stationary object has an `InvMass == 0.0`. All the math uses the objects mass so there isn't a problem mathematically but yeah... This is horrible.
+
+### Constants
+To keep things fairly fast and reasonable, Osseus does use it's own values for the gravitational constant as well as coulomb's constant.
+
+Currently Osseus uses `1.0` for both constants, this will eventually change to allow the true values.
