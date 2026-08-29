@@ -19,6 +19,7 @@ add_executable(OsseusTests
         physics/ForceTests.cpp
         physics/OctreeTests.cpp
         physics/BarnesHutExclusionTests.cpp
+        physics/OrbitTests.cpp
         system/LockstepTests.cpp
         )
 

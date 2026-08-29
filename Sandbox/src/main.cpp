@@ -3,6 +3,7 @@
 #include <memory>
 #include <random>
 #include <vector>
+#include <numbers>
 
 #include <Osseus/Osseus.h>
 #include <SFML/Graphics.hpp>
@@ -10,8 +11,8 @@
 int main() {
     // ================= SFML Window initialization
     sf::Color particle_color = sf::Color::Cyan;
-    const int width = 800;
-    const int height = 600;
+    const int width = 1200;
+    const int height = 1200;
     sf::RenderWindow window(sf::VideoMode({width, height}), "Osseus-Sandbox");
 
     const int frame_rate = 60;
@@ -29,7 +30,7 @@ int main() {
     const float maxFrameDelta = 0.25;
     const int maxPhysicsSteps = 5;
 
-    const double physicsDelta = 1.0 / 60.0; // 120-60 Hz
+    const double physicsDelta = 1.0 / 120.0; // 120-60 Hz
 
     sf::Text statisticsText(font, "", 18);
     statisticsText.setFillColor(sf::Color::White);
@@ -38,37 +39,91 @@ int main() {
     // ================= Osseus Initialization
     osseus::PhysicsWorld world;
 
+    const double boundaryRadius = 800.0;
+    const double particleRadius = 2.0;
+    const double maxDistance = boundaryRadius - particleRadius;
+
     world.SetIntegrator(std::make_unique<osseus::IntegratorEulerCromer>());
 
     osseus::UniversalGravity universalGravity;
     world.GetForceManager().AddUniversal(&universalGravity);
 
+
     // ================= RNG Initialization
     std::random_device rd;
     std::mt19937 generator(rd());
 
-    const double rangeBound = 200.0;
+    const double rangeBound = 300.0;
     std::uniform_real_distribution<double> distribution(-rangeBound, rangeBound);
 
-    // ===== Create all bodies for simulation
+    // ================= Create static central object
+
+    const double staticRadius = 20.0;
+    const double staticMass = 250000.0;
+
+    const double orbitalRadius = 100.0;
+
+    osseus::BodyData staticBody{
+        osseus::Vector3::Zero(),
+        osseus::Vector3::Zero(),
+        staticMass,
+        0.0,
+        0.0
+    };
+
+    osseus::Handle staticHandle =
+        world.CreateBody(
+            staticBody,
+            std::make_unique<osseus::ShapeSphere>(staticRadius)
+        );
+
+    // ================= Create particles
+
     std::vector<osseus::Handle> particleHandles;
-    const size_t bodyCount = 1000;
+    const size_t bodyCount = 1000; // 2000 is current limit
     const double mass = 1.0;
+    const double speed = 50.0;
 
     for (int i = 0; i < bodyCount; i++) {
-        double randX = distribution(generator);
-        double randY = distribution(generator);
+        double randX;
+        double randY;
+        do {
+            randX = distribution(generator);
+            randY = distribution(generator);
+        } while (randX * randX + randY * randY <
+             (staticRadius + particleRadius) * (staticRadius + particleRadius));
 
+        
         osseus::Vector3 randPosition = osseus::Vector3(randX, randY, 0.0);
+
+        const double dx = randPosition.x;
+        const double dy = randPosition.y;
+
+        const double distance = std::sqrt(dx * dx + dy * dy);
+
+
+        osseus::Vector3 randVelocity(
+            -dy / distance * speed,
+            dx / distance * speed,
+            0.0
+        );
         osseus::BodyData body{
             randPosition,            // Position
-            osseus::Vector3::Zero(), // Velocity
+            randVelocity,            // Velocity
             mass,                    // Mass
             1.0 / mass,              // InvMass
             0.0                      // Charge
         };
 
-        particleHandles.push_back(world.CreateBody(body));
+        // osseus::BodyData body{
+        //     osseus::Vector3(orbitalRadius, 0.0, 0.0),            // Position
+        //     osseus::Vector3(0.0, std::sqrt(staticMass / orbitalRadius), 0.0),            // Velocity
+        //     mass,                    // Mass
+        //     1.0 / mass,              // InvMass
+        //     0.0                      // Charge
+        // };
+
+        particleHandles.push_back(world.CreateBody(body, std::make_unique<osseus::ShapeSphere>(particleRadius)));
     }
 
     // run the program as long as the window is open
@@ -104,6 +159,30 @@ int main() {
             physicsTimer.restart();
 
             world.Step(physicsDelta);
+        
+            for (osseus::Handle handle : particleHandles) {
+                osseus::BodyData* body = world.GetBody(handle);
+
+                body->position.z = 0.0;
+
+                const double distanceSquared = body->position.LengthSquared();
+
+                if (distanceSquared > maxDistance * maxDistance) {
+                    const double distance = std::sqrt(distanceSquared);
+
+                    const osseus::Vector3 normal = body->position / distance;
+
+                    // Put the particle back on the inside surface.
+                    body->position = normal * maxDistance;
+
+                    // Reflect the outward velocity.
+                    const double velocityAlongNormal = body->velocity.Dot(normal);
+
+                    if (velocityAlongNormal > 0.0) {
+                        body->velocity -= normal * (2.0 * velocityAlongNormal);
+                    }
+                }
+            }
 
             physicsMs += physicsTimer.getElapsedTime().asSeconds() * 1000.0;
 
@@ -132,9 +211,26 @@ int main() {
             toDrawParticles[i] = sf::Vertex{sf::Vector2f(position.x, position.y), particle_color};
         }
 
+        osseus::Vector3 staticPosition = world.GetBody(staticHandle)->position;
+        staticPosition.x += width / 2.0;
+        staticPosition.y = height / 2.0 - staticPosition.y;
+       
+        sf::CircleShape staticCircle(staticRadius);
+        staticCircle.setFillColor(sf::Color::Yellow);
+        staticCircle.setOrigin({staticRadius, staticRadius});
+        staticCircle.setPosition({
+            static_cast<float>(staticPosition.x),
+            static_cast<float>(staticPosition.y)
+        });
+
+        window.draw(staticCircle);
         window.draw(toDrawParticles);
+        
 
         const double frameMs = frameDelta * 1000.0;
+
+        const osseus::BodyData* body = world.GetBody(particleHandles[0]);
+
 
         std::string statistics = "FPS: " + std::to_string(static_cast<int>(fps)) +
                                  "\nParticle Position: " + world.GetBody(particleHandles[0])->position.ToString() +

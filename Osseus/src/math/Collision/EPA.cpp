@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <limits>
 
 namespace osseus {
@@ -22,16 +23,16 @@ namespace osseus {
             return Face{a, b, c, Vector3::Zero(), std::numeric_limits<double>::max()};
         }
         normal = normal / std::sqrt(lengthSq);
-
         double distance = normal.Dot(pa);
-        if (distance < 0.0) {
-            // Winding put the normal facing the origin - flip both so it
-            // always points outward, away from the enclosed origin.
-            normal = -normal;
-            distance = -distance;
-            std::swap(b, c);
-        }
 
+        // No per-face orientation correction here. As long as the polytope
+        // stays convex with the origin strictly interior - which EPA's
+        // invariants guarantee - "normal points away from the origin" and
+        // "normal points outward from the solid" are the same condition at
+        // every face. Handedness is fixed once, globally, on the starting
+        // tetrahedron in Resolve(); every face built afterward (including
+        // hole-patches) inherits correct orientation from that single fix
+        // rather than each face re-deriving it locally.
         return Face{a, b, c, normal, distance};
     }
 
@@ -89,11 +90,27 @@ namespace osseus {
         std::vector<GJKSupportPoint> polytope = {startingSimplex[0], startingSimplex[1], startingSimplex[2],
                                                  startingSimplex[3]};
 
+        // Fix the tetrahedron's handedness once, globally, before any faces
+        // are built. Faces (0,1,2)/(0,2,3)/(0,3,1)/(1,3,2) form a fixed,
+        // already edge-consistent boundary triangulation by construction;
+        // what's not fixed is which way it winds relative to GJK's vertex
+        // order. A single swap flips all four faces together, so they stay
+        // mutually consistent - unlike correcting each face's winding
+        // independently after the fact.
+        if ((polytope[1].point - polytope[0].point)
+                .Dot((polytope[2].point - polytope[0].point).Cross(polytope[3].point - polytope[0].point)) > 0.0) {
+            std::swap(polytope[2], polytope[3]);
+        }
+
         std::vector<Face> faces = {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
                                    MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)};
 
+
+        // Adjust some limits of the simulation.
+        // epsilon is the convergence factor, larger convergence ~1
+        // leads to fast but innacurate results. 0.01 is about 1% for 1 unit objects
         constexpr int maxIterations = 64;
-        constexpr double epsilon = 1e-8;
+        constexpr double epsilon = 0.0001;
 
         Face closest = faces[0];
 
@@ -117,6 +134,26 @@ namespace osseus {
                 break;
             }
 
+            // Guard against a support point that's a near-duplicate of one
+            // already in the polytope. This can happen without tripping the
+            // convergence check above (e.g. on flat/near-planar Minkowski
+            // regions where consecutive support directions keep landing on
+            // the same vertex up to floating-point noise). Pushing it
+            // anyway would build degenerate patch faces that neither
+            // converge nor get pruned, letting the polytope grow without
+            // real progress toward the surface.
+            constexpr double duplicatePointEpsilonSq = 1e-10;
+            bool isDuplicate = false;
+            for (const auto& existing : polytope) {
+                if (DistanceSquared(existing.point, newPoint.point) < duplicatePointEpsilonSq) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (isDuplicate) {
+                break;
+            }
+
             polytope.push_back(newPoint);
             int newIndex = static_cast<int>(polytope.size() - 1);
 
@@ -125,19 +162,29 @@ namespace osseus {
             std::vector<std::pair<int, int>> uniqueEdges;
             for (auto it = faces.begin(); it != faces.end();) {
                 Vector3 faceToPoint = newPoint.point - polytope[it->a].point;
-                if (it->normal.Dot(faceToPoint) > 0.0) {
+                if (it->normal.Dot(faceToPoint) > epsilon) {
                     AddUniqueEdge(uniqueEdges, it->a, it->b);
                     AddUniqueEdge(uniqueEdges, it->b, it->c);
                     AddUniqueEdge(uniqueEdges, it->c, it->a);
+
                     it = faces.erase(it);
                 } else {
                     ++it;
                 }
             }
-
+            
             for (const auto& edge : uniqueEdges) {
                 faces.push_back(MakeFace(polytope, edge.first, edge.second, newIndex));
             }
+            
+            // double improvement = supportDistance - closest.distance;
+            // std::cerr
+            //     << "EPA iteration " << iteration
+            //     << " | closest: " << closest.distance
+            //     << " | support: " << supportDistance
+            //     << " | improvement: " << improvement
+            //     << '\n';
+            
         }
 
         return BuildContact(polytope, closest, handleA, handleB);

@@ -134,6 +134,8 @@ namespace osseus {
                 DestroyBody(handle);
             }
         }
+
+        forceManager_.Clear();
     }
 
 } // namespace osseus

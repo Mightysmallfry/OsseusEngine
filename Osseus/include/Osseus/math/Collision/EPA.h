@@ -27,7 +27,7 @@ namespace osseus {
             Vector3 normal;
             double distance;
         };
-
+        
         static Face MakeFace(const std::vector<GJKSupportPoint>& polytope, int a, int b, int c);
         static void AddUniqueEdge(std::vector<std::pair<int, int>>& edges, int a, int b);
         static Contact BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face, Handle handleA,
