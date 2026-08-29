@@ -9,6 +9,7 @@ namespace osseus {
         public:
         virtual ~IIntegrator() = default;
         virtual void Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) = 0;
+        virtual std::string GetName() = 0;
     };
 } // namespace osseus
 

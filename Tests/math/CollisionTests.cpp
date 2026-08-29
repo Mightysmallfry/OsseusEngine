@@ -399,6 +399,7 @@ TEST_CASE("Collisions - NarrowPhase produces a contact for an overlapping candid
 {
     BodyManager bodyManager;
     ShapeManager shapeManager;
+    std::vector<osseus::Contact> contacts;
     Handle a{0, 0};
     Handle b{1, 0};
 
@@ -408,8 +409,8 @@ TEST_CASE("Collisions - NarrowPhase produces a contact for an overlapping candid
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
     NarrowPhase narrowPhase;
-    std::vector<Contact> contacts = narrowPhase.GenerateContacts(
-        { CollisionCandidatePair{a, b} }, bodyManager, shapeManager);
+    narrowPhase.GenerateContacts(
+        { CollisionCandidatePair{a, b} }, bodyManager, shapeManager, contacts);
 
     REQUIRE(contacts.size() == 1);
     REQUIRE(contacts[0].a.index == a.index);
@@ -420,6 +421,7 @@ TEST_CASE("Collisions - NarrowPhase produces no contact for a separated candidat
 {
     BodyManager bodyManager;
     ShapeManager shapeManager;
+    std::vector<osseus::Contact> contacts;
     Handle a{0, 0};
     Handle b{1, 0};
 
@@ -429,8 +431,8 @@ TEST_CASE("Collisions - NarrowPhase produces no contact for a separated candidat
     shapeManager.AddShape(b, std::make_unique<ShapeSphere>(1.0));
 
     NarrowPhase narrowPhase;
-    std::vector<Contact> contacts = narrowPhase.GenerateContacts(
-        { CollisionCandidatePair{a, b} }, bodyManager, shapeManager);
+    narrowPhase.GenerateContacts(
+        { CollisionCandidatePair{a, b} }, bodyManager, shapeManager, contacts);
 
     REQUIRE(contacts.empty());
 }
@@ -439,6 +441,7 @@ TEST_CASE("Collisions - NarrowPhase skips candidate pairs missing a body or shap
 {
     BodyManager bodyManager;
     ShapeManager shapeManager;
+    std::vector<osseus::Contact> contacts;
     Handle a{0, 0};
     Handle missing{99, 0}; // never registered with either manager
 
@@ -446,8 +449,8 @@ TEST_CASE("Collisions - NarrowPhase skips candidate pairs missing a body or shap
     shapeManager.AddShape(a, std::make_unique<ShapeSphere>(1.0));
 
     NarrowPhase narrowPhase;
-    std::vector<Contact> contacts = narrowPhase.GenerateContacts(
-        { CollisionCandidatePair{a, missing} }, bodyManager, shapeManager);
+    narrowPhase.GenerateContacts(
+        { CollisionCandidatePair{a, missing} }, bodyManager, shapeManager, contacts);
 
     REQUIRE(contacts.empty());
 }

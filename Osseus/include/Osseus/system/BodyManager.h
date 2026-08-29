@@ -29,8 +29,11 @@ namespace osseus {
             return bodies_.Handles();
         }
 
+
+
         private:
         SparseSet<BodyData> bodies_;
+
     };
 } // namespace osseus
 

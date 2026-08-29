@@ -17,6 +17,7 @@ namespace osseus {
         bodyManager_.Register(handle);
         forceManager_.Register(handle);
         shapeManager_.Register(handle);
+        objectCount_++;
         return handle;
     }
 
@@ -25,6 +26,7 @@ namespace osseus {
         AttachBody(handle, bodyData);
         forceManager_.Register(handle);
         shapeManager_.Register(handle);
+        objectCount_++;
         return handle;
     }
 
@@ -33,6 +35,7 @@ namespace osseus {
         AttachBody(handle, bodyData);
         AttachShape(handle, std::move(shape));
         forceManager_.Register(handle);
+        objectCount_++;
         return handle;
     }
 
@@ -44,6 +47,7 @@ namespace osseus {
         shapeManager_.RemoveShape(handle);
         registry_.Destroy(handle);
         forceManager_.ClearForceOf(handle);
+        objectCount_--;
     }
 
     void PhysicsWorld::QueueDestroyBody(Handle handle) {
@@ -84,17 +88,17 @@ namespace osseus {
     }
 
     void PhysicsWorld::Step(double delta) {
-
+        elapsedTime_ += delta;
         // ============ Detect Collisions ============
         // Broad Phase
         std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
         // Narrow Phase (GJK/EPA via IShape::Support)
-        std::vector<Contact> contacts = narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_);
+        narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
 
         // ============ Resolve Collisions ============
         // Solver
-        solver_.ResolveContacts(contacts, bodyManager_);
+        solver_.ResolveContacts(collisionManifold_, bodyManager_);
 
         // =========== Apply Universal Forces ===========
         RebuildOctree();

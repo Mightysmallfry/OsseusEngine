@@ -56,27 +56,48 @@ namespace osseus {
         ShapeManager& GetShapeManager() {
             return shapeManager_;
         }
+        Octree& GetOctree() {
+            return spatialTree_;
+        }
+        int GetObjectCount() const {
+            return objectCount_;
+        }
 
-        private:
+        double GetElapsedTime() const {
+            return elapsedTime_;
+        }
+
+        std::string GetIntegratorName() {
+            return integrator_->GetName();
+        }
+
+        const std::vector<Contact>& GetCollisionManifold() {
+            return collisionManifold_;
+        }
+
+        private:        
         void AttachBody(Handle handle, BodyData bodyData);
         void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
-
+        
         void SyncState();
-
+        
         std::vector<Handle> destructionQueue_;
-
+        std::vector<Contact> collisionManifold_;
         std::unique_ptr<IIntegrator> integrator_;
-
+        
         Registry registry_;
         BodyManager bodyManager_;
         ForceManager forceManager_;
         ShapeManager shapeManager_;
         Octree spatialTree_;
-
+        
         BarnesHut barnesHut_;
         BroadPhase broadPhase_;
         NarrowPhase narrowPhase_;
         Solver solver_;
+        
+        int objectCount_{ 0 };
+        double elapsedTime_{ 0.0 };
     };
 } // namespace osseus
 

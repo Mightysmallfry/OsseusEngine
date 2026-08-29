@@ -5,7 +5,7 @@ namespace osseus {
     // ==================== OctNode ====================
 
     OctNode::OctNode(const Bounds& bounds, OctNode* parent, int depth)
-        : bounds_(bounds), parent_(parent), depth_(depth) {
+        : bounds_(bounds), parent_(parent), depth_(depth), deepestDepth_(depth) {
     }
 
     void OctNode::Insert(Handle handle, const Vector3& position, double mass, double charge) {
@@ -26,9 +26,13 @@ namespace osseus {
 
         const std::size_t octant = GetOctantIndex(position);
         if (!children_[octant]) {
-            children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
+            children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), 
+                this, 
+                depth_ + 1);
+            IncrementSubtreeCount();
         }
         children_[octant]->Insert(handle, position, mass, charge);
+        deepestDepth_ = std::max(deepestDepth_, children_[octant]->GetDeepestDepth());
     }
 
     bool OctNode::Remove(Handle handle) {
@@ -54,11 +58,38 @@ namespace osseus {
                 RemoveEntryProperties(outRemoved);
                 if (child->IsEmpty() && child->IsLeaf()) {
                     child.reset();
+                    DecrementSubtreeCount();
+                }
+                
+                deepestDepth_ = depth_;
+                for (const auto& remainingChild : children_) {
+                    if (remainingChild) {
+                        deepestDepth_ = std::max(
+                            deepestDepth_,
+                            remainingChild->GetDeepestDepth()
+                        );
+                    }
                 }
                 return true;
             }
         }
         return false;
+    }
+
+    void OctNode::IncrementSubtreeCount() {
+        ++subtreeSize_;
+
+        if (parent_) {
+            parent_->IncrementSubtreeCount();
+        }
+    }
+
+    void OctNode::DecrementSubtreeCount() {
+        --subtreeSize_;
+
+        if (parent_) {
+            parent_->DecrementSubtreeCount();
+        }
     }
 
     bool OctNode::IsLeaf() const {
@@ -155,8 +186,12 @@ namespace osseus {
             const std::size_t octant = GetOctantIndex(entry.position);
             if (!children_[octant]) {
                 children_[octant] = std::make_unique<OctNode>(ComputeChildBounds(octant), this, depth_ + 1);
+                IncrementSubtreeCount();
             }
-            children_[octant]->Insert(entry.handle, entry.position, entry.mass, entry.charge);
+            children_[octant]->Insert(entry.handle, entry.position, 
+                entry.mass, entry.charge);
+            
+            deepestDepth_ = std::max(deepestDepth_, children_[octant]->GetDeepestDepth());
         }
     }
 
@@ -166,6 +201,14 @@ namespace osseus {
 
     int OctNode::GetDepth() const {
         return depth_;
+    }
+
+    int OctNode::GetDeepestDepth() const {
+        return deepestDepth_;
+    }
+
+    int OctNode::GetSubtreeSize() const {
+        return subtreeSize_;
     }
 
     void OctNode::AccumulateEntry(const Entry& entry) {
@@ -367,13 +410,21 @@ namespace osseus {
     void Octree::Insert(Entry entry) {
         Insert(entry.handle, entry.position, entry.mass, entry.charge);
     }
-
+    
     void Octree::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         root_->Insert(handle, position, mass, charge);
     }
 
     void Octree::Remove(Handle handle) {
         root_->Remove(handle);
+    }
+
+    size_t Octree::Size() const {
+        return root_ ? root_->GetSubtreeSize() : 0;
+    }
+
+    int Octree::GetDepth() const {
+        return root_ ? root_->GetDeepestDepth() : 0;
     }
 
     void Octree::UpdateProperties() {

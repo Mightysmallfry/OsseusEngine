@@ -10,6 +10,7 @@ namespace osseus {
     class IntegratorEulerCromer : public IIntegrator {
         public:
         void Step(BodyManager& bodymanager, ForceManager& forceManager, double delta) override;
+        std::string GetName() { return "EULER-CROMER"; }
     };
 } // namespace osseus
 

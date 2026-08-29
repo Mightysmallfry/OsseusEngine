@@ -36,6 +36,9 @@ namespace osseus {
         void Insert(Handle handle, const Vector3& position, double mass, double charge);
         bool Remove(Handle handle);
 
+        void IncrementSubtreeCount();
+        void DecrementSubtreeCount();
+
         bool IsLeaf() const;
         bool IsEmpty() const;
         bool ContainsBody(Handle handle, const Vector3& position) const;
@@ -55,6 +58,8 @@ namespace osseus {
 
         const OctNode* GetParent() const;
         int GetDepth() const;
+        int GetDeepestDepth() const;
+        int GetSubtreeSize() const;
 
         void UpdateProperties();
 
@@ -77,6 +82,8 @@ namespace osseus {
         Bounds bounds_;
         OctNode* parent_;
         int depth_;
+        int deepestDepth_;
+        size_t subtreeSize_{ 1 };
 
         std::array<std::unique_ptr<OctNode>, 8> children_;
         std::vector<Entry> entries_;
@@ -103,12 +110,16 @@ namespace osseus {
         void Insert(Handle handle, const Vector3& position, double mass, double charge);
         void Remove(Handle handle);
 
+        size_t Size() const;
+        int GetDepth() const;
+
         void UpdateProperties();
         const OctNode& GetRoot() const;
 
         private:
         Bounds rootBounds_;
         std::unique_ptr<OctNode> root_;
+        int deepestDepth_{ 0 };
     };
 
 } // namespace osseus

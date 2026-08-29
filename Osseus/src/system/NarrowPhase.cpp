@@ -4,10 +4,12 @@
 #include "Osseus/math/Collision/GJK.h"
 
 namespace osseus {
-    std::vector<Contact> NarrowPhase::GenerateContacts(const std::vector<CollisionCandidatePair>& candidates,
-                                                       BodyManager& bodyManager, ShapeManager& shapeManager) const {
-        std::vector<Contact> contacts;
+    void NarrowPhase::GenerateContacts(const std::vector<CollisionCandidatePair>& candidates,
+                                                       BodyManager& bodyManager, ShapeManager& shapeManager,
+                                                       std::vector<Contact>& contacts) const {
+        contacts.clear();
         contacts.reserve(candidates.size());
+                                                   
 
         for (const CollisionCandidatePair& candidate : candidates) {
             BodyData* bodyA = bodyManager.GetBody(candidate.a);
@@ -27,6 +29,5 @@ namespace osseus {
             contacts.push_back(
                 EPA::Resolve(*shapeA, bodyA->position, candidate.a, *shapeB, bodyB->position, candidate.b, simplex));
         }
-        return contacts;
     }
 } // namespace osseus
