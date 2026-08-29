@@ -1,5 +1,5 @@
 # OsseusEngine
-OsseusEngine is a C++20 physics engine focused on real-time rigid-body and particle simulation. It provides a modular physics architecture with numerical integration, collision detection, spatial acceleration structures, and extensible force systems.
+OsseusEngine is a C++20 physics engine focused on real-time rigid-body particle simulation and video game development. It provides a modular physics architecture with numerical integration, collision detection, spatial acceleration structures, and extensible force systems.
 
 The engine is currently under active development.
 
