@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OSSEUS_SANDBOX_DASHBOARD_H
+#define OSSEUS_SANDBOX_DASHBOARD_H
 
 #include <SFML/Graphics.hpp>
 
@@ -41,7 +42,7 @@ namespace sandbox {
     };
 
     class Dashboard {
-    public:
+        public:
         explicit Dashboard(const sf::Font& font);
 
         void SetTelemetry(const Telemetry& telemetry);
@@ -50,7 +51,9 @@ namespace sandbox {
 
         void Draw(sf::RenderWindow& window);
 
-    private:
+        sf::FloatRect GetSimulationBounds(const sf::Vector2f& viewSize) const;
+
+        private:
         struct Layout {
             sf::FloatRect simulation;
             sf::FloatRect status;
@@ -58,65 +61,31 @@ namespace sandbox {
             sf::FloatRect eventLog;
         };
 
-        Layout CalculateLayout(
-            const sf::Vector2f& viewSize
-        ) const;
+        Layout CalculateLayout(const sf::Vector2f& viewSize) const;
 
         void DrawHeader(sf::RenderWindow& window);
 
-        void DrawSimulationPanel(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds
-        );
+        void DrawSimulationPanel(sf::RenderWindow& window, const sf::FloatRect& bounds);
 
-        void DrawStatusPanel(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds
-        );
+        void DrawStatusPanel(sf::RenderWindow& window, const sf::FloatRect& bounds);
 
-        void DrawSimulationInfo(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds
-        );
+        void DrawSimulationInfo(sf::RenderWindow& window, const sf::FloatRect& bounds);
 
-        void DrawEventLog(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds
-        );
+        void DrawEventLog(sf::RenderWindow& window, const sf::FloatRect& bounds);
 
-        void DrawPanel(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds
-        );
+        void DrawPanel(sf::RenderWindow& window, const sf::FloatRect& bounds);
 
-        void DrawPanelHeader(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds,
-            const std::string& title,
-            const std::string& status
-        );
+        void DrawPanelHeader(sf::RenderWindow& window, const sf::FloatRect& bounds, const std::string& title,
+                             const std::string& status);
 
-        void DrawText(
-            sf::RenderWindow& window,
-            const std::string& string,
-            const sf::Vector2f& position,
-            unsigned int characterSize,
-            const sf::Color& color
-        );
+        void DrawText(sf::RenderWindow& window, const std::string& string, const sf::Vector2f& position,
+                      unsigned int characterSize, const sf::Color& color);
 
-        void DrawMetric(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds,
-            const std::string& label,
-            const std::string& value
-        );
+        void DrawMetric(sf::RenderWindow& window, const sf::FloatRect& bounds, const std::string& label,
+                        const std::string& value);
 
-        void DrawDataRow(
-            sf::RenderWindow& window,
-            const sf::FloatRect& bounds,
-            const std::string& label,
-            const std::string& value
-        );
+        void DrawDataRow(sf::RenderWindow& window, const sf::FloatRect& bounds, const std::string& label,
+                         const std::string& value);
 
         const sf::Font& font_;
         DashboardColors colors_;
@@ -125,3 +94,5 @@ namespace sandbox {
     };
 
 } // namespace sandbox
+
+#endif

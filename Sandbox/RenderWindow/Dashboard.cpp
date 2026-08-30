@@ -183,6 +183,10 @@ namespace sandbox {
         DrawMetric(window, {{bounds.position.x + metricWidth, contentY + 82.0f}, {metricWidth, 82.0f}}, "PHYSICS",
                    FormatDouble(telemetry_.physicsTimeMs, 2) + " ms");
     }
+    
+    sf::FloatRect Dashboard::GetSimulationBounds(const sf::Vector2f& viewSize) const {
+        return CalculateLayout(viewSize).simulation;
+    }
 
     void Dashboard::DrawSimulationInfo(sf::RenderWindow& window, const sf::FloatRect& bounds) {
         if (bounds.size.x < MinimumPanelWidth || bounds.size.y < MinimumPanelHeight) {
