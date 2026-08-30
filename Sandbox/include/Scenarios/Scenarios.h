@@ -3,5 +3,6 @@
 
 #include "IScenario.h"
 #include "OrbitScenario.h"
+#include "BinaryScenario.h"
 
 #endif

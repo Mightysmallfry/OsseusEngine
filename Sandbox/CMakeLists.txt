@@ -5,6 +5,7 @@ add_executable(osseus-sandbox
         RenderWindow/Dashboard.cpp
         RenderWindow/RenderWindow.cpp
         src/Scenarios/OrbitScenario.cpp
+        src/Scenarios/BinaryScenario.cpp
 )
 
 
