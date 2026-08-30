@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 8/16/2026.
-//
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <Osseus/Osseus.h>

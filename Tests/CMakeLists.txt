@@ -17,11 +17,21 @@ add_executable(OsseusTests
         math/CollisionTests.cpp
         math/Vector3Tests.cpp
         physics/ForceTests.cpp
-        physics/OctreeTests.cpp
+        # physics/OctreeTests.cpp
         physics/BarnesHutExclusionTests.cpp
         physics/OrbitTests.cpp
+
         system/LockstepTests.cpp
         system/Octreerootboundstests.cpp
+
+        object-storage/HandleRegistryTests.cpp
+        object-storage/SparseSetTests.cpp
+
+        manager/ForceManagerTests.cpp
+        manager/BodyManagerTests.cpp
+        manager/ShapeManagerTests.cpp
+
+        data-structure/OctreeTests.cpp
         )
 
 target_link_libraries(
