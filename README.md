@@ -14,6 +14,7 @@ The engine is currently under active development.
     - GJK/EPA collision detection
 - Octree spatial partitioning
 - Barnes-Hut force approximation
+- Baumgarte-style contact stabilization
 - Extensible force system
     - Universal and per-body forces
 - Catch2-based physics tests

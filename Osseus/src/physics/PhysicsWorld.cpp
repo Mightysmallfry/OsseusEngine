@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 7/16/2026.
-//
-
 #include <algorithm>
 #include <cstddef>
 #include <limits>
@@ -135,8 +131,8 @@ namespace osseus {
         narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
 
         // ============ Resolve Collisions ============
-        // Solver
-        solver_.ResolveContacts(collisionManifold_, bodyManager_);
+        // BaumGarte
+        baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
 
         // =========== Apply Universal Forces ===========
         RebuildOctree();

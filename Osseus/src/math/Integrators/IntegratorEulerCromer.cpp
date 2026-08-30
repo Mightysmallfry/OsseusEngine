@@ -1,8 +1,4 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
-#include "../../../include/Osseus/math/Integrators/IntegratorEulerCromer.h"
+#include "Osseus/math/Integrators/IntegratorEulerCromer.h"
 
 namespace osseus {
     void IntegratorEulerCromer::Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) {

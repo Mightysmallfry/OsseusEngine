@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/24/2026.
-//
-
 #ifndef OSSEUSENGINE_SHAPECUBE_H
 #define OSSEUSENGINE_SHAPECUBE_H
+
 #include "Osseus/interfaces/IShape.h"
 
 namespace osseus {

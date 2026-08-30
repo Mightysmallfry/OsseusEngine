@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 8/2/2026
-//
-
 #ifndef OSSEUS_QUATERNION_H
 #define OSSEUS_QUATERNION_H
 

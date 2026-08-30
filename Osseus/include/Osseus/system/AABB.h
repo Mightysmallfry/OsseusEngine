@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
 #ifndef OSSEUSENGINE_AABB_H
 #define OSSEUSENGINE_AABB_H
+
 #include "Osseus/math/Vector3.h"
 
 namespace osseus {

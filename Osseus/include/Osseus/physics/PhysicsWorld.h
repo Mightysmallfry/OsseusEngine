@@ -1,17 +1,13 @@
-//
-// Created by MightySmallFry on 7/16/2026.
-//
-
 #ifndef OSSEUSENGINE_PHYSICSWORLD_H
 #define OSSEUSENGINE_PHYSICSWORLD_H
-#include <stdint.h>
 
+#include <stdint.h>
 #include <memory>
 #include <vector>
 
 #include "Osseus/interfaces/IIntegrator.h"
 #include "Osseus/math/Integrators/IntegratorEulerCromer.h"
-#include "Osseus/math/Solver.h"
+#include "Osseus/math/Baumgarte.h"
 #include "Osseus/physics/BarnesHut.h"
 #include "Osseus/physics/Octree.h"
 #include "Osseus/system/BodyManager.h"
@@ -100,7 +96,7 @@ namespace osseus {
         BarnesHut barnesHut_;
         BroadPhase broadPhase_;
         NarrowPhase narrowPhase_;
-        Solver solver_;
+        Baumgarte baumGarte_;
         
         int objectCount_{ 0 };
         double elapsedTime_{ 0.0 };

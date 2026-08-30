@@ -39,8 +39,8 @@ int main() {
 
     sandbox::Dashboard dashboard(font);
 
-    // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
-    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::BinaryScenario>();
+    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
+    // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::BinaryScenario>();
 
     const sf::FloatRect simulationBounds = dashboard.GetSimulationBounds(renderWindow.Get().getView().getSize());
     scenario->Initialize(world, simulationBounds.size.x, simulationBounds.size.y);

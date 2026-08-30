@@ -14,25 +14,11 @@ namespace osseus {
         Vector3 normal = (pb - pa).Cross(pc - pa);
         double lengthSq = normal.LengthSquared();
         if (lengthSq <= 1e-12) {
-            // Degenerate (near zero-area) triangle. Its "normal" is
-            // meaningless noise, and dotting it against pa can look like
-            // a tiny distance even when this face isn't remotely close
-            // to the real surface. Keep it out of the closest-face search
-            // entirely rather than let it masquerade as a converged hit;
-            // the edge-patching step will supersede it as the polytope grows.
             return Face{a, b, c, Vector3::Zero(), std::numeric_limits<double>::max()};
         }
         normal = normal / std::sqrt(lengthSq);
         double distance = normal.Dot(pa);
 
-        // No per-face orientation correction here. As long as the polytope
-        // stays convex with the origin strictly interior - which EPA's
-        // invariants guarantee - "normal points away from the origin" and
-        // "normal points outward from the solid" are the same condition at
-        // every face. Handedness is fixed once, globally, on the starting
-        // tetrahedron in Resolve(); every face built afterward (including
-        // hole-patches) inherits correct orientation from that single fix
-        // rather than each face re-deriving it locally.
         return Face{a, b, c, normal, distance};
     }
 
@@ -138,10 +124,7 @@ namespace osseus {
             // already in the polytope. This can happen without tripping the
             // convergence check above (e.g. on flat/near-planar Minkowski
             // regions where consecutive support directions keep landing on
-            // the same vertex up to floating-point noise). Pushing it
-            // anyway would build degenerate patch faces that neither
-            // converge nor get pruned, letting the polytope grow without
-            // real progress toward the surface.
+            // the same vertex up to floating-point noise).
             constexpr double duplicatePointEpsilonSq = 1e-10;
             bool isDuplicate = false;
             for (const auto& existing : polytope) {
@@ -176,14 +159,6 @@ namespace osseus {
             for (const auto& edge : uniqueEdges) {
                 faces.push_back(MakeFace(polytope, edge.first, edge.second, newIndex));
             }
-            
-            // double improvement = supportDistance - closest.distance;
-            // std::cerr
-            //     << "EPA iteration " << iteration
-            //     << " | closest: " << closest.distance
-            //     << " | support: " << supportDistance
-            //     << " | improvement: " << improvement
-            //     << '\n';
             
         }
 

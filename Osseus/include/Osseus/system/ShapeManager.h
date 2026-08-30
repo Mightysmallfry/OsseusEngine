@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
 #ifndef OSSEUSENGINE_SHAPEMANAGER_H
 #define OSSEUSENGINE_SHAPEMANAGER_H
+
 #include "SparseSet.h"
 #include <memory>
 

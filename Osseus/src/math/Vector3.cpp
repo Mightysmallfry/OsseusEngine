@@ -1,8 +1,4 @@
-//
-// Created by MightySmallFry on 7/16/2026.
-//
-
-#include "../../include/Osseus/math/Vector3.h"
+#include "Osseus/math/Vector3.h"
 
 #include <cmath>
 #include <ostream>

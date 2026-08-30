@@ -1,5 +1,6 @@
 #ifndef OSSEUSENGINE_INTEGRATOR_H
 #define OSSEUSENGINE_INTEGRATOR_H
+
 #include "IForceEvaluator.h"
 #include "Osseus/system/BodyManager.h"
 #include "Osseus/system/ForceManager.h"

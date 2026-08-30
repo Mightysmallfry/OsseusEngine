@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
 #ifndef OSSEUSENGINE_BROADPHASE_H
 #define OSSEUSENGINE_BROADPHASE_H
+
 #include <vector>
 
 #include "AABB.h"

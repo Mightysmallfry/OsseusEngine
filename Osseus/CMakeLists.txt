@@ -5,7 +5,7 @@ target_sources(Osseus
 
         # Math
         src/math/Vector3.cpp
-        src/math/Solver.cpp
+        src/math/Baumgarte.cpp
         src/math/Quaternion.cpp
         src/math/Collision/EPA.cpp
         src/math/Collision/GJK.cpp
@@ -32,11 +32,6 @@ target_sources(Osseus
         src/system/BroadPhase.cpp
         src/system/NarrowPhase.cpp
         src/system/SimulationState.cpp
-
-        # Interfaces
-        src/interfaces/IIntegrator.cpp
-        src/interfaces/IForceEvaluator.cpp
-        src/interfaces/IShape.cpp
 )
 
 target_include_directories(Osseus

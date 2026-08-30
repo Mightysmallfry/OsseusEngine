@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
 #include "Osseus/system/SparseSet.h"
 
 namespace osseus {

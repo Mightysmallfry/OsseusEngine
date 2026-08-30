@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
 #ifndef OSSEUSENGINE_BODYMANAGER_H
 #define OSSEUSENGINE_BODYMANAGER_H
+
 #include "BodyData.h"
 #include "Osseus/math/Vector3.h"
 #include "SparseSet.h"
@@ -28,9 +25,7 @@ namespace osseus {
         const std::vector<Handle>& Handles() const {
             return bodies_.Handles();
         }
-
-
-
+        
         private:
         SparseSet<BodyData> bodies_;
 

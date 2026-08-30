@@ -1,5 +1,6 @@
 #ifndef OSSEUSENGINE_ISHAPE_H
 #define OSSEUSENGINE_ISHAPE_H
+
 #include "Osseus/math/Vector3.h"
 #include "Osseus/system/AABB.h"
 

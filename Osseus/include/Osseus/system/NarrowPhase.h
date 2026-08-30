@@ -1,5 +1,6 @@
 #ifndef OSSEUSENGINE_NARROWPHASE_H
 #define OSSEUSENGINE_NARROWPHASE_H
+
 #include <vector>
 
 #include "BodyManager.h"

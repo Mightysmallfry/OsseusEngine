@@ -1,8 +1,4 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
-#include "../../include/Osseus/system/ShapeManager.h"
+#include "Osseus/system/ShapeManager.h"
 
 namespace osseus {
     void ShapeManager::AddShape(Handle handle, std::unique_ptr<IShape> shape) {

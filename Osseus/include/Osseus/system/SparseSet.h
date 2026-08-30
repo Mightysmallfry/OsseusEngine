@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 7/19/2026.
-//
-
 #ifndef OSSEUSENGINE_SPARSESET_H
 #define OSSEUSENGINE_SPARSESET_H
 

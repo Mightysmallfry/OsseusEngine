@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
 #ifndef OSSEUSENGINE_REGISTRY_H
 #define OSSEUSENGINE_REGISTRY_H
 

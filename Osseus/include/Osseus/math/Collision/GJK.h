@@ -1,5 +1,6 @@
 #ifndef OSSEUSENGINE_GJK_H
 #define OSSEUSENGINE_GJK_H
+
 #include <array>
 #include <cstddef>
 #include <initializer_list>

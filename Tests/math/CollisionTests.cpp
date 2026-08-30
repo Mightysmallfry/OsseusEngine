@@ -456,10 +456,10 @@ TEST_CASE("Collisions - NarrowPhase skips candidate pairs missing a body or shap
 }
 
 // ==========================================================================
-// Solver
+// Solver - Baumgarte
 // ==========================================================================
 
-TEST_CASE("Collisions - Solver applies equal and opposite impulses to two dynamic bodies", "[solver]")
+TEST_CASE("Collisions - Baumgarte applies equal and opposite impulses to two dynamic bodies", "[Baumgarte]")
 {
     BodyManager bodyManager;
     Handle a{0, 0};
@@ -475,7 +475,7 @@ TEST_CASE("Collisions - Solver applies equal and opposite impulses to two dynami
     contact.pointOnA = Vector3(0.5, 0.0, 0.0);
     contact.pointOnB = Vector3(0.5, 0.0, 0.0);
 
-    Solver solver;
+    Baumgarte solver;
     solver.SetRestitution(0.5);
     solver.ResolveContacts({ contact }, bodyManager);
 
@@ -487,7 +487,7 @@ TEST_CASE("Collisions - Solver applies equal and opposite impulses to two dynami
     RequireWithinAbs(bodyManager.GetBody(b)->position, Vector3(1.076, 0.0, 0.0), 1e-6);
 }
 
-TEST_CASE("Collisions - Solver leaves a static (infinite-mass) body untouched", "[solver]")
+TEST_CASE("Collisions - Baumgarte leaves a static (infinite-mass) body untouched", "[Baumgarte]")
 {
     BodyManager bodyManager;
     Handle floor{0, 0};
@@ -503,7 +503,7 @@ TEST_CASE("Collisions - Solver leaves a static (infinite-mass) body untouched", 
     contact.pointOnA = Vector3(0.0, 0.0, 0.0);
     contact.pointOnB = Vector3(0.0, 1.0, 0.0);
 
-    Solver solver;
+    Baumgarte solver;
     solver.SetRestitution(0.0);
     solver.ResolveContacts({ contact }, bodyManager);
 
@@ -516,7 +516,7 @@ TEST_CASE("Collisions - Solver leaves a static (infinite-mass) body untouched", 
     RequireWithinAbs(bodyManager.GetBody(ball)->position, Vector3(0.0, 1.072, 0.0), 1e-6);
 }
 
-TEST_CASE("Collisions - Solver does nothing when both bodies have infinite mass", "[solver]")
+TEST_CASE("Collisions - Baumgarte does nothing when both bodies have infinite mass", "[Baumgarte]")
 {
     BodyManager bodyManager;
     Handle a{0, 0};
@@ -530,7 +530,7 @@ TEST_CASE("Collisions - Solver does nothing when both bodies have infinite mass"
     contact.normal = Vector3(1.0, 0.0, 0.0);
     contact.penetration = 0.5;
 
-    Solver solver;
+    Baumgarte solver;
     solver.ResolveContacts({ contact }, bodyManager);
 
     RequireWithinAbs(bodyManager.GetBody(a)->velocity, Vector3(5.0, 0.0, 0.0), 1e-9);

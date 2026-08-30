@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
 #ifndef OSSEUSENGINE_SOLVER_H
 #define OSSEUSENGINE_SOLVER_H
+
 #include <vector>
 
 #include "Collision/Contact.h"
@@ -13,7 +10,7 @@ namespace osseus {
     // Impulse-based contact resolution with Baumgarte-style positional
     // correction to counteract the sinking that discrete timesteps
     // otherwise leave behind.
-    class Solver {
+    class Baumgarte {
         public:
         void SetRestitution(double newRestitution) {
             restitution_ = newRestitution;

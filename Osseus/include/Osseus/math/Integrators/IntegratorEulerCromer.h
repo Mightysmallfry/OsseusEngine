@@ -1,9 +1,6 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
 #ifndef OSSEUSENGINE_INTEGRATOREULERCROMER_H
 #define OSSEUSENGINE_INTEGRATOREULERCROMER_H
+
 #include "Osseus/interfaces/IIntegrator.h"
 
 namespace osseus {

@@ -1,8 +1,4 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
-#include "../../include/Osseus/system/BroadPhase.h"
+#include "Osseus/system/BroadPhase.h"
 
 namespace osseus {
     bool BroadPhase::AABBOverlaps(const AABB& ours, const AABB& other) const {

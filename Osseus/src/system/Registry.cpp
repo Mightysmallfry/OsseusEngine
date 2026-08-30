@@ -1,8 +1,4 @@
-//
-// Created by MightySmallFry on 7/20/2026.
-//
-
-#include "../../include/Osseus/system/Registry.h"
+#include "Osseus/system/Registry.h"
 
 namespace osseus {
     Handle Registry::CreateHandle() {

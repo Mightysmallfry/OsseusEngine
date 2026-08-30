@@ -1,5 +1,6 @@
 #ifndef OSSEUSENGINE_CONTACT_H
 #define OSSEUSENGINE_CONTACT_H
+
 #include "Osseus/math/Vector3.h"
 #include "Osseus/system/Handle.h"
 

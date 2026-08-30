@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 8/2/2026.
-//
-
 #include <Osseus/math/Quaternion.h>
 
 #include <cmath>

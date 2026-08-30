@@ -1,7 +1,3 @@
-//
-// Created by MightySmallFry on 7/16/2026.
-//
-
 #ifndef OSSEUSENGINE_VECTOR3_H
 #define OSSEUSENGINE_VECTOR3_H
 

@@ -1,14 +1,8 @@
-//
-// Created by MightySmallFry on 7/24/2026.
-//
-//
-// Created by MightySmallFry on 7/24/2026.
-//
 #include <catch2/catch_test_macros.hpp>
 
 #include <Osseus/Osseus.h>
 
-TEST_CASE("Integrator - Euler-Cromer integrates constant gravity")
+TEST_CASE("Integrator - Euler-Cromer integrates constant gravity", "[Euler-Cromer]")
 {
     const double delta = 0.05;
 

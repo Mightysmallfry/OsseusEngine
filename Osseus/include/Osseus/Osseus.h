@@ -1,10 +1,9 @@
 #ifndef OSSEUSENGINE_OSSEUS_H
 #define OSSEUSENGINE_OSSEUS_H
 
-
 // Osseus.h — umbrella header for the Osseus physics engine.
 // Includes every public header in the engine so consumers can
-// pull in the whole library with a single #include "Osseus.h".
+// pull in the whole library with a single #include "Osseus/Osseus.h".
 
 // --- interfaces ---
 #include "interfaces/IForceEvaluator.h"
@@ -14,7 +13,7 @@
 // --- math ---
 #include "math/Vector3.h"
 #include "math/Quaternion.h"
-#include "math/Solver.h"
+#include "math/Baumgarte.h"
 
 // --- math / Integrator
 #include "math/Integrators/IntegratorEulerCromer.h"

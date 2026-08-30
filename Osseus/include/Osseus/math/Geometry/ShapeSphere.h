@@ -1,11 +1,9 @@
-//
-// Created by MightySmallFry on 7/21/2026.
-//
-
 #ifndef OSSEUSENGINE_CIRCLE_H
 #define OSSEUSENGINE_CIRCLE_H
-#include "Osseus/interfaces/IShape.h"
+
 #include <cmath>
+
+#include "Osseus/interfaces/IShape.h"
 
 namespace osseus {
     class ShapeSphere : public IShape {

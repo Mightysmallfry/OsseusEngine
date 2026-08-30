@@ -1,9 +1,9 @@
-#include "Osseus/math/Solver.h"
+#include "Osseus/math/Baumgarte.h"
 
 #include <algorithm>
 
 namespace osseus {
-    void Solver::ResolveContacts(const std::vector<Contact>& contacts, BodyManager& bodyManager) const {
+    void Baumgarte::ResolveContacts(const std::vector<Contact>& contacts, BodyManager& bodyManager) const {
         for (const Contact& contact : contacts) {
             BodyData* bodyA = bodyManager.GetBody(contact.a);
             BodyData* bodyB = bodyManager.GetBody(contact.b);
