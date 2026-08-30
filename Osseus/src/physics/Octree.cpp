@@ -403,6 +403,11 @@ namespace osseus {
     Octree::Octree(const Bounds& rootBounds) : rootBounds_(rootBounds), root_(std::make_unique<OctNode>(rootBounds)) {
     }
 
+    void Octree::SetRootBounds(const Bounds& rootBounds) {
+        rootBounds_ = rootBounds;
+        root_ = std::make_unique<OctNode>(rootBounds_);
+    }
+
     void Octree::Clear() {
         root_ = std::make_unique<OctNode>(rootBounds_);
     }

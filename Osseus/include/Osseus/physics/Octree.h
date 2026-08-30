@@ -105,6 +105,15 @@ namespace osseus {
         Octree();
         explicit Octree(const Bounds& rootBounds);
 
+        // Replaces the root bounds and drops the current tree. Must be
+        // called whenever the actual extent of the bodies being inserted
+        // may no longer fit the existing root bounds -- a stale/undersized
+        // root silently breaks the Barnes-Hut opening-angle test AND the
+        // inBounds() self-exclusion pre-check in UniversalGravity /
+        // UniversalElectroMag, since both key off of GetBounds() width and
+        // containment, not the actual inserted positions.
+        void SetRootBounds(const Bounds& rootBounds);
+
         void Clear();
         void Insert(Entry entry);
         void Insert(Handle handle, const Vector3& position, double mass, double charge);

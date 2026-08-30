@@ -80,6 +80,12 @@ namespace osseus {
         void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
         
         void SyncState();
+
+        // Computes an AABB over the current body positions (with padding),
+        // for use as the octree's root bounds. RebuildOctree() must derive
+        // fresh bounds from the actual bodies every call rather than
+        // relying on a fixed default -- see Octree::SetRootBounds.
+        Bounds ComputeWorldBounds() const;
         
         std::vector<Handle> destructionQueue_;
         std::vector<Contact> collisionManifold_;

@@ -21,6 +21,7 @@ add_executable(OsseusTests
         physics/BarnesHutExclusionTests.cpp
         physics/OrbitTests.cpp
         system/LockstepTests.cpp
+        system/Octreerootboundstests.cpp
         )
 
 target_link_libraries(

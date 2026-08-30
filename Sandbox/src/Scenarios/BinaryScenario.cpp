@@ -19,8 +19,8 @@ namespace sandbox {
 
         orbitalRadius_ = 200;
         // orbitalRadius_ = std::min(width_, height_) * 0.15;
-        // orbitalSpeed_ = std::sqrt(starMass_ / (4.0 * orbitalRadius_));
-        orbitalSpeed_ = 11.18;
+        orbitalSpeed_ = std::sqrt(starMass_ / (4.0 * orbitalRadius_));
+        
 
         // ==================== Star 1
 
