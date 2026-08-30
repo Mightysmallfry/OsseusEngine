@@ -11,7 +11,7 @@ namespace sandbox {
         width_ = width;
         height_ = height;
 
-        world.SetIntegrator(std::make_unique<osseus::IntegratorEulerCromer>());
+        world.SetIntegrator(std::make_unique<osseus::IntegratorRungeKutta4>());
 
         world.GetForceManager().AddUniversal(&universalGravity_);
 
