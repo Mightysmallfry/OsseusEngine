@@ -67,7 +67,7 @@ namespace osseus {
             return false;
         }
 
-        return denseHandles_[index].index == handle.index;
+        return denseHandles_[index] == handle;
     }
 
     template <typename T> size_t SparseSet<T>::size() const {

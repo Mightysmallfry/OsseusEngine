@@ -13,7 +13,7 @@ namespace sandbox {
 
     // ==================== Central Body
 
-    const double staticMass = 250000.0;
+    const double staticMass = 500000.0;
 
     osseus::BodyData staticBody{osseus::Vector3::Zero(), osseus::Vector3::Zero(), staticMass, 0.0, 0.0};
 
@@ -39,7 +39,7 @@ namespace sandbox {
 
     // ==================== Particles
 
-    const std::size_t bodyCount = 250;
+    const std::size_t bodyCount = 1000;
     const double mass = 1.0;
     const double speed = 50.0;
 

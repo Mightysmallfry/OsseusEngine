@@ -13,7 +13,7 @@ namespace osseus {
     }
 
     const Vector3& ForceManager::Get(Handle handle) const {
-        return netForces_[handle.index];
+        return netForces_.at(handle.index);
     }
 
     void ForceManager::Register(Handle handle) {

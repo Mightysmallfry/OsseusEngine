@@ -19,6 +19,24 @@
 
 namespace osseus {
 
+    enum class CollisionMode {
+        ENABLED,
+        DISABLED
+    };
+
+    enum class ApproximationMode {
+        EXACT,
+        NORMAL,
+        LIGHT
+    };
+
+    enum class BoundaryMode {
+        NONE,
+        CLAMP,
+        PERIODIC,
+        BOUNCE
+    };
+
     class PhysicsWorld {
         public:
         PhysicsWorld() : integrator_(std::make_unique<IntegratorEulerCromer>()) {

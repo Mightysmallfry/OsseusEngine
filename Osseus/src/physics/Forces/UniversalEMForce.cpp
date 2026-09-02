@@ -56,7 +56,7 @@ namespace osseus {
             return Vector3::Zero();
         }
 
-        const double forceMag = (OsseusConstants::CoulombConstant * queryCharge * sourceCharge) / distSq;
+        const double forceMag = -(OsseusConstants::CoulombConstant * queryCharge * sourceCharge) / distSq;
         return offset * (forceMag / dist); // (offset / dist) is the unit direction
     }
 

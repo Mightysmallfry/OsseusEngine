@@ -8,10 +8,10 @@
 
 namespace {
 
-    TEST_CASE("ForceManager starts with no forces", "[ForceManager]") {
+    TEST_CASE("ForceManager throws when given invalid handle", "[ForceManager]") {
         osseus::ForceManager forceManager;
 
-        REQUIRE(forceManager.Get(osseus::Handle{0, 0}) == osseus::Vector3());
+        REQUIRE_THROWS_AS(forceManager.Get(osseus::Handle{0, 0}),std::out_of_range);
     }
 
 

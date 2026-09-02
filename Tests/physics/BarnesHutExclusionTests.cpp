@@ -261,7 +261,7 @@ TEST_CASE("UniversalElectroMag - CalculateForce excludes self-force after the tr
     const Vector3 offset = positionB - positionA;
     const double distSq = offset.LengthSquared();
     const double dist = std::sqrt(distSq);
-    const double forceMag = (OsseusConstants::CoulombConstant * 2.0 * -3.0) / distSq;
+    const double forceMag = -(OsseusConstants::CoulombConstant * 2.0 * -3.0) / distSq;
     const Vector3 expected = offset * (forceMag / dist);
 
     const Vector3 result = electroMag.CalculateForce(tree.GetRoot(), handleA, bodyA);

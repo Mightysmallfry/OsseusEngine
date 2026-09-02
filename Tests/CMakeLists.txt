@@ -11,6 +11,7 @@
 find_package(Catch2 3 REQUIRED)
 
 add_executable(OsseusTests
+        # Test that need adjustments
         math/RK4Tests.cpp
         math/EulerCromerTests.cpp
         math/QuaternionTests.cpp
@@ -22,16 +23,32 @@ add_executable(OsseusTests
         physics/OrbitTests.cpp
 
         system/LockstepTests.cpp
-        system/Octreerootboundstests.cpp
-
+        system/Octreerootboundstests.cpp        
+        
+        # Good Tests
+        system/BaumgarteTests.cpp
+        system/BroadPhaseTests.cpp
+        system/NarrowPhaseTests.cpp
+        system/GJKBoundaryTests.cpp
+        
         object-storage/HandleRegistryTests.cpp
         object-storage/SparseSetTests.cpp
-
+        
         manager/ForceManagerTests.cpp
         manager/BodyManagerTests.cpp
         manager/ShapeManagerTests.cpp
-
+        manager/ShapeTests.cpp
+        
         data-structure/OctreeTests.cpp
+        data-structure/OctreeChargeTests.cpp
+        data-structure/AABBTests.cpp
+        
+        forces/GravityEMTests.cpp
+        forces/IndividualForceTests.cpp
+
+        integrators/EulerCromerKinematicsTests.cpp
+        integrators/RK4ExpandedTests.cpp
+        integrators/IntegratorComparisonTests.cpp
         )
 
 target_link_libraries(
