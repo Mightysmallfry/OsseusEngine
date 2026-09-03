@@ -35,11 +35,12 @@ int main() {
 
     osseus::PhysicsWorld world;
 
-    const double delta = 1.0 / 60.0;
+    const double delta = 1.0 / 120.0;
 
     sandbox::Dashboard dashboard(font);
 
-    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
+    // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
+    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyContactlessScenario>();
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::BinaryScenario>();
 
     const sf::FloatRect simulationBounds = dashboard.GetSimulationBounds(renderWindow.Get().getView().getSize());

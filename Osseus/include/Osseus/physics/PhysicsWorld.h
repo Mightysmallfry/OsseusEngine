@@ -89,6 +89,8 @@ namespace osseus {
             return collisionManifold_;
         }
 
+        void SetCollisionMode(CollisionMode mode);
+
         private:        
         void AttachBody(Handle handle, BodyData bodyData);
         void AttachShape(Handle handle, std::unique_ptr<IShape> shape);
@@ -101,6 +103,11 @@ namespace osseus {
         // relying on a fixed default -- see Octree::SetRootBounds.
         Bounds ComputeWorldBounds() const;
         
+        CollisionMode collisionMode_{ CollisionMode::ENABLED };
+        BoundaryMode boundaryMode_{ BoundaryMode::BOUNCE };
+        ApproximationMode ApproximationMode_{ ApproximationMode::NORMAL};
+
+
         std::vector<Handle> destructionQueue_;
         std::vector<Contact> collisionManifold_;
         std::unique_ptr<IIntegrator> integrator_;

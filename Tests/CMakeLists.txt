@@ -26,10 +26,18 @@ add_executable(OsseusTests
         system/Octreerootboundstests.cpp        
         
         # Good Tests
+        physics/PhysicsWorldEdgeCaseTests.cpp
+        physics/SimulationStateTests.cpp
+
         system/BaumgarteTests.cpp
         system/BroadPhaseTests.cpp
         system/NarrowPhaseTests.cpp
         system/GJKBoundaryTests.cpp
+        system/LifecycleStressTests.cpp
+        system/OrderAndDeterminismTests.cpp
+        system/PipelineScenarioTests.cpp
+        system/CoreInvariantsTests.cpp
+        system/NumericalEdgeCaseTests.cpp
         
         object-storage/HandleRegistryTests.cpp
         object-storage/SparseSetTests.cpp

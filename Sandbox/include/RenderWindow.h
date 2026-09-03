@@ -24,6 +24,11 @@ namespace sandbox {
 
         sf::RenderWindow& Get();
 
+        int GetScale() const { return scale_; }
+        void SetScale(float pixelsPerUnit);
+
+        float ComputeFitScale(double worldRadius, const sf::FloatRect& bounds) const;
+
         private:
         void HandleResize(const sf::Event::Resized& event);
         void UpdateView(unsigned int width, unsigned int height);
@@ -31,6 +36,7 @@ namespace sandbox {
         sf::Vector2f WorldToScreen(const osseus::Vector3& position, const sf::FloatRect& bounds) const;
 
         sf::RenderWindow window_;
+        float scale_ = 1.0f; // > 1 zooms in
     };
 
 } // namespace sandbox

@@ -66,8 +66,17 @@ namespace sandbox {
     }
 
     sf::Vector2f RenderWindow::WorldToScreen(const osseus::Vector3& position, const sf::FloatRect& bounds) const {
-        return {bounds.position.x + bounds.size.x / 2.0f + static_cast<float>(position.x),
-                bounds.position.y + bounds.size.y / 2.0f - static_cast<float>(position.y)};
+        return {bounds.position.x + bounds.size.x / 2.0f + static_cast<float>(position.x) * scale_,
+                bounds.position.y + bounds.size.y / 2.0f - static_cast<float>(position.y) * scale_};
     }
 
+    void RenderWindow::SetScale(float pixelsPerUnit) {
+        scale_ = pixelsPerUnit;
+    }
+
+    float RenderWindow::ComputeFitScale(double worldRadius, const sf::FloatRect& bounds) const {
+        const float smallerDimension = std::min(bounds.size.x, bounds.size.y);
+       return smallerDimension / (2.0f * static_cast<float>(worldRadius));
+    }
+    
 } // namespace sandbox

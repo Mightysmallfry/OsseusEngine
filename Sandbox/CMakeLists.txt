@@ -6,6 +6,7 @@ add_executable(osseus-sandbox
         RenderWindow/RenderWindow.cpp
         src/Scenarios/OrbitScenario.cpp
         src/Scenarios/BinaryScenario.cpp
+        src/Scenarios/NBodyContactlessScenario.cpp
 )
 
 

@@ -123,17 +123,21 @@ namespace osseus {
 
     void PhysicsWorld::Step(double delta) {
         elapsedTime_ += delta;
-        // ============ Detect Collisions ============
-        // Broad Phase
-        std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
-        // Narrow Phase (GJK/EPA via IShape::Support)
-        narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
 
-        // ============ Resolve Collisions ============
-        // BaumGarte
-        baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
+        if (collisionMode_ == CollisionMode::ENABLED){
+            // ============ Detect Collisions ============
+            // Broad Phase
+            std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
+            // Narrow Phase (GJK/EPA via IShape::Support)
+            narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
+        
+        
+            // ============ Resolve Collisions ============
+            // BaumGarte
+            baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
+        }
         // =========== Apply Universal Forces ===========
         RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
@@ -174,6 +178,10 @@ namespace osseus {
         }
 
         forceManager_.Clear();
+    }
+
+    void PhysicsWorld::SetCollisionMode(CollisionMode mode) {
+        collisionMode_ = mode;
     }
 
 } // namespace osseus
