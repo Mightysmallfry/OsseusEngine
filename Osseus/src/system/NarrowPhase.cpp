@@ -1,5 +1,7 @@
 #include "Osseus/system/NarrowPhase.h"
 
+#include <iostream>
+
 #include "Osseus/math/Collision/EPA.h"
 #include "Osseus/math/Collision/GJK.h"
 
@@ -10,7 +12,6 @@ namespace osseus {
         contacts.clear();
         contacts.reserve(candidates.size());
                                                    
-
         for (const CollisionCandidatePair& candidate : candidates) {
             BodyData* bodyA = bodyManager.GetBody(candidate.a);
             BodyData* bodyB = bodyManager.GetBody(candidate.b);
@@ -18,6 +19,7 @@ namespace osseus {
             IShape* shapeB = shapeManager.GetShape(candidate.b);
 
             if (!bodyA || !bodyB || !shapeA || !shapeB) {
+                std::cerr << "Invalid Collision pairing\n";
                 continue;
             }
 

@@ -1,6 +1,7 @@
 #include "Osseus/math/Baumgarte.h"
 
 #include <algorithm>
+#include <iostream>
 
 namespace osseus {
     void Baumgarte::ResolveContacts(const std::vector<Contact>& contacts, BodyManager& bodyManager) const {
@@ -8,6 +9,7 @@ namespace osseus {
             BodyData* bodyA = bodyManager.GetBody(contact.a);
             BodyData* bodyB = bodyManager.GetBody(contact.b);
             if (!bodyA || !bodyB) {
+                std::cerr << "Invalid contact found\n";
                 continue;
             }
 

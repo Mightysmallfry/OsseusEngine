@@ -14,7 +14,7 @@ namespace sandbox {
         osseus::UniversalGravity universalGravity_;
 
         double boundaryRadius_ = 0.0;
-        double particleRadius_ = 2.0;
+        double particleRadius_ = 5.0;
         double staticRadius_ = 5.0;
     };
 

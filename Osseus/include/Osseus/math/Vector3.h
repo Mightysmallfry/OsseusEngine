@@ -156,6 +156,8 @@ namespace osseus {
             return Vector3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
         }
 
+        [[nodiscard]] bool IsFinite() const noexcept;
+
         // Not constexpr: std::stringstream isn't constexpr-friendly.
         // Defined in Vector3.cpp.
         [[nodiscard]] std::string ToString() const;

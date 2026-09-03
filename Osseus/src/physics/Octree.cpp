@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Osseus/physics/Octree.h"
 
 namespace osseus {
@@ -10,6 +12,7 @@ namespace osseus {
 
     void OctNode::Insert(Handle handle, const Vector3& position, double mass, double charge) {
         if (mass <= 0.0) {
+            std::cerr << "Octree insertion attempted with mass < 0.0\n";
             return;
         }
 
@@ -299,6 +302,7 @@ namespace osseus {
         bodyCount_ = newBodyCount;
     }
 
+    // TODO: Implementent NaN catches. Something is happening with math and division.
     void OctNode::UpdateProperties() {
         totalMass_ = 0.0;
         centerOfMass_ = Vector3::Zero();

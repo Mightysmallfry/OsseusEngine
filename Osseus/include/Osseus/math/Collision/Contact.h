@@ -12,7 +12,9 @@ namespace osseus {
         Vector3 pointOnA;        // world-space witness point on A's surface
         Vector3 pointOnB;        // world-space witness point on B's surface
         double penetration{0.0}; // depth of overlap along normal, >= 0
+    
     };
+
 } // namespace osseus
 
 #endif // OSSEUSENGINE_CONTACT_H

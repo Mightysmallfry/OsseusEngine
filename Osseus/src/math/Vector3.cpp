@@ -40,6 +40,13 @@ namespace osseus {
         return result;
     }
 
+    bool Vector3::IsFinite() const noexcept {
+        return x == x && y == y && z == z && x != std::numeric_limits<double>::infinity() &&
+               x != -std::numeric_limits<double>::infinity() && y != std::numeric_limits<double>::infinity() &&
+               y != -std::numeric_limits<double>::infinity() && z != std::numeric_limits<double>::infinity() &&
+               z != -std::numeric_limits<double>::infinity();
+    }
+
     // Return a string with a vector formatted as [X, Y, Z]
     std::string Vector3::ToString() const {
         std::stringstream ss;

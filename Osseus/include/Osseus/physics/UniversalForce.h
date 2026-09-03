@@ -20,7 +20,7 @@ namespace osseus {
 
         protected:
         double theta_{0.25};    // Accuracy or Speed, 0 -> 1.0, strict to loose
-        double softening_{0.0}; // Softens distance calculations
+        double softening_{0.01}; // Softens distance calculations
     };
 
 } // namespace osseus

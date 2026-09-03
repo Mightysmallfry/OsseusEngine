@@ -5,7 +5,7 @@
 #include "Scenarios/Scenarios.h"
 
 #include <SFML/System/Clock.hpp>
-
+#include <iostream>
 #include <memory>
 
 void UpdateTelemetry(double delta, double fps, double frameTimeMs, double physicsTimeMs, sandbox::Telemetry& telemetry,
@@ -35,7 +35,7 @@ int main() {
 
     osseus::PhysicsWorld world;
 
-    const double delta = 1.0 / 120.0;
+    const double delta = 1.0 / 60.0;
 
     sandbox::Dashboard dashboard(font);
 

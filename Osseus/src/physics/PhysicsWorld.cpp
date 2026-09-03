@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 #include <limits>
 
 #include "Osseus/physics/PhysicsWorld.h"
@@ -38,6 +39,7 @@ namespace osseus {
 
     void PhysicsWorld::DestroyBody(Handle handle) {
         if (!registry_.IsValid(handle)) {
+            std::cerr << "Invalid Handle used to Destroy Body\n";
             return;
         }
         bodyManager_.RemoveBody(handle);
@@ -124,8 +126,11 @@ namespace osseus {
     void PhysicsWorld::Step(double delta) {
         elapsedTime_ += delta;
 
+        if (!integrator_) {
+            std::cerr << "No integregrator selected for PhysicsWorld object";
+        }
 
-        if (collisionMode_ == CollisionMode::ENABLED){
+        // if (collisionMode_ == CollisionMode::ENABLED){
             // ============ Detect Collisions ============
             // Broad Phase
             std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
@@ -133,11 +138,11 @@ namespace osseus {
             // Narrow Phase (GJK/EPA via IShape::Support)
             narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
         
-        
             // ============ Resolve Collisions ============
             // BaumGarte
             baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
-        }
+        // }
+
         // =========== Apply Universal Forces ===========
         RebuildOctree();
         // Apply Universal Forces Via Barnes Hut
@@ -152,12 +157,26 @@ namespace osseus {
         // Integrator
         integrator_->Step(bodyManager_, forceManager_, delta);
 
+        if (candidates.size() > 0){
+                std::cout << "Collisions at " << elapsedTime_ << "\n";
+            } else {
+                for (Handle handle : bodyManager_.Handles()) {
+                    std::cout << handle.index << " P: " << bodyManager_.GetBody(handle)->position;
+                    std::cout << " V: " << bodyManager_.GetBody(handle)->velocity;
+                    std::cout << " F: " << forceManager_.Get(handle) << "\n";
+                }
+
+
+                std::exit(EXIT_FAILURE);
+            }
+        
         // Sync State
         SyncState();
     }
 
     BodyData* PhysicsWorld::GetBody(Handle handle) {
         if (!registry_.IsValid(handle)) {
+            std::cerr << "Invalid Handle used to GetBody\n";
             return nullptr;
         }
         return bodyManager_.GetBody(handle);
@@ -165,6 +184,7 @@ namespace osseus {
 
     const BodyData* PhysicsWorld::GetBody(Handle handle) const {
         if (!registry_.IsValid(handle)) {
+            std::cerr << "Invalid Handle used to GetBody\n";
             return nullptr;
         }
         return bodyManager_.GetBody(handle);
