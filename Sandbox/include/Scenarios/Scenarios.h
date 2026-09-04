@@ -4,6 +4,6 @@
 #include "IScenario.h"
 #include "OrbitScenario.h"
 #include "BinaryScenario.h"
-#include "NBodyContactlessScenario.h"
+#include "NBodyContactScenario.h"
 
 #endif

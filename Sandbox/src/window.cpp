@@ -40,7 +40,7 @@ int main() {
     sandbox::Dashboard dashboard(font);
 
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
-    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyContactlessScenario>();
+    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyContactScenario>();
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::BinaryScenario>();
 
     const sf::FloatRect simulationBounds = dashboard.GetSimulationBounds(renderWindow.Get().getView().getSize());
