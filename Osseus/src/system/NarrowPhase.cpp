@@ -28,8 +28,15 @@ namespace osseus {
                 continue;
             }
 
-            contacts.push_back(
-                EPA::Resolve(*shapeA, bodyA->position, candidate.a, *shapeB, bodyB->position, candidate.b, simplex));
+            Contact contact = EPA::Resolve(*shapeA, bodyA->position, candidate.a, *shapeB, bodyB->position, candidate.b, simplex);
+
+            // Verify that the contact is non-degenerate
+            // Stop the bad contact from entering the manifold
+            if (contact.normal.LengthSquared() < Vector3::TOLERANCE){
+                std::cerr << "Discarding degenerate EPA result (zero-length normal)\n";
+                continue;
+            }
+            contacts.push_back(contact);
         }
     }
 } // namespace osseus

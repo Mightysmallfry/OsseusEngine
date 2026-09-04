@@ -130,7 +130,7 @@ namespace osseus {
             std::cerr << "No integregrator selected for PhysicsWorld object";
         }
 
-        // if (collisionMode_ == CollisionMode::ENABLED){
+        if (collisionMode_ == CollisionMode::ENABLED){
             // ============ Detect Collisions ============
             // Broad Phase
             std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
@@ -141,7 +141,7 @@ namespace osseus {
             // ============ Resolve Collisions ============
             // BaumGarte
             baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
-        // }
+        }
 
         // =========== Apply Universal Forces ===========
         RebuildOctree();
@@ -156,20 +156,7 @@ namespace osseus {
         // ============ Resolve Trajectories ============
         // Integrator
         integrator_->Step(bodyManager_, forceManager_, delta);
-
-        if (candidates.size() > 0){
-                std::cout << "Collisions at " << elapsedTime_ << "\n";
-            } else {
-                for (Handle handle : bodyManager_.Handles()) {
-                    std::cout << handle.index << " P: " << bodyManager_.GetBody(handle)->position;
-                    std::cout << " V: " << bodyManager_.GetBody(handle)->velocity;
-                    std::cout << " F: " << forceManager_.Get(handle) << "\n";
-                }
-
-
-                std::exit(EXIT_FAILURE);
-            }
-        
+       
         // Sync State
         SyncState();
     }

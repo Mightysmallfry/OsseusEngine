@@ -68,6 +68,7 @@ namespace osseus {
         contact.penetration = face.distance;
         contact.pointOnA = polytope[face.a].pointA * u + polytope[face.b].pointA * v + polytope[face.c].pointA * w;
         contact.pointOnB = polytope[face.a].pointB * u + polytope[face.b].pointB * v + polytope[face.c].pointB * w;
+        
         return contact;
     }
 
@@ -161,6 +162,7 @@ namespace osseus {
             }
             
         }
+
 
         return BuildContact(polytope, closest, handleA, handleB);
     }

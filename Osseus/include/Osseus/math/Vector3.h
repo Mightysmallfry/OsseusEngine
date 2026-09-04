@@ -6,6 +6,7 @@
 #include <iosfwd>
 #include <stdexcept>
 #include <string>
+#include <cassert>
 
 namespace osseus {
 
@@ -72,7 +73,10 @@ namespace osseus {
         }
 
         [[nodiscard]] constexpr Vector3 operator*(double scalar) const noexcept {
-            return Vector3(x * scalar, y * scalar, z * scalar);
+            Vector3 result(x * scalar, y * scalar, z * scalar);
+            assert(result.IsFinite() && "Vector3::operator*: result is not finite (NaN/Inf produced).");
+            return result;
+
         }
         [[nodiscard]] friend constexpr Vector3 operator*(double scalar, const Vector3& v) noexcept {
             return v * scalar;
@@ -81,6 +85,7 @@ namespace osseus {
             x *= scalar;
             y *= scalar;
             z *= scalar;
+            assert(IsFinite() && "Vector3::operator*=: result is not finite (NaN/Inf produced).");
             return *this;
         }
 
@@ -92,13 +97,16 @@ namespace osseus {
                 throw std::runtime_error("Cannot divide Vector3 by zero.");
             }
 
-            return Vector3(x / scalar, y / scalar, z / scalar);
+            Vector3 result(x / scalar, y / scalar, z / scalar);
+            assert(result.IsFinite() && "Vector3::operator/: result is not finite (NaN/Inf produced).");
+            return result;
         }
 
         constexpr Vector3& operator/=(double scalar) noexcept {
             x /= scalar;
             y /= scalar;
             z /= scalar;
+            assert(IsFinite() && "Vector3::operator/=: result is not finite (NaN/Inf produced).");
             return *this;
         }
 

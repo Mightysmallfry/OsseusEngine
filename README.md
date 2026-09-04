@@ -28,6 +28,42 @@ The engine is currently under active development.
 
 The project uses CMake presets and vcpkg for dependency management.
 
+## How to Build
+Once everything is hooked up, you should be able to run the following commands to build the library and the associated examples:
+
+### Set the cmake preset
+```
+cmake --preset default
+```
+
+### Building the Library
+Build Everything:
+```
+cmake --build build
+```
+
+Build only the library:
+```
+cmake --build build --target Osseus
+```
+
+Build the library with examples suite:
+```
+cmake --build build --target osseus-sandbox 
+```
+You can then also run the examples with
+```
+build/Sandbox/osseus-sandbox
+```
+
+Build the library with testing suite
+```
+cmake --build build --target Osseus 
+ctest --test-dir build --output-on-failure
+```
+
+
+
 ## Project Structure
 ```
 OsseusEngine/
@@ -41,6 +77,7 @@ OsseusEngine/
 ├── CMakePresets.json
 └── vcpkg.json
 ```
+
 
 ### Architecture
 OsseusEngine is organized around a few core systems:

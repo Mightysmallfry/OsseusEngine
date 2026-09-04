@@ -1,11 +1,11 @@
-#ifndef OSSEUS_SANDBOX_NBODYCONTACTLESSSCENARIO_H
-#define OSSEUS_SANDBOX_NBODYCONTACTLESSSCENARIO_H
+#ifndef OSSEUS_SANDBOX_NBODYCONTACTSCENARIO_H
+#define OSSEUS_SANDBOX_NBODYCONTACTSCENARIO_H
 
 #include "IScenario.h"
 
 namespace sandbox {
 
-    class NBodyContactlessScenario : public IScenario {
+    class NBodyContactScenario : public IScenario {
         public:        
         void Initialize(osseus::PhysicsWorld& world, double width, double height) override;
         void Update(osseus::PhysicsWorld& world) override;

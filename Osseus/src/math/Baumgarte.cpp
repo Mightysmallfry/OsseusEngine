@@ -18,6 +18,12 @@ namespace osseus {
                 continue;
             } // both infinite mass, nothing to resolve
 
+            // Check for degenerate faces (near coplanar face from EPA)
+            if (contact.normal.LengthSquared() < Vector3::TOLERANCE) {
+                std::cerr << "Discarding degenerate contact (zero-length normal)\n";
+                continue;
+            }
+
             Vector3 relativeVelocity = bodyB->velocity - bodyA->velocity;
             double velocityAlongNormal = relativeVelocity.Dot(contact.normal);
 

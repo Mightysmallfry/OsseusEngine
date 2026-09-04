@@ -1,4 +1,4 @@
-#include "Scenarios/NBodyContactlessScenario.h"
+#include "Scenarios/NBodyContactScenario.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -9,7 +9,7 @@
 
 namespace sandbox {
 
-    void NBodyContactlessScenario::Initialize(osseus::PhysicsWorld& world, double width, double height) {
+    void NBodyContactScenario::Initialize(osseus::PhysicsWorld& world, double width, double height) {
         boundaryRadius_ = std::min(width, height) / 2.0;
 
         // ==================== World
@@ -62,7 +62,7 @@ namespace sandbox {
         }
     }
 
-    void NBodyContactlessScenario::Update(osseus::PhysicsWorld& world) {
+    void NBodyContactScenario::Update(osseus::PhysicsWorld& world) {
         const double maxDistance = boundaryRadius_ * 1.5 - particleRadius_;
 
         for (const RenderObject& object : renderObjects_) {
