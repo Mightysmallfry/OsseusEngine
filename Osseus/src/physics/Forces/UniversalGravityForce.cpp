@@ -46,30 +46,9 @@ namespace osseus {
     Vector3 UniversalGravity::PointForce(const Vector3& sourcePosition, double sourceMass, const Vector3& queryPosition,
                                          double queryMass) {
 
-        if (!sourcePosition.IsFinite() || !queryPosition.IsFinite() || !std::isfinite(sourceMass) ||
-            !std::isfinite(queryMass)) {
-
-            std::cerr << "INVALID GRAVITY INPUT\n";
-            std::cerr << "Source: " << sourcePosition << " mass=" << sourceMass << "\n";
-            std::cerr << "Query: " << queryPosition << " mass=" << queryMass << "\n";
-
-            std::exit(EXIT_FAILURE);
-            return Vector3::Zero();
-        }
-
         const Vector3 offset = sourcePosition - queryPosition;
         const double distSq = offset.LengthSquared() + softening_ * softening_;
         const double dist = std::sqrt(distSq);
-
-        if (!std::isfinite(distSq) || !std::isfinite(dist)) {
-            std::cerr << "INVALID GRAVITY DISTANCE\n";
-            std::cerr << "Source: " << sourcePosition << "\n";
-            std::cerr << "Query: " << queryPosition << "\n";
-            std::cerr << "Offset: " << offset << "\n";
-            std::cerr << "distSq: " << distSq << "\n";
-            std::cerr << "dist: " << dist << "\n";
-            return Vector3::Zero();
-        }
 
         if (dist <= 1e-12) {
             std::cerr << "Short range point detected\n";
@@ -80,18 +59,6 @@ namespace osseus {
         const double forceMag = (OsseusConstants::GravitationalConstant * queryMass * sourceMass) / distSq;
 
         const Vector3 force = offset * (forceMag / dist);
-
-        if (!force.IsFinite()) {
-            std::cerr << "GRAVITY PRODUCED INVALID FORCE\n";
-            std::cerr << "Source: " << sourcePosition << "\n";
-            std::cerr << "Query: " << queryPosition << "\n";
-            std::cerr << "Source mass: " << sourceMass << "\n";
-            std::cerr << "Query mass: " << queryMass << "\n";
-            std::cerr << "Offset: " << offset << "\n";
-            std::cerr << "distSq: " << distSq << "\n";
-            std::cerr << "dist: " << dist << "\n";
-            std::cerr << "forceMag: " << forceMag << "\n";
-        }
 
         return force;
     }

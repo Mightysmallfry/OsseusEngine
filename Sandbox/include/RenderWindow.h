@@ -24,7 +24,7 @@ namespace sandbox {
 
         sf::RenderWindow& Get();
 
-        int GetScale() const { return scale_; }
+        float GetScale() const { return scale_; }
         void SetScale(float pixelsPerUnit);
 
         float ComputeFitScale(double worldRadius, const sf::FloatRect& bounds) const;

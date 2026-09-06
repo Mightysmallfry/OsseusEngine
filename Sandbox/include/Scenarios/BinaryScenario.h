@@ -17,10 +17,10 @@
         double width_ = 0.0;
         double height_ = 0.0;
 
-        // Binary system
+        // Binary system - Speed is calculated on initialization
         double starMass_ = 125000.0;
         double starRadius_ = 20.0;
-        double orbitalRadius_ = 0.0;
+        double orbitalRadius_ = 200.0;
         double orbitalSpeed_ = 0.0;
 
         // Physics

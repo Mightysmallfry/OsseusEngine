@@ -210,7 +210,7 @@ namespace osseus {
         return deepestDepth_;
     }
 
-    int OctNode::GetSubtreeSize() const {
+    size_t OctNode::GetSubtreeSize() const {
         return subtreeSize_;
     }
 

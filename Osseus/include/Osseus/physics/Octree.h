@@ -59,7 +59,7 @@ namespace osseus {
         const OctNode* GetParent() const;
         int GetDepth() const;
         int GetDeepestDepth() const;
-        int GetSubtreeSize() const;
+        size_t GetSubtreeSize() const;
 
         void UpdateProperties();
 

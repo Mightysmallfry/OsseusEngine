@@ -13,9 +13,15 @@ namespace sandbox {
         private:
         osseus::UniversalGravity universalGravity_;
 
+        const std::size_t bodyCount = 100;
+        const double mass = 100.0;
+
         double boundaryRadius_ = 0.0;
         double particleRadius_ = 5.0;
         double staticRadius_ = 5.0;
+        
+        const double G = OsseusConstants::GravitationalConstant;
+        const double orbitalSpeed = 0;
     };
 
 } // namespace sandbox

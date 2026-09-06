@@ -1,5 +1,5 @@
-#ifndef OSSEUSENGINE_CIRCLE_H
-#define OSSEUSENGINE_CIRCLE_H
+#ifndef OSSEUSENGINE_SPHERE_H
+#define OSSEUSENGINE_SPHERE_H
 
 #include <cmath>
 

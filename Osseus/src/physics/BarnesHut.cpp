@@ -26,7 +26,7 @@ namespace osseus {
             for (UniversalForceEvaluator* UForce : forceManager.GetUniversals()) {
                 force += UForce->CalculateForce(root, handle, body);
             }
-            forceManager.NetForces()[handle.index] += force;
+            forceManager.NetForces().at(handle.index) += force;
         }
     }
 

@@ -28,11 +28,7 @@ namespace sandbox {
         std::uniform_real_distribution<double> distribution(-rangeBound, rangeBound);
 
         // ==================== Particles
-        const std::size_t bodyCount = 100;
-        const double mass = 100.0;
-
         const double minimumDistance = particleRadius_;
-        const double G = OsseusConstants::GravitationalConstant;
 
         for (std::size_t i = 0; i < bodyCount; ++i) {
             double randX;
@@ -46,7 +42,6 @@ namespace sandbox {
             } while (distSq < minimumDistance * minimumDistance || distSq > boundaryRadius_ * boundaryRadius_);
 
             const double distance = std::sqrt(distSq);
-            const double orbitalSpeed = 0;
 
             const osseus::Vector3 position{randX, randY, 0.0};
             const osseus::Vector3 velocity{0.0, 0.0, 0.0};

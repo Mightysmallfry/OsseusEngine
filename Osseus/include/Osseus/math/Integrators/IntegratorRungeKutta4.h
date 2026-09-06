@@ -15,7 +15,7 @@ namespace osseus {
     class IntegratorRungeKutta4 : public IIntegrator {
         public:
         void Step(BodyManager& bodyManager, ForceManager& forceManager, double delta) override;
-        std::string GetName() { return "4TH-ORDER RUNGE-KUTTA"; }
+        std::string GetName() override { return "4TH-ORDER RUNGE-KUTTA"; }
 
         private:
         DerivativeState DerivativeOf(SimulationState& state);

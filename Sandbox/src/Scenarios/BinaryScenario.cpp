@@ -17,7 +17,6 @@ namespace sandbox {
 
         // ==================== Orbital Configuration
 
-        orbitalRadius_ = 200;
         // orbitalRadius_ = std::min(width_, height_) * 0.15;
         orbitalSpeed_ = std::sqrt(starMass_ / (4.0 * orbitalRadius_));
         

@@ -61,6 +61,8 @@ namespace osseus {
 
         void RebuildOctree();
 
+        // Managers - Currently Breaking Encapsulation
+        // TODO: Intent revealing wrappers
         ForceManager& GetForceManager() {
             return forceManager_;
         }
@@ -73,6 +75,9 @@ namespace osseus {
         Octree& GetOctree() {
             return spatialTree_;
         }
+
+
+
         int GetObjectCount() const {
             return objectCount_;
         }

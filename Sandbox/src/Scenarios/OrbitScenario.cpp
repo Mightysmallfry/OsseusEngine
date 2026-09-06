@@ -11,96 +11,91 @@ namespace sandbox {
     void OrbitScenario::Initialize(osseus::PhysicsWorld& world, double width, double height) {
         boundaryRadius_ = std::min(width, height) / 2.0;
 
-    world.GetForceManager().AddUniversal(&universalGravity_);
-    // ==================== Central Body
+        world.GetForceManager().AddUniversal(&universalGravity_);
+        // ==================== Central Body
 
-    const double staticMass = 500000.0;
+        osseus::BodyData staticBody{osseus::Vector3::Zero(), osseus::Vector3::Zero(), staticMass, 0.0, 0.0};
 
-    osseus::BodyData staticBody{osseus::Vector3::Zero(), osseus::Vector3::Zero(), staticMass, 0.0, 0.0};
+        const osseus::Handle staticHandle =
+            world.CreateBody(staticBody, std::make_unique<osseus::ShapeSphere>(staticRadius_));
 
-    const osseus::Handle staticHandle =
-        world.CreateBody(staticBody, std::make_unique<osseus::ShapeSphere>(staticRadius_));
+        auto staticShape = std::make_unique<sf::CircleShape>(static_cast<float>(staticRadius_));
 
-    auto staticShape = std::make_unique<sf::CircleShape>(static_cast<float>(staticRadius_));
+        staticShape->setOrigin({static_cast<float>(staticRadius_), static_cast<float>(staticRadius_)});
 
-    staticShape->setOrigin({static_cast<float>(staticRadius_), static_cast<float>(staticRadius_)});
+        staticShape->setFillColor(sf::Color::Yellow);
 
-    staticShape->setFillColor(sf::Color::Yellow);
+        renderObjects_.push_back({staticHandle, std::move(staticShape)});
 
-    renderObjects_.push_back({staticHandle, std::move(staticShape)});
+        // ==================== Random Number Generator
 
-    // ==================== Random Number Generator
+        std::random_device rd;
+        std::mt19937 generator(rd());
 
-    std::random_device rd;
-    std::mt19937 generator(rd());
+        const double rangeBound = boundaryRadius_;
 
-    const double rangeBound = boundaryRadius_;
+        std::uniform_real_distribution<double> distribution(-rangeBound, rangeBound);
 
-    std::uniform_real_distribution<double> distribution(-rangeBound, rangeBound);
+        // ==================== Particles
 
-    // ==================== Particles
+        const double minimumDistance = staticRadius_ + particleRadius_;
 
-    const std::size_t bodyCount = 1000;
-    const double mass = 1.0;
-    const double speed = 50.0;
+        for (std::size_t i = 0; i < bodyCount; ++i) {
+            double randX;
+            double randY;
 
-    const double minimumDistance = staticRadius_ + particleRadius_;
+            do {
+                randX = distribution(generator);
+                randY = distribution(generator);
+            } while (randX * randX + randY * randY < minimumDistance * minimumDistance);
 
-    for (std::size_t i = 0; i < bodyCount; ++i) {
-        double randX;
-        double randY;
+            const osseus::Vector3 position{randX, randY, 0.0};
+            const double distance = std::sqrt(randX * randX + randY * randY);
+            const osseus::Vector3 velocity{-randY / distance * speed, randX / distance * speed, 0.0};
+            const osseus::BodyData body{position, velocity, mass, 1.0 / mass, 0.0};
 
-        do {
-            randX = distribution(generator);
-            randY = distribution(generator);
-        } while (randX * randX + randY * randY < minimumDistance * minimumDistance);
+            const osseus::Handle handle =
+                world.CreateBody(body, std::make_unique<osseus::ShapeSphere>(particleRadius_));
 
-        const osseus::Vector3 position{randX, randY, 0.0};
-        const double distance = std::sqrt(randX * randX + randY * randY);
-        const osseus::Vector3 velocity{-randY / distance * speed, randX / distance * speed, 0.0};
-        const osseus::BodyData body{position, velocity, mass, 1.0 / mass, 0.0};
+            auto particleShape = std::make_unique<sf::CircleShape>(static_cast<float>(particleRadius_));
 
-        const osseus::Handle handle = world.CreateBody(body, std::make_unique<osseus::ShapeSphere>(particleRadius_));
+            particleShape->setOrigin({static_cast<float>(particleRadius_), static_cast<float>(particleRadius_)});
 
-        auto particleShape = std::make_unique<sf::CircleShape>(static_cast<float>(particleRadius_));
-
-        particleShape->setOrigin({static_cast<float>(particleRadius_), static_cast<float>(particleRadius_)});
-
-        particleShape->setFillColor(sf::Color::Cyan);
-        renderObjects_.push_back({handle, std::move(particleShape)});
-    }
-}
-
-void OrbitScenario::Update(osseus::PhysicsWorld& world) {
-    const double maxDistance = boundaryRadius_ * 1.5 - particleRadius_;
-
-    for (const RenderObject& object : renderObjects_) {
-        osseus::BodyData* body = world.GetBody(object.handle);
-
-        // The central body is static, so there is no boundary
-        // handling required for it.
-        if (body->invMass == 0.0) {
-            continue;
+            particleShape->setFillColor(sf::Color::Cyan);
+            renderObjects_.push_back({handle, std::move(particleShape)});
         }
+    }
 
-        body->position.z = 0.0;
+    void OrbitScenario::Update(osseus::PhysicsWorld& world) {
+        const double maxDistance = boundaryRadius_ * 1.5 - particleRadius_;
 
-        const double distanceSquared = body->position.LengthSquared();
+        for (const RenderObject& object : renderObjects_) {
+            osseus::BodyData* body = world.GetBody(object.handle);
 
-        if (distanceSquared > maxDistance * maxDistance) {
-            const double distance = std::sqrt(distanceSquared);
+            // The central body is static, so there is no boundary
+            // handling required for it.
+            if (body->invMass == 0.0) {
+                continue;
+            }
 
-            const osseus::Vector3 normal = body->position / distance;
+            body->position.z = 0.0;
 
-            body->position = normal * maxDistance;
+            const double distanceSquared = body->position.LengthSquared();
 
-            const double velocityAlongNormal = body->velocity.Dot(normal);
+            if (distanceSquared > maxDistance * maxDistance) {
+                const double distance = std::sqrt(distanceSquared);
 
-            if (velocityAlongNormal > 0.0) {
-                body->velocity -= normal * (2.0 * velocityAlongNormal);
+                const osseus::Vector3 normal = body->position / distance;
+
+                body->position = normal * maxDistance;
+
+                const double velocityAlongNormal = body->velocity.Dot(normal);
+
+                if (velocityAlongNormal > 0.0) {
+                    body->velocity -= normal * (2.0 * velocityAlongNormal);
+                }
             }
         }
     }
-}
 
 } // namespace sandbox
