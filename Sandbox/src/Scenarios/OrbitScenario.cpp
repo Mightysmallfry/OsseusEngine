@@ -11,7 +11,7 @@ namespace sandbox {
     void OrbitScenario::Initialize(osseus::PhysicsWorld& world, double width, double height) {
         boundaryRadius_ = std::min(width, height) / 2.0;
 
-        world.GetForceManager().AddUniversal(&universalGravity_);
+        world.AddUniversalForce(&universalGravity_);
         // ==================== Central Body
 
         osseus::BodyData staticBody{osseus::Vector3::Zero(), osseus::Vector3::Zero(), staticMass, 0.0, 0.0};

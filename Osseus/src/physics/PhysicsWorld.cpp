@@ -130,14 +130,15 @@ namespace osseus {
             std::cerr << "No integregrator selected for PhysicsWorld object";
         }
 
-        if (collisionMode_ == CollisionMode::ENABLED){
+        if (collisionMode_ == CollisionMode::ENABLED) {
             // ============ Detect Collisions ============
             // Broad Phase
-            std::vector<CollisionCandidatePair> candidates = broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
+            std::vector<CollisionCandidatePair> candidates =
+                broadPhase_.FindCandidatePairs(bodyManager_, shapeManager_);
 
             // Narrow Phase (GJK/EPA via IShape::Support)
             narrowPhase_.GenerateContacts(candidates, bodyManager_, shapeManager_, collisionManifold_);
-        
+
             // ============ Resolve Collisions ============
             // BaumGarte
             baumGarte_.ResolveContacts(collisionManifold_, bodyManager_);
@@ -156,7 +157,7 @@ namespace osseus {
         // ============ Resolve Trajectories ============
         // Integrator
         integrator_->Step(bodyManager_, forceManager_, delta);
-       
+
         // Sync State
         SyncState();
     }
@@ -175,6 +176,26 @@ namespace osseus {
             return nullptr;
         }
         return bodyManager_.GetBody(handle);
+    }
+
+    Vector3 PhysicsWorld::GetNetForce(Handle handle) {
+        return registry_.IsValid(handle) ? forceManager_.Get(handle) : Vector3::Zero();
+    }
+
+    const Vector3 PhysicsWorld::GetNetForce(Handle handle) const {
+        return registry_.IsValid(handle) ? forceManager_.Get(handle) : Vector3::Zero();
+    }
+
+    void PhysicsWorld::AddForce(Handle handle, Vector3& force) {
+        if (!registry_.IsValid(handle)) {
+            return;
+        }
+
+        forceManager_.Add(handle, force);
+    }
+
+    void PhysicsWorld::AddUniversalForce(UniversalForceEvaluator* uForce) {
+        forceManager_.AddUniversal(uForce);
     }
 
     void PhysicsWorld::SyncState() {

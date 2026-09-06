@@ -2,6 +2,31 @@
 
 namespace osseus {
 
+    UniversalForceEvaluator::UniversalForceEvaluator() {
+        SetApproximationMode(approximationMode);
+    }
+
+    void UniversalForceEvaluator::SetApproximationMode(ApproximationMode mode) {
+        approximationMode = mode;
+        
+        ApproximationData guidelines = Approximations::Get(mode);
+
+        if (mode == ApproximationMode::CUSTOM) {
+            std::cerr << "[Warning] custom approximation mode has been selected, ensure approximation data has been handed forward\n";
+        }
+        SetApproximationData(guidelines);
+    }
+
+    ApproximationMode UniversalForceEvaluator::GetApproximationMode() {
+        return approximationMode;
+    }
+
+    void UniversalForceEvaluator::SetApproximationData(ApproximationData data) {
+        SetTheta(data.theta);
+        SetSoftening(data.softening);
+    }
+
+
     void UniversalForceEvaluator::SetTheta(double newTheta) {
         theta_ = newTheta;
     }

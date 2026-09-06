@@ -16,25 +16,13 @@
 #include "Osseus/system/NarrowPhase.h"
 #include "Osseus/system/Registry.h"
 #include "Osseus/system/ShapeManager.h"
+#include "Osseus/system/ApproximationMode.h"
 
 namespace osseus {
 
     enum class CollisionMode {
         ENABLED,
         DISABLED
-    };
-
-    enum class ApproximationMode {
-        EXACT,
-        NORMAL,
-        LIGHT
-    };
-
-    enum class BoundaryMode {
-        NONE,
-        CLAMP,
-        PERIODIC,
-        BOUNCE
     };
 
     class PhysicsWorld {
@@ -55,28 +43,24 @@ namespace osseus {
         void SetIntegrator(std::unique_ptr<IIntegrator> newIntegrator);
 
         void Step(double delta);
+        
+        void RebuildOctree();
+        
+        // Force Manager
+        Vector3 GetNetForce(Handle handle);
+        const Vector3 GetNetForce(Handle handle) const;
 
+        void AddForce(Handle handle, Vector3& force);
+        void AddUniversalForce(UniversalForceEvaluator* uForce);
+        
+        // Body Manager
         BodyData* GetBody(Handle handle);
         const BodyData* GetBody(Handle handle) const;
+        
 
-        void RebuildOctree();
-
-        // Managers - Currently Breaking Encapsulation
-        // TODO: Intent revealing wrappers
-        ForceManager& GetForceManager() {
-            return forceManager_;
-        }
-        BodyManager& GetBodyManager() {
-            return bodyManager_;
-        }
-        ShapeManager& GetShapeManager() {
-            return shapeManager_;
-        }
         Octree& GetOctree() {
             return spatialTree_;
         }
-
-
 
         int GetObjectCount() const {
             return objectCount_;
@@ -109,12 +93,12 @@ namespace osseus {
         Bounds ComputeWorldBounds() const;
         
         CollisionMode collisionMode_{ CollisionMode::ENABLED };
-        BoundaryMode boundaryMode_{ BoundaryMode::BOUNCE };
-        ApproximationMode ApproximationMode_{ ApproximationMode::NORMAL};
 
 
         std::vector<Handle> destructionQueue_;
+        
         std::vector<Contact> collisionManifold_;
+
         std::unique_ptr<IIntegrator> integrator_;
         
         Registry registry_;

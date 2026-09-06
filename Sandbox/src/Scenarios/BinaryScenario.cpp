@@ -13,7 +13,7 @@ namespace sandbox {
 
         world.SetIntegrator(std::make_unique<osseus::IntegratorRungeKutta4>());
 
-        world.GetForceManager().AddUniversal(&universalGravity_);
+        world.AddUniversalForce(&universalGravity_);
 
         // ==================== Orbital Configuration
 

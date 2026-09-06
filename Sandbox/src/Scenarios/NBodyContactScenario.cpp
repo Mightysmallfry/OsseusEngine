@@ -14,7 +14,7 @@ namespace sandbox {
 
         // ==================== World
 
-        world.GetForceManager().AddUniversal(&universalGravity_);
+        world.AddUniversalForce(&universalGravity_);
         world.SetCollisionMode(osseus::CollisionMode::ENABLED);
         world.SetIntegrator(std::make_unique<osseus::IntegratorEulerCromer>());
 

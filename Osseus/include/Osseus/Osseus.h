@@ -52,5 +52,6 @@
 #include "system/BroadPhase.h"
 #include "system/NarrowPhase.h"
 #include "system/SimulationState.h"
+#include "system/ApproximationMode.h"
 
 #endif // OSSEUSENGINE_OSSEUS_H
