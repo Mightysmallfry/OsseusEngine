@@ -9,10 +9,10 @@ TEST_CASE("Universal Forces [Gravity] - Adding Force evaluators rejects duplicat
     osseus::UniversalGravity gravityDuplicate;
 
 
-    int goodAdd = world.GetForceManager().AddUniversal(&universalGravity);
+    int goodAdd = world.AddUniversalForce(&universalGravity);
     REQUIRE(goodAdd != -1);
 
-    int badAdd = world.GetForceManager().AddUniversal(&gravityDuplicate);
+    int badAdd = world.AddUniversalForce(&gravityDuplicate);
     REQUIRE(badAdd == -1);
 }
 
@@ -20,7 +20,7 @@ TEST_CASE("Universal Forces [Gravity] - A single body remains uneffected") {
     osseus::PhysicsWorld world;
 
     osseus::UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     osseus::Handle object = world.CreateBody();
     osseus::BodyData* body = world.GetBody(object);
@@ -37,7 +37,7 @@ TEST_CASE("Universal Forces [Gravity] - A single body remains uneffected") {
 TEST_CASE("Universal Forces [Gravity] - A two bodies along an axis attract as expected") {
     osseus::PhysicsWorld world;
     osseus::UniversalGravity universalGravity;
-    world.GetForceManager().AddUniversal(&universalGravity);
+    world.AddUniversalForce(&universalGravity);
 
     osseus::Handle objectOne = world.CreateBody();
     osseus::BodyData* bodyOne = world.GetBody(objectOne);

@@ -18,7 +18,7 @@ TEST_CASE("Euler-Cromer preserves a circular orbit", "[IntegratorEulerCromer][or
     );
 
     osseus::UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     // ======================================================================
     // Physical constants

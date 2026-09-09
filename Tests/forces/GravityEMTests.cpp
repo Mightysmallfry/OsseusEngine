@@ -54,7 +54,7 @@ TEST_CASE("Gravity - Doubling the distance quarters the force magnitude", "[grav
     queryAt2R.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     const double forceAtR = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, queryAtR).Length();
     const double forceAt2R = gravity.CalculateForce(tree.GetRoot(), Handle{2, 0}, queryAt2R).Length();
@@ -78,7 +78,7 @@ TEST_CASE("Gravity - Quadrupling the distance reduces the force magnitude to one
     queryAt4R.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     const double forceAtR = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, queryAtR).Length();
     const double forceAt4R = gravity.CalculateForce(tree.GetRoot(), Handle{2, 0}, queryAt4R).Length();
@@ -103,7 +103,7 @@ TEST_CASE("Gravity - Force magnitude scales linearly with source mass", "[gravit
     query.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     const double forceLight = gravity.CalculateForce(treeLight.GetRoot(), Handle{1, 0}, query).Length();
     const double forceHeavy = gravity.CalculateForce(treeHeavy.GetRoot(), Handle{1, 0}, query).Length();
@@ -135,7 +135,7 @@ TEST_CASE("Gravity - Newton's third law: force on A from B is equal and opposite
     bodyB.mass = 9.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 forceOnAFromB = gravity.CalculateForce(tree.GetRoot(), handleA, bodyA);
     const Vector3 forceOnBFromA = gravity.CalculateForce(tree.GetRoot(), handleB, bodyB);
@@ -160,7 +160,7 @@ TEST_CASE("Gravity - A static body (present in the tree but not queried) still e
     query.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 force = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
@@ -207,7 +207,7 @@ TEST_CASE("Barnes-Hut - Theta of 0 (exact descent) matches brute-force O(N^2) gr
     tree.UpdateProperties();
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
 
     for (std::size_t i = 0; i < positions.size(); ++i) {
         BodyData query;
@@ -247,11 +247,14 @@ TEST_CASE("Barnes-Hut - Increasing theta trades accuracy for approximation but s
     const Handle farHandle{99, 0};
 
     UniversalGravity exactGravity;
-    exactGravity.SetTheta(0.0);
+    exactGravity.SetApproximationMode(ApproximationMode::EXACT);
     const Vector3 exact = exactGravity.CalculateForce(tree.GetRoot(), farHandle, farQuery);
 
     UniversalGravity approxGravity;
-    approxGravity.SetTheta(0.5);
+    approxGravity.SetApproximationMode(ApproximationMode::CUSTOM);
+    ApproximationData data;
+    data.theta = 0.5;
+    approxGravity.SetApproximationData(data);
     const Vector3 approx = approxGravity.CalculateForce(tree.GetRoot(), farHandle, farQuery);
 
     const double relativeError = (approx - exact).Length() / exact.Length();
@@ -282,7 +285,11 @@ TEST_CASE("Barnes-Hut - A very loose theta (1.0) still produces a force pointed 
     farQuery.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(1.0);
+
+    gravity.SetApproximationMode(ApproximationMode::CUSTOM);
+    ApproximationData data;
+    data.theta = 1.0;
+    gravity.SetApproximationData(data);
 
     const Vector3 force = gravity.CalculateForce(tree.GetRoot(), Handle{99, 0}, farQuery);
 
@@ -314,7 +321,7 @@ TEST_CASE("Electromagnetism - Doubling the distance quarters the force magnitude
     queryAt2R.charge = 1.0;
 
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
 
     const double forceAtR = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, queryAtR).Length();
     const double forceAt2R = em.CalculateForce(tree.GetRoot(), Handle{2, 0}, queryAt2R).Length();
@@ -339,7 +346,7 @@ TEST_CASE("Electromagnetism - Like charges repel", "[em][regression][sign-conven
     query.charge = 1.0; // query: +1 charge (like signs)
 
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 force = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
@@ -358,7 +365,7 @@ TEST_CASE("Electromagnetism - Opposite charges attract", "[em][regression][sign-
     query.charge = -1.0; // query: -1 charge (opposite signs)
 
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 force = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
     CAPTURE(force);
@@ -377,7 +384,7 @@ TEST_CASE("Electromagnetism - A neutral query body in a charged field feels no f
     query.charge = 0.0;
 
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 force = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
@@ -399,7 +406,10 @@ TEST_CASE("Electromagnetism - A dipole's approximated far-field force falls off 
     REQUIRE_THAT(tree.GetRoot().GetTotalCharge(), WithinAbs(0.0, 1e-9));
 
     UniversalElectroMag em;
-    em.SetTheta(1.0); // force the monopole+dipole approximation path, not exact descent
+    em.SetApproximationMode(ApproximationMode::CUSTOM);
+    ApproximationData data;
+    data.theta = 1.0;
+    em.SetApproximationData(data); // force the monopole+dipole approximation path, not exact descent
 
     BodyData queryNear;
     queryNear.position = Vector3(10.0, 0.0, 0.0);
@@ -440,9 +450,9 @@ TEST_CASE("Gravity and EM coexisting - Total force on a massive, charged body eq
     query.charge = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
 
     const Vector3 gravityForce = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
     const Vector3 emForce = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
@@ -458,8 +468,8 @@ TEST_CASE("Gravity and EM coexisting - Via ForceManager, both universal forces a
     PhysicsWorld world;
     UniversalGravity gravity;
     UniversalElectroMag em;
-    world.GetForceManager().AddUniversal(&gravity);
-    world.GetForceManager().AddUniversal(&em);
+    world.AddUniversalForce(&gravity);
+    world.AddUniversalForce(&em);
 
     Handle source = world.CreateBody();
     world.GetBody(source)->position = Vector3::Zero();

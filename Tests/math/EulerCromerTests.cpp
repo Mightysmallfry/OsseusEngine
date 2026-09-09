@@ -21,7 +21,8 @@ TEST_CASE("Integrator - Euler-Cromer integrates constant gravity", "[Euler-Crome
     );
 
 
-    world.GetForceManager().Add(body, osseus::Vector3(0.0, -9.8, 0.0));
+    osseus::Vector3 gravity = osseus::Vector3(0.0, -9.8, 0.0);
+    world.AddForce(body, gravity);
 
     world.Step(delta);
 

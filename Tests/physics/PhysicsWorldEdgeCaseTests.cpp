@@ -22,7 +22,8 @@ TEST_CASE("PhysicsWorld - Stepping with dt = 0 leaves position and velocity unch
     Handle body = world.CreateBody(BodyData{Vector3(1.0, 2.0, 3.0), Vector3(4.0, 5.0, 6.0), 1.0, 1.0},
                                    std::make_unique<ShapePoint>());
 
-    world.GetForceManager().Add(body, Vector3(100.0, 0.0, 0.0));
+    osseus::Vector3 force = Vector3(100.0, 0.0, 0.0);
+    world.AddForce(body, force);
     world.Step(0.0);
 
     const BodyData* result = world.GetBody(body);
@@ -50,7 +51,8 @@ TEST_CASE("PhysicsWorld - A very small dt produces a proportionally small, finit
     PhysicsWorld world;
     Handle body = world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), 1.0, 1.0}, std::make_unique<ShapePoint>());
 
-    world.GetForceManager().Add(body, Vector3(10.0, 0.0, 0.0));
+    osseus::Vector3 force = Vector3(10.0, 0.0, 0.0);
+    world.AddForce(body, force);
     world.Step(1e-9);
 
     const BodyData* result = world.GetBody(body);
@@ -65,7 +67,9 @@ TEST_CASE("PhysicsWorld - A very large dt does not produce NaN or infinite state
     PhysicsWorld world;
     Handle body = world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), 1.0, 1.0}, std::make_unique<ShapePoint>());
 
-    world.GetForceManager().Add(body, Vector3(10.0, 0.0, 0.0));
+
+    osseus::Vector3 force = Vector3(10.0, 0.0, 0.0);
+    world.AddForce(body, force);
     world.Step(1000.0);
 
     const BodyData* result = world.GetBody(body);
@@ -81,7 +85,7 @@ TEST_CASE("PhysicsWorld - A very large dt under gravitational orbit still produc
     // overshoots past its attractor in a single giant step.
     PhysicsWorld world;
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), 10000.0, 0.0, 0.0}, std::make_unique<ShapeSphere>(1.0));
     Handle orbiter = world.CreateBody(BodyData{Vector3(100.0, 0.0, 0.0), Vector3(0.0, 10.0, 0.0), 1.0, 1.0, 0.0},
@@ -149,7 +153,7 @@ TEST_CASE("PhysicsWorld - A body under gravity continues its trajectory sensibly
 {
     PhysicsWorld world;
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), 10000.0, 0.0, 0.0}, std::make_unique<ShapeSphere>(1.0));
     Handle orbiter = world.CreateBody(BodyData{Vector3(100.0, 0.0, 0.0), Vector3(0.0, 10.0, 0.0), 1.0, 1.0, 0.0},

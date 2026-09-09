@@ -88,7 +88,7 @@ TEST_CASE("PhysicsWorld - A manually added individual force affects the body dur
 
     const Vector3 startVelocity = body->velocity;
 
-    world.GetForceManager().Add(object, Vector3(10.0, 0.0, 0.0));
+    world.AddForce(object, Vector3(10.0, 0.0, 0.0));
     world.Step(0.1);
 
     // A constant +X force on a moving body should have accelerated it
@@ -105,7 +105,7 @@ TEST_CASE("PhysicsWorld - A manually added individual force does NOT persist to 
     BodyData* body = world.GetBody(object);
     body->invMass = 1.0;
 
-    world.GetForceManager().Add(object, Vector3(10.0, 0.0, 0.0));
+    world.AddForce(object, Vector3(10.0, 0.0, 0.0));
     world.Step(0.1);
 
     const Vector3 velocityAfterFirstStep = world.GetBody(object)->velocity;
@@ -129,11 +129,11 @@ TEST_CASE("PhysicsWorld - Re-adding the same individual force each step reproduc
     const Vector3 force(4.0, 0.0, 0.0);
     const double dt = 0.1;
 
-    world.GetForceManager().Add(object, force);
+    world.AddForce(object, force);
     world.Step(dt);
     const Vector3 velocityAfterStepOne = world.GetBody(object)->velocity;
 
-    world.GetForceManager().Add(object, force);
+    world.AddForce(object, force);
     world.Step(dt);
     const Vector3 velocityAfterStepTwo = world.GetBody(object)->velocity;
 
@@ -156,7 +156,7 @@ TEST_CASE("PhysicsWorld - Individual forces on different bodies do not cross-con
     // even if one were registered (none is here).
     world.GetBody(b)->position = Vector3(1000.0, 1000.0, 1000.0);
 
-    world.GetForceManager().Add(a, Vector3(10.0, 0.0, 0.0));
+    world.AddForce(a, Vector3(10.0, 0.0, 0.0));
     world.Step(0.1);
 
     REQUIRE(world.GetBody(a)->velocity.x > 0.0);

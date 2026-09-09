@@ -186,7 +186,8 @@ namespace osseus {
         return registry_.IsValid(handle) ? forceManager_.Get(handle) : Vector3::Zero();
     }
 
-    void PhysicsWorld::AddForce(Handle handle, Vector3& force) {
+
+    void PhysicsWorld::AddForce(Handle handle, Vector3 force) {
         if (!registry_.IsValid(handle)) {
             return;
         }
@@ -194,8 +195,8 @@ namespace osseus {
         forceManager_.Add(handle, force);
     }
 
-    void PhysicsWorld::AddUniversalForce(UniversalForceEvaluator* uForce) {
-        forceManager_.AddUniversal(uForce);
+    int PhysicsWorld::AddUniversalForce(UniversalForceEvaluator* uForce) {
+        return forceManager_.AddUniversal(uForce);
     }
 
     void PhysicsWorld::SyncState() {

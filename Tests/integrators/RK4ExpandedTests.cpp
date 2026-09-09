@@ -59,7 +59,7 @@ TEST_CASE("RK4 - A harmonic oscillator matches the analytic solution closely (po
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
 
     SpringForce spring(springConstant);
-    world.GetForceManager().AddUniversal(&spring);
+    world.AddUniversalForce(&spring);
 
     Handle body = world.CreateBody(BodyData{initialPosition, Vector3::Zero(), mass, 1.0 / mass},
                                    std::make_unique<ShapePoint>());
@@ -102,7 +102,7 @@ TEST_CASE("RK4 - A harmonic oscillator conserves mechanical energy far better th
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
 
     SpringForce spring(springConstant);
-    world.GetForceManager().AddUniversal(&spring);
+    world.AddUniversalForce(&spring);
 
     Handle body = world.CreateBody(BodyData{initialPosition, Vector3::Zero(), mass, 1.0 / mass},
                                    std::make_unique<ShapePoint>());
@@ -142,7 +142,7 @@ TEST_CASE("RK4 - An elliptical orbit (sub-circular speed) stays bounded, oscilla
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
 
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), centralMass, 0.0, 0.0},
                      std::make_unique<ShapeSphere>(5.0));

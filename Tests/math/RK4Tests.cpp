@@ -28,10 +28,8 @@ TEST_CASE("Integrator - RK4 integrates constant gravity")
         std::make_unique<osseus::ShapePoint>()
     );
 
-    world.GetForceManager().Add(
-        body,
-        osseus::Vector3(0.0, gravity, 0.0)
-    );
+    osseus::Vector3 directionalGravity = osseus::Vector3(0.0, gravity, 0.0);
+    world.AddForce(body, directionalGravity);
 
     world.Step(delta);
 
@@ -130,9 +128,10 @@ TEST_CASE("Integrator - RK4 integrates constant acceleration")
         std::make_unique<osseus::ShapePoint>()
     );
 
+    osseus::Vector3 gravity = osseus::Vector3(0.0, -9.81, 0.0);
     
     for (int i = 0; i < steps; ++i) {
-        world.GetForceManager().Add(body, osseus::Vector3(0.0, -9.81, 0.0));
+        world.AddForce(body, gravity);
         world.Step(delta);
     }
 
@@ -185,7 +184,7 @@ TEST_CASE("Integrator - RK4 preserves a circular orbit")
     );
 
     osseus::UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     const osseus::Handle centralHandle = world.CreateBody(
         osseus::BodyData{

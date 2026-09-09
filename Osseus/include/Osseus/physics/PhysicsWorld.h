@@ -50,8 +50,8 @@ namespace osseus {
         Vector3 GetNetForce(Handle handle);
         const Vector3 GetNetForce(Handle handle) const;
 
-        void AddForce(Handle handle, Vector3& force);
-        void AddUniversalForce(UniversalForceEvaluator* uForce);
+        void AddForce(Handle handle, Vector3 force);
+        int AddUniversalForce(UniversalForceEvaluator* uForce);
         
         // Body Manager
         BodyData* GetBody(Handle handle);
@@ -76,6 +76,14 @@ namespace osseus {
 
         const std::vector<Contact>& GetCollisionManifold() {
             return collisionManifold_;
+        }
+
+        int GetNetForcesSize() const {
+            return forceManager_.NetForces().size();
+        }
+
+        int GetBodyDataSize() const {
+            return bodyManager_.Data().size();
         }
 
         void SetCollisionMode(CollisionMode mode);

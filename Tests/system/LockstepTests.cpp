@@ -63,12 +63,12 @@ TEST_CASE("Lockstep - PhysicsWorld maintains lockstep on creation")
     osseus::PhysicsWorld world;
 
     osseus::Handle object = world.CreateBody();
-    REQUIRE(world.GetForceManager().NetForces().size() == world.GetBodyManager().Data().size());
+    REQUIRE(world.GetNetForcesSize() == world.GetBodyDataSize());
     
     osseus::Handle secondObject = world.CreateBody();
     osseus::Handle thirdObject = world.CreateBody();
     
-    REQUIRE(world.GetForceManager().NetForces().size() == world.GetBodyManager().Data().size());
+    REQUIRE(world.GetNetForcesSize() == world.GetBodyDataSize());
 }
 
 
@@ -77,7 +77,7 @@ TEST_CASE("Lockstep - PhysicsWorld maintains lockstep through destruction")
     osseus::PhysicsWorld world;
 
     osseus::Handle object = world.CreateBody();
-    REQUIRE(world.GetForceManager().NetForces().size() == world.GetBodyManager().Data().size());
+    REQUIRE(world.GetNetForcesSize() == world.GetBodyDataSize());
 
     world.DestroyBody(object);
     
@@ -86,7 +86,7 @@ TEST_CASE("Lockstep - PhysicsWorld maintains lockstep through destruction")
 
     osseus::Handle thirdObject = world.CreateBody();
     
-    REQUIRE(world.GetForceManager().NetForces().size() == world.GetBodyManager().Data().size());
+    REQUIRE(world.GetNetForcesSize() == world.GetBodyDataSize());    
 }
 
 
@@ -96,23 +96,23 @@ TEST_CASE("Lockstep - PhysicsWorld typically destroys at end step.")
     osseus::PhysicsWorld world;
 
     osseus::Handle object = world.CreateBody();
-    REQUIRE(world.GetBodyManager().Data().size() == 1);
+    REQUIRE(world.GetBodyDataSize() == 1);
 
     world.DestroyBody(object);
 
-    REQUIRE(world.GetBodyManager().Data().size() == 0);
+    REQUIRE(world.GetBodyDataSize() == 0);
 
     osseus::Handle secondObject = world.CreateBody();
     world.QueueDestroyBody(secondObject);
 
 
-    REQUIRE(world.GetBodyManager().Data().size() == 1);
+    REQUIRE(world.GetBodyDataSize() == 1);
 
     osseus::Handle thirdObject = world.CreateBody();
     world.QueueDestroyBody(thirdObject);
     
-    REQUIRE(world.GetBodyManager().Data().size() == 2);
+    REQUIRE(world.GetBodyDataSize() == 2);
 
     world.Step(0.01);
-    REQUIRE(world.GetBodyManager().Data().size() == 0);
+    REQUIRE(world.GetBodyDataSize() == 0);
 }

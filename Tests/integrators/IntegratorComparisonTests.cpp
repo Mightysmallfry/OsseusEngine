@@ -35,7 +35,7 @@ namespace {
         world.SetIntegrator(std::move(integrator));
 
         UniversalGravity gravity;
-        world.GetForceManager().AddUniversal(&gravity);
+        world.AddUniversalForce(&gravity);
 
         world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), centralMass, 0.0, 0.0},
                          std::make_unique<ShapeSphere>(5.0));

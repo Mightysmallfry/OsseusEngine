@@ -53,7 +53,7 @@ TEST_CASE("Invariant - A static body (invMass = 0) never moves under gravity, in
 {
     PhysicsWorld world;
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     Handle staticBody = world.CreateBody(BodyData{Vector3::Zero(), Vector3::Zero(), 1.0e6, 0.0, 0.0},
                                          std::make_unique<ShapeCube>(1.0));
@@ -61,7 +61,8 @@ TEST_CASE("Invariant - A static body (invMass = 0) never moves under gravity, in
                                           std::make_unique<ShapeSphere>(1.0));
     (void)dynamicBody;
 
-    world.GetForceManager().Add(staticBody, Vector3(1000.0, 0.0, 0.0));
+    osseus::Vector3 force = Vector3(1000.0, 0.0, 0.0);
+    world.AddForce(staticBody, force);
 
     for (int i = 0; i < 100; ++i) {
         world.Step(0.01);
@@ -89,11 +90,11 @@ TEST_CASE("Invariant - BodyManager and ForceManager report the same set of live 
         }
     }
 
-    REQUIRE(world.GetBodyManager().Data().size() == world.GetForceManager().NetForces().size());
-    REQUIRE(world.GetBodyManager().Handles().size() == survivors.size());
+    REQUIRE(world.GetBodyDataSize() == world.GetNetForcesSize());
+    REQUIRE(world.GetBodyDataSize() == survivors.size());
 
     for (Handle h : survivors) {
-        REQUIRE(world.GetBodyManager().GetBody(h) != nullptr);
+        REQUIRE(world.GetBody(h) != nullptr);
     }
 }
 
@@ -129,7 +130,7 @@ TEST_CASE("Invariant - Total momentum is conserved for an isolated multi-body gr
     PhysicsWorld world;
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     struct Seed { Vector3 position, velocity; double mass; };
     const std::vector<Seed> seeds = {

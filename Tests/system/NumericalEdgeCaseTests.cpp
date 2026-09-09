@@ -42,7 +42,7 @@ TEST_CASE("Numerical edge cases - Gravity between near-singularity-close bodies 
     query.mass = 1.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
     const Vector3 force = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
     REQUIRE(std::isfinite(force.x));
@@ -62,7 +62,7 @@ TEST_CASE("Numerical edge cases - Gravity between very large (but not overflow-i
     query.mass = 1e150;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
     const Vector3 force = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
     REQUIRE(std::isfinite(force.x));
@@ -85,7 +85,7 @@ TEST_CASE("Numerical edge cases - CURRENT BEHAVIOR: sufficiently extreme masses 
     query.mass = 1e200;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(ApproximationMode::EXACT);
     const Vector3 force = gravity.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
     REQUIRE(std::isinf(force.x));
@@ -103,7 +103,7 @@ TEST_CASE("Numerical edge cases - Electromagnetism between near-singularity-clos
     query.charge = -1.0;
 
     UniversalElectroMag em;
-    em.SetTheta(0.0);
+    em.SetApproximationMode(ApproximationMode::EXACT);
     const Vector3 force = em.CalculateForce(tree.GetRoot(), Handle{1, 0}, query);
 
     REQUIRE(std::isfinite(force.x));

@@ -113,7 +113,7 @@ TEST_CASE("UniversalGravity - CalculateForce excludes self-force after the tree 
     bodyA.mass = 2.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0); // force exact full descent, no Barnes-Hut approximation
+    gravity.SetApproximationMode(osseus::ApproximationMode::EXACT); // force exact full descent, no Barnes-Hut approximation
 
     const Vector3 result = gravity.CalculateForce(tree.GetRoot(), handleA, bodyA);
     const Vector3 expected = ExpectedGravityPointForce(positionB, 3.0, positionA, 2.0);
@@ -144,7 +144,7 @@ TEST_CASE("UniversalGravity - CalculateForce still applies force from a spatiall
     bodyB.mass = 3.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0);
+    gravity.SetApproximationMode(osseus::ApproximationMode::EXACT);
 
     const Vector3 result = gravity.CalculateForce(tree.GetRoot(), handleB, bodyB);
     const Vector3 expected = ExpectedGravityPointForce(positionA, 2.0, positionB, 3.0);
@@ -173,7 +173,7 @@ TEST_CASE("UniversalGravity - CalculateForce sums exact contributions from multi
     bodyA.mass = 2.0;
 
     UniversalGravity gravity;
-    gravity.SetTheta(0.0); // exact descent -- no approximation to account for
+    gravity.SetApproximationMode(osseus::ApproximationMode::EXACT); // exact descent -- no approximation to account for
 
     const Vector3 result = gravity.CalculateForce(tree.GetRoot(), handleA, bodyA);
     const Vector3 expected = ExpectedGravityPointForce(positionB, 3.0, positionA, 2.0)
@@ -256,7 +256,7 @@ TEST_CASE("UniversalElectroMag - CalculateForce excludes self-force after the tr
     bodyA.charge = 2.0;
 
     UniversalElectroMag electroMag;
-    electroMag.SetTheta(0.0); // exact descent -- stays on the PointForce path, never opens the dipole term
+    electroMag.SetApproximationMode(osseus::ApproximationMode::EXACT); // exact descent -- stays on the PointForce path, never opens the dipole term
 
     const Vector3 offset = positionB - positionA;
     const double distSq = offset.LengthSquared();

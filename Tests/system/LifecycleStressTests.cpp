@@ -53,7 +53,7 @@ TEST_CASE("Lifecycle stress - Repeated create/step/destroy cycles maintain locks
 {
     PhysicsWorld world;
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     constexpr int cycles = 500;
     for (int i = 0; i < cycles; ++i) {
@@ -110,7 +110,7 @@ TEST_CASE("Lifecycle stress - A large population of bodies can be created, stepp
 {
     PhysicsWorld world;
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     std::vector<Handle> handles;
     constexpr int bodyCount = 100;

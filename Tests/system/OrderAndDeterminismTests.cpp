@@ -40,7 +40,7 @@ namespace {
     std::vector<BodyData> RunSystem(const std::vector<BodySpec>& specs, double dt, int steps) {
         PhysicsWorld world;
         UniversalGravity gravity;
-        world.GetForceManager().AddUniversal(&gravity);
+        world.AddUniversalForce(&gravity);
 
         std::vector<Handle> handles;
         handles.reserve(specs.size());
@@ -170,7 +170,7 @@ TEST_CASE("Determinism - Interleaving unrelated body creation/destruction before
         }
 
         UniversalGravity gravity;
-        world.GetForceManager().AddUniversal(&gravity);
+        world.AddUniversalForce(&gravity);
         Handle a = world.CreateBody(BodyData{Vector3(10.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0), 5.0, 0.2, 0.0},
                                     std::make_unique<ShapeSphere>(1.0));
         Handle b = world.CreateBody(BodyData{Vector3(-10.0, 0.0, 0.0), Vector3(0.0, -1.0, 0.0), 5.0, 0.2, 0.0},

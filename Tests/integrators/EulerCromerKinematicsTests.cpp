@@ -99,8 +99,9 @@ TEST_CASE("Euler-Cromer - Zero initial velocity under constant acceleration matc
     Handle body =
         world.CreateBody(BodyData{Vector3(0.0, 10.0, 0.0), Vector3::Zero(), 1.0, 1.0}, std::make_unique<ShapePoint>());
 
+    osseus::Vector3 gravity = Vector3(0.0, acceleration, 0.0);
     for (int i = 0; i < steps; ++i) {
-        world.GetForceManager().Add(body, Vector3(0.0, acceleration, 0.0));
+        world.AddForce(body, gravity);
         world.Step(dt);
     }
 
@@ -127,8 +128,9 @@ TEST_CASE("Euler-Cromer - Nonzero initial velocity under constant acceleration m
     Handle body = world.CreateBody(BodyData{Vector3(0.0, 0.0, 0.0), Vector3(0.0, initialVelocityY, 0.0), 1.0, 1.0},
                                    std::make_unique<ShapePoint>());
 
+    osseus::Vector3 gravity = Vector3(0.0, acceleration, 0.0);
     for (int i = 0; i < steps; ++i) {
-        world.GetForceManager().Add(body, Vector3(0.0, acceleration, 0.0));
+        world.AddForce(body, gravity);
         world.Step(dt);
     }
 
@@ -162,7 +164,8 @@ TEST_CASE("Euler-Cromer - Single step position update uses the NEWLY updated vel
         BodyData{Vector3(0.0, initialPositionY, 0.0), Vector3(0.0, initialVelocityY, 0.0), 1.0, 1.0},
         std::make_unique<ShapePoint>());
 
-    world.GetForceManager().Add(body, Vector3(0.0, acceleration, 0.0));
+    osseus::Vector3 gravity = Vector3(0.0, acceleration, 0.0);
+    world.AddForce(body, gravity);
     world.Step(dt);
 
     const BodyData* result = world.GetBody(body);
@@ -195,8 +198,9 @@ TEST_CASE("Euler-Cromer - A 2D projectile (combined X velocity and Y acceleratio
     Handle body = world.CreateBody(BodyData{Vector3::Zero(), Vector3(initialVelocityX, initialVelocityY, 0.0), 1.0, 1.0},
                                    std::make_unique<ShapePoint>());
 
+    osseus::Vector3 accel = Vector3(0.0, gravity, 0.0);
     for (int i = 0; i < steps; ++i) {
-        world.GetForceManager().Add(body, Vector3(0.0, gravity, 0.0));
+        world.AddForce(body, accel);
         world.Step(dt);
     }
 

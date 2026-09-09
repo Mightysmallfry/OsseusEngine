@@ -111,7 +111,7 @@ TEST_CASE("PhysicsWorld - RebuildOctree derives root bounds from body positions 
     world.SetIntegrator(std::make_unique<osseus::IntegratorEulerCromer>());
 
     osseus::UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     constexpr double mass = 125000.0;
     constexpr double orbitalRadius = 200.0;
@@ -159,7 +159,7 @@ TEST_CASE("PhysicsWorld - a symmetric equal-mass binary holds its separation ove
     world.SetIntegrator(std::make_unique<osseus::IntegratorEulerCromer>());
 
     osseus::UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     constexpr double mass = 125000.0;
     constexpr double orbitalRadius = 200.0;

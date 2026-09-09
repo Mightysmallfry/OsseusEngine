@@ -164,7 +164,7 @@ TEST_CASE("Scenario B - A constant universal force field accelerates a body unif
 {
     PhysicsWorld world;
     UniformGravityField field(Vector3(0.0, -9.8, 0.0));
-    world.GetForceManager().AddUniversal(&field);
+    world.AddUniversalForce(&field);
 
     Handle body = world.CreateBody(BodyData{Vector3(0.0, 100.0, 0.0), Vector3::Zero(), 1.0, 1.0, 0.0},
                                    std::make_unique<ShapePoint>());
@@ -196,7 +196,7 @@ TEST_CASE("Scenario C - Two mutually-attracting bodies conserve total momentum a
     PhysicsWorld world;
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     const double massA = 5.0;
     const double massB = 3.0;
@@ -239,7 +239,7 @@ TEST_CASE("Scenario F - A three-body system runs without producing NaN/Inf and s
     PhysicsWorld world;
     world.SetIntegrator(std::make_unique<IntegratorRungeKutta4>());
     UniversalGravity gravity;
-    world.GetForceManager().AddUniversal(&gravity);
+    world.AddUniversalForce(&gravity);
 
     const double mass = 10.0;
     Handle bodyA = world.CreateBody(BodyData{Vector3(20.0, 0.0, 0.0), Vector3(0.0, 4.0, 0.0), mass, 1.0 / mass, 0.0},
@@ -313,7 +313,7 @@ TEST_CASE("Scenario J - A body under a universal gravity field settles onto a st
 {
     PhysicsWorld world;
     UniformGravityField field(Vector3(0.0, -9.8, 0.0));
-    world.GetForceManager().AddUniversal(&field);
+    world.AddUniversalForce(&field);
 
     const double floorHalfExtent = 0.5;
     const double ballRadius = 0.5;
