@@ -1,12 +1,14 @@
 add_executable(osseus-sandbox
-        #src/main.cpp
-        src/window.cpp
+        src/main.cpp
 
         RenderWindow/Dashboard.cpp
         RenderWindow/RenderWindow.cpp
         src/Scenarios/OrbitScenario.cpp
+        src/Scenarios/OrbitCubeScenario.cpp
         src/Scenarios/BinaryScenario.cpp
         src/Scenarios/NBodyContactScenario.cpp
+        src/Scenarios/NBodyCubeScenario.cpp
+        src/Scenarios/NEMScenario.cpp
 )
 
 

@@ -5,5 +5,8 @@
 #include "OrbitScenario.h"
 #include "BinaryScenario.h"
 #include "NBodyContactScenario.h"
+#include "NBodyCubeScenario.h"
+#include "OrbitCubeScenario.h"
+#include "NEMScenario.h"
 
 #endif

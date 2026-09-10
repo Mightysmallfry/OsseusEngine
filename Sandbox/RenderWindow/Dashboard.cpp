@@ -22,6 +22,13 @@ namespace sandbox {
         constexpr float MinimumPanelWidth = 80.0f;
         constexpr float MinimumPanelHeight = 40.0f;
 
+
+        constexpr int TitleFontSize = 20;
+        constexpr int SubpanelFontSize = 16;
+        constexpr int FieldFontSize = 14;
+        constexpr int DataFontSize = 14;
+
+
         std::string FormatInteger(std::size_t value) {
             return std::to_string(value);
         }
@@ -145,7 +152,7 @@ namespace sandbox {
         border.setFillColor(colors_.border);
         window.draw(border);
 
-        DrawText(window, "OSSEUS // MONITOR", {16.0f, 15.0f}, 13, colors_.text);
+        DrawText(window, "OSSEUS // DASHBOARD", {16.0f, 15.0f}, TitleFontSize, colors_.text);
     }
 
     void Dashboard::DrawSimulationPanel(sf::RenderWindow& window, const sf::FloatRect& bounds) {
@@ -155,7 +162,7 @@ namespace sandbox {
 
         DrawPanel(window, bounds);
 
-        DrawPanelHeader(window, bounds, "ORBITAL VIEW", "LIVE");
+        DrawPanelHeader(window, bounds, "ORBITAL VIEW", "ACTIVE");
     }
 
     void Dashboard::DrawStatusPanel(sf::RenderWindow& window, const sf::FloatRect& bounds) {
@@ -165,7 +172,7 @@ namespace sandbox {
 
         DrawPanel(window, bounds);
 
-        DrawPanelHeader(window, bounds, "SYSTEM STATUS", "LIVE");
+        DrawPanelHeader(window, bounds, "SYSTEM STATUS", "ACTIVE");
 
         const float contentY = bounds.position.y + PanelHeaderHeight;
 
@@ -262,9 +269,11 @@ namespace sandbox {
 
         window.draw(line);
 
-        DrawText(window, title, {bounds.position.x + 10.0f, bounds.position.y + 10.0f}, 10, colors_.text);
+        DrawText(window, title, {bounds.position.x + 10.0f, bounds.position.y + 10.0f}, SubpanelFontSize, colors_.text);
+
+        // Status bar
         if (!status.empty()) {
-            sf::Text statusText(font_, status, 9);
+            sf::Text statusText(font_, status, SubpanelFontSize);
             statusText.setFillColor(colors_.green);
 
             const float statusWidth = statusText.getLocalBounds().size.x;
@@ -288,14 +297,14 @@ namespace sandbox {
 
     void Dashboard::DrawMetric(sf::RenderWindow& window, const sf::FloatRect& bounds, const std::string& label,
                                const std::string& value) {
-        DrawText(window, label, {bounds.position.x + 10.0f, bounds.position.y + 12.0f}, 9, colors_.textDim);
-        DrawText(window, value, {bounds.position.x + 10.0f, bounds.position.y + 34.0f}, 18, colors_.text);
+        DrawText(window, label, {bounds.position.x + 10.0f, bounds.position.y + 12.0f}, FieldFontSize, colors_.textDim);
+        DrawText(window, value, {bounds.position.x + 10.0f, bounds.position.y + 34.0f}, DataFontSize, colors_.text);
     }
 
     void Dashboard::DrawDataRow(sf::RenderWindow& window, const sf::FloatRect& bounds, const std::string& label,
                                 const std::string& value) {
-        DrawText(window, label, {bounds.position.x + 10.0f, bounds.position.y + 7.0f}, 9, colors_.textDim);
-        sf::Text valueText(font_, value, 9);
+        DrawText(window, label, {bounds.position.x + 10.0f, bounds.position.y + 7.0f}, 14, colors_.textDim);
+        sf::Text valueText(font_, value, 14);
         valueText.setFillColor(colors_.text);
         valueText.setPosition(
             {bounds.position.x + bounds.size.x - valueText.getLocalBounds().size.x - 10.0f, bounds.position.y + 7.0f});
