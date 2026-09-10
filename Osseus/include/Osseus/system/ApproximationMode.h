@@ -24,7 +24,7 @@ namespace osseus {
             case ApproximationMode::EXACT:
                 return ApproximationData{0.0, 0.0};
             case ApproximationMode::NORMAL:
-                return ApproximationData{0.25, 0.01};
+                return ApproximationData{0.35, 0.01};
             case ApproximationMode::LIGHT:
                 return ApproximationData{0.6, 0.05};
 

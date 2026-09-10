@@ -10,6 +10,7 @@
 #include "Osseus/system/Handle.h"
 
 namespace osseus {
+
     // Expanding Polytope Algorithm. Once GJK confirms an overlap it
     // leaves behind a tetrahedron enclosing the origin; EPA inflates
     // that tetrahedron toward the Minkowski surface to recover the
@@ -21,14 +22,23 @@ namespace osseus {
                                const Vector3& posB, Handle handleB, const GJKSimplex& startingSimplex);
 
         private:
+        struct HeapEntry {
+            double distance;
+            int index;
+            bool operator>(const HeapEntry& other) const {
+                return distance > other.distance;
+            }
+        };
+
         struct Face {
             int a;
             int b;
             int c;
             Vector3 normal;
             double distance;
+            bool alive = true;
         };
-        
+
         static Face MakeFace(const std::vector<GJKSupportPoint>& polytope, int a, int b, int c);
         static void AddUniqueEdge(std::vector<std::pair<int, int>>& edges, int a, int b);
         static Contact BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face, Handle handleA,

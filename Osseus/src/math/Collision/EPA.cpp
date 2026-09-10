@@ -4,6 +4,11 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <queue>
+
+// ============================================================================
+//  EPA Face Construction
+// ============================================================================
 
 namespace osseus {
     EPA::Face EPA::MakeFace(const std::vector<GJKSupportPoint>& polytope, int a, int b, int c) {
@@ -14,34 +19,43 @@ namespace osseus {
         Vector3 normal = (pb - pa).Cross(pc - pa);
         double lengthSq = normal.LengthSquared();
         if (lengthSq <= 1e-12) {
-            return Face{a, b, c, Vector3::Zero(), std::numeric_limits<double>::max()};
+            return Face{a, b, c, Vector3::Zero(), std::numeric_limits<double>::max(), true};
         }
-        normal = normal / std::sqrt(lengthSq);
+
+        double invLen = 1.0 / std::sqrt(lengthSq);
+        normal *= invLen;
         double distance = normal.Dot(pa);
 
-        return Face{a, b, c, normal, distance};
+        return Face{a, b, c, normal, distance, true};
     }
 
+    // ============================================================================
+    //  Silhouette Edge Management
+    // ============================================================================
+
     void EPA::AddUniqueEdge(std::vector<std::pair<int, int>>& edges, int a, int b) {
-        auto reversed = std::find(edges.begin(), edges.end(), std::make_pair(b, a));
-        if (reversed != edges.end()) {
-            // Shared by two faces being removed together - it's an
-            // interior edge of the hole, not part of its silhouette.
-            edges.erase(reversed);
-        } else {
-            edges.emplace_back(a, b);
+        for (size_t i = 0; i < edges.size(); ++i) {
+            if (edges[i].first == b && edges[i].second == a) {
+                edges[i] = edges.back();
+                edges.pop_back();
+                return;
+            }
         }
+
+        edges.emplace_back(a, b);
     }
+
+    // ============================================================================
+    //  Contact Construction
+    // ============================================================================
 
     Contact EPA::BuildContact(const std::vector<GJKSupportPoint>& polytope, const Face& face, Handle handleA,
                               Handle handleB) {
-        Vector3 pa = polytope[face.a].point;
-        Vector3 pb = polytope[face.b].point;
-        Vector3 pc = polytope[face.c].point;
-        Vector3 projected = face.normal * face.distance; // closest point on the face's plane to the origin
+        const Vector3& pa = polytope[face.a].point;
+        const Vector3& pb = polytope[face.b].point;
+        const Vector3& pc = polytope[face.c].point;
+        Vector3 projected = face.normal * face.distance;
 
-        // Barycentric coordinates of `projected` within triangle (pa, pb, pc),
-        // used to interpolate the real witness points on A and B.
         Vector3 v0 = pb - pa;
         Vector3 v1 = pc - pa;
         Vector3 v2 = projected - pa;
@@ -68,102 +82,161 @@ namespace osseus {
         contact.penetration = face.distance;
         contact.pointOnA = polytope[face.a].pointA * u + polytope[face.b].pointA * v + polytope[face.c].pointA * w;
         contact.pointOnB = polytope[face.a].pointB * u + polytope[face.b].pointB * v + polytope[face.c].pointB * w;
-        
+
         return contact;
     }
 
+    // ============================================================================
+    //  EPA Main Resolution Loop
+    // ============================================================================
+
     Contact EPA::Resolve(const IShape& shapeA, const Vector3& posA, Handle handleA, const IShape& shapeB,
                          const Vector3& posB, Handle handleB, const GJKSimplex& startingSimplex) {
-        std::vector<GJKSupportPoint> polytope = {startingSimplex[0], startingSimplex[1], startingSimplex[2],
-                                                 startingSimplex[3]};
 
-        // Fix the tetrahedron's handedness once, globally, before any faces
-        // are built. Faces (0,1,2)/(0,2,3)/(0,3,1)/(1,3,2) form a fixed,
-        // already edge-consistent boundary triangulation by construction;
-        // what's not fixed is which way it winds relative to GJK's vertex
-        // order. A single swap flips all four faces together, so they stay
-        // mutually consistent - unlike correcting each face's winding
-        // independently after the fact.
+        // ----------------------------------------
+        // Initialize polytope
+        // ----------------------------------------
+        std::vector<GJKSupportPoint> polytope;
+        polytope.reserve(64);
+        polytope.insert(polytope.end(),
+                        {startingSimplex[0], startingSimplex[1], startingSimplex[2], startingSimplex[3]});
+
+        // ----------------------------------------
+        // Fix tetrahedron handedness
+        // ----------------------------------------
         if ((polytope[1].point - polytope[0].point)
                 .Dot((polytope[2].point - polytope[0].point).Cross(polytope[3].point - polytope[0].point)) > 0.0) {
             std::swap(polytope[2], polytope[3]);
         }
 
-        std::vector<Face> faces = {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
-                                   MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)};
+        // ----------------------------------------
+        // Build initial faces
+        // ----------------------------------------
+        std::vector<Face> faces;
+        faces.reserve(128);
+        faces.insert(faces.end(), {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
+                                   MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)});
 
+        // ----------------------------------------
+        // Initialize heap
+        // ----------------------------------------
+        std::priority_queue<HeapEntry, std::vector<HeapEntry>, std::greater<HeapEntry>> faceQueue;
+        for (int i = 0; i < 4; ++i)
+            faceQueue.emplace(faces[i].distance, i);
 
-        // Adjust some limits of the simulation.
-        // epsilon is the convergence factor, larger convergence ~1
-        // leads to fast but innacurate results. 0.01 is about 1% for 1 unit objects
         constexpr int maxIterations = 64;
-        constexpr double epsilon = 0.0001;
+        constexpr double epsilon = 1e-4;
+        constexpr double duplicatePointEpsilonSq = 1e-10;
 
-        Face closest = faces[0];
+        Face lastClosest{};
+        bool hasClosest = false;
+
+        // ====================================================================
+        //  EPA Iteration Loop
+        // ====================================================================
+
+        Vector3 lastDir = Vector3::Zero();
+        GJKSupportPoint lastSupport;
+        bool hasCachedSupport = false;
+        constexpr double dirSimilarityThreshold = 0.99999; // cosine similarity ~0.5 degrees
+
+        std::vector<std::pair<int, int>> uniqueEdges;
+        uniqueEdges.reserve(64);
 
         for (int iteration = 0; iteration < maxIterations; ++iteration) {
-            size_t closestIndex = 0;
-            double minDistance = std::numeric_limits<double>::max();
-            for (size_t i = 0; i < faces.size(); ++i) {
-                if (faces[i].distance < minDistance) {
-                    minDistance = faces[i].distance;
-                    closestIndex = i;
-                }
-            }
-            closest = faces[closestIndex];
 
-            GJKSupportPoint newPoint = GJK::Support(shapeA, posA, shapeB, posB, closest.normal);
-            double supportDistance = newPoint.point.Dot(closest.normal);
+            // ----------------------------------------
+            // Pop closest alive face
+            // ----------------------------------------
+            hasClosest = false;
+            while (!faceQueue.empty()) {
+                HeapEntry entry = faceQueue.top();
+                faceQueue.pop();
 
-            if (supportDistance - closest.distance < epsilon) {
-                // The closest face already sits on the Minkowski surface -
-                // no support point extends further along its normal.
-                break;
-            }
-
-            // Guard against a support point that's a near-duplicate of one
-            // already in the polytope. This can happen without tripping the
-            // convergence check above (e.g. on flat/near-planar Minkowski
-            // regions where consecutive support directions keep landing on
-            // the same vertex up to floating-point noise).
-            constexpr double duplicatePointEpsilonSq = 1e-10;
-            bool isDuplicate = false;
-            for (const auto& existing : polytope) {
-                if (DistanceSquared(existing.point, newPoint.point) < duplicatePointEpsilonSq) {
-                    isDuplicate = true;
+                Face& f = faces[entry.index];
+                if (f.alive) {
+                    lastClosest = f;
+                    hasClosest = true;
                     break;
                 }
             }
-            if (isDuplicate) {
+
+            if (!hasClosest)
                 break;
+
+            // ----------------------------------------
+            // Support point in direction of closest normal
+            // ----------------------------------------
+
+            Vector3 dir = lastClosest.normal;
+            // Check if direction is nearly identical to last direction
+            GJKSupportPoint newPoint;
+            if (hasCachedSupport && dir.Dot(lastDir) > dirSimilarityThreshold) {
+                newPoint = lastSupport; // reuse cached support point
+            } else {
+                newPoint = GJK::Support(shapeA, posA, shapeB, posB, dir);
+                lastSupport = newPoint;
+                lastDir = dir;
+                hasCachedSupport = true;
+            }
+
+            double supportDistance = newPoint.point.Dot(lastClosest.normal);
+
+            if (supportDistance - lastClosest.distance < epsilon)
+                break;
+
+            // ----------------------------------------
+            // Duplicate point guard
+            // ----------------------------------------
+
+            for (const auto& existing : polytope) {
+                Vector3 difference = existing.point - newPoint.point;
+
+                if (fabs(difference.x) < epsilon && fabs(difference.y) < epsilon && fabs(difference.z) < epsilon) {
+                    if (difference.LengthSquared() < duplicatePointEpsilonSq)
+                        return BuildContact(polytope, lastClosest, handleA, handleB);
+                }
             }
 
             polytope.push_back(newPoint);
             int newIndex = static_cast<int>(polytope.size() - 1);
 
-            // Remove every face visible from the new point, recording the
-            // silhouette edges left behind so we can patch the hole.
-            std::vector<std::pair<int, int>> uniqueEdges;
-            for (auto it = faces.begin(); it != faces.end();) {
-                Vector3 faceToPoint = newPoint.point - polytope[it->a].point;
-                if (it->normal.Dot(faceToPoint) > epsilon) {
-                    AddUniqueEdge(uniqueEdges, it->a, it->b);
-                    AddUniqueEdge(uniqueEdges, it->b, it->c);
-                    AddUniqueEdge(uniqueEdges, it->c, it->a);
+            // ----------------------------------------
+            // Silhouette extraction (lazy removal)
+            // ----------------------------------------
 
-                    it = faces.erase(it);
-                } else {
-                    ++it;
+            uniqueEdges.clear();
+
+            for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
+                Face& face = faces[i];
+
+                if (!face.alive) {
+                    continue;
+                }
+
+                Vector3 faceToPoint = newPoint.point - polytope[face.a].point;
+
+                if (face.normal.Dot(faceToPoint) > epsilon) {
+                    AddUniqueEdge(uniqueEdges, face.a, face.b);
+                    AddUniqueEdge(uniqueEdges, face.b, face.c);
+                    AddUniqueEdge(uniqueEdges, face.c, face.a);
+                    face.alive = false;
                 }
             }
-            
+
+            // ----------------------------------------
+            // Patch hole with new faces
+            // ----------------------------------------
             for (const auto& edge : uniqueEdges) {
-                faces.push_back(MakeFace(polytope, edge.first, edge.second, newIndex));
+                Face newFace = MakeFace(polytope, edge.first, edge.second, newIndex);
+                faces.push_back(newFace);
+                faceQueue.emplace(newFace.distance, faces.size() - 1);
             }
-            
         }
 
-
-        return BuildContact(polytope, closest, handleA, handleB);
+        // ====================================================================
+        //  Final Contact
+        // ====================================================================
+        return BuildContact(polytope, lastClosest, handleA, handleB);
     }
 } // namespace osseus

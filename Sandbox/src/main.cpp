@@ -44,9 +44,9 @@ int main() {
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyCubeScenario>();
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitCubeScenario>();
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::OrbitScenario>();
-    // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyContactScenario>();
+    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NBodyContactScenario>();
     // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::BinaryScenario>();
-    std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NEMScenario>();
+    // std::unique_ptr<sandbox::IScenario> scenario = std::make_unique<sandbox::NEMScenario>();
 
     // ======================
     
