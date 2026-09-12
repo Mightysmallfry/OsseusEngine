@@ -109,7 +109,7 @@ Forces can be applied directly to individual bodies or through universal force e
 Per-body forces can be added directly:
 
 ``` C++
-world.GetForceManager().Add(
+world.AddForce(
     objectHandle,
     osseus::Vector3(0.0, -9.8, 0.0)
 );
@@ -120,7 +120,7 @@ Universal forces operate across the simulation and are useful for interactions s
 ``` C++
 osseus::UniversalGravity gravity;
 
-world.GetForceManager().AddUniversal(&gravity);
+world.AddUniversalForce(&gravity);
 ```
 
 This separation allows forces that affect specific objects to coexist with forces that govern the entire simulation.
