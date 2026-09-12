@@ -117,6 +117,13 @@ namespace osseus {
         faces.insert(faces.end(), {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
                                    MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)});
 
+        std::vector<int> aliveIndices;
+        aliveIndices.reserve(128);
+        for (int i = 0; i < 4; ++i) {
+            faces[i].aliveSlot = i;
+            aliveIndices.push_back(i);
+        }
+
         // ----------------------------------------
         // Initialize heap
         // ----------------------------------------
@@ -207,12 +214,8 @@ namespace osseus {
 
             uniqueEdges.clear();
 
-            for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-                Face& face = faces[i];
-
-                if (!face.alive) {
-                    continue;
-                }
+            for (size_t slot = 0; slot < aliveIndices.size();) {
+                Face& face = faces[aliveIndices[slot]];
 
                 Vector3 faceToPoint = newPoint.point - polytope[face.a].point;
 
@@ -220,7 +223,15 @@ namespace osseus {
                     AddUniqueEdge(uniqueEdges, face.a, face.b);
                     AddUniqueEdge(uniqueEdges, face.b, face.c);
                     AddUniqueEdge(uniqueEdges, face.c, face.a);
+
                     face.alive = false;
+                    face.aliveSlot = -1;
+                    int lastIndex = aliveIndices.back();
+                    aliveIndices[slot] = lastIndex;
+                    faces[lastIndex].aliveSlot = static_cast<int>(slot);
+                    aliveIndices.pop_back();
+                } else {
+                    ++slot;
                 }
             }
 
@@ -229,7 +240,9 @@ namespace osseus {
             // ----------------------------------------
             for (const auto& edge : uniqueEdges) {
                 Face newFace = MakeFace(polytope, edge.first, edge.second, newIndex);
+                newFace.aliveSlot = static_cast<int>(aliveIndices.size());
                 faces.push_back(newFace);
+                aliveIndices.push_back(static_cast<int>(faces.size() - 1));
                 faceQueue.emplace(newFace.distance, faces.size() - 1);
             }
         }

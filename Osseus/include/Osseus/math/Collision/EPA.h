@@ -37,6 +37,7 @@ namespace osseus {
             Vector3 normal;
             double distance;
             bool alive = true;
+            int aliveSlot = -1;
         };
 
         static Face MakeFace(const std::vector<GJKSupportPoint>& polytope, int a, int b, int c);
