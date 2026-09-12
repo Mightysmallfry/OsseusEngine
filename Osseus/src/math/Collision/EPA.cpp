@@ -112,10 +112,23 @@ namespace osseus {
         // ----------------------------------------
         // Build initial faces
         // ----------------------------------------
+        std::cerr << "Initial EPA simplex:\n";
+        for (int i = 0; i < 4; ++i) {
+            const Vector3& p = polytope[i].point;
+            std::cerr << "  " << i << ": (" << p.x << ", " << p.y << ", " << p.z << ")\n";
+        }
+
         std::vector<Face> faces;
         faces.reserve(128);
         faces.insert(faces.end(), {MakeFace(polytope, 0, 1, 2), MakeFace(polytope, 0, 2, 3),
                                    MakeFace(polytope, 0, 3, 1), MakeFace(polytope, 1, 3, 2)});
+
+        std::cerr << "Initial EPA faces:\n";
+        for (size_t i = 0; i < faces.size(); ++i) {
+            std::cerr << "  Face " << i << ": normal=(" << faces[i].normal.x << ", " << faces[i].normal.y << ", "
+                      << faces[i].normal.z << ")"
+                      << " distance=" << faces[i].distance << '\n';
+        }
 
         std::vector<int> aliveIndices;
         aliveIndices.reserve(128);
@@ -240,6 +253,7 @@ namespace osseus {
             // ----------------------------------------
             for (const auto& edge : uniqueEdges) {
                 Face newFace = MakeFace(polytope, edge.first, edge.second, newIndex);
+
                 newFace.aliveSlot = static_cast<int>(aliveIndices.size());
                 faces.push_back(newFace);
                 aliveIndices.push_back(static_cast<int>(faces.size() - 1));

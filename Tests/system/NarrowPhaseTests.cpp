@@ -15,7 +15,7 @@ namespace {
 
     // Builds a one-shape-per-body world and runs it through NarrowPhase.
     std::vector<Contact> GenerateContact(std::unique_ptr<IShape> shapeA, const Vector3& posA,
-                                          std::unique_ptr<IShape> shapeB, const Vector3& posB) {
+                                         std::unique_ptr<IShape> shapeB, const Vector3& posB) {
         BodyManager bodyManager;
         ShapeManager shapeManager;
         Handle a = MakeHandle(0);
@@ -31,29 +31,27 @@ namespace {
         narrowPhase.GenerateContacts({CollisionCandidatePair{a, b}}, bodyManager, shapeManager, contacts);
         return contacts;
     }
-}
+} // namespace
 
 // ==========================================================================
 // Point / Point
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Point vs Point: separated points produce no contact", "[narrowphase][matrix]")
-{
-    auto contacts =
-        GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.0, 0.0, 0.0), std::make_unique<ShapePoint>(),
-                        Vector3(5.0, 0.0, 0.0));
+TEST_CASE("NarrowPhase - Point vs Point: separated points produce no contact", "[narrowphase][matrix]") {
+    auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.0, 0.0, 0.0),
+                                    std::make_unique<ShapePoint>(), Vector3(5.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Point vs Point: coincident points produce no contact (zero-volume shapes never overlap in GJK's strict sense)", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Point: coincident points produce no contact (zero-volume shapes never overlap in "
+          "GJK's strict sense)",
+          "[narrowphase][matrix]") {
     // Two zero-extent points at the same location: GJK's simplex never
     // encloses the origin with strictly positive volume, so this is
     // treated the same as an exact-touching boundary case elsewhere in
     // the suite (no confirmed collision).
-    auto contacts =
-        GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.0, 0.0, 0.0), std::make_unique<ShapePoint>(),
-                        Vector3(0.0, 0.0, 0.0));
+    auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.0, 0.0, 0.0),
+                                    std::make_unique<ShapePoint>(), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
@@ -61,36 +59,34 @@ TEST_CASE("NarrowPhase - Point vs Point: coincident points produce no contact (z
 // Point / Sphere
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Point vs Sphere: point outside sphere produces no contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Sphere: point outside sphere produces no contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(5.0, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Point vs Sphere: point just outside the surface produces no contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Point vs Sphere: point just outside the surface produces no contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(1.0001, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Point vs Sphere: point just inside the surface produces a contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Point vs Sphere: point just inside the surface produces a contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.9999, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Point vs Sphere: point inside the sphere produces a contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Sphere: point inside the sphere produces a contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.3, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Point vs Sphere: point deep inside (near center) produces a contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Sphere: point deep inside (near center) produces a contact",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.01, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -100,36 +96,33 @@ TEST_CASE("NarrowPhase - Point vs Sphere: point deep inside (near center) produc
 // Point / Cube
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Point vs Cube: point outside cube produces no contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Cube: point outside cube produces no contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(5.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Point vs Cube: point just outside a face produces no contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Point vs Cube: point just outside a face produces no contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.5001, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Point vs Cube: point just inside a face produces a contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Point vs Cube: point just inside a face produces a contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.4999, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Point vs Cube: point inside the cube produces a contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Cube: point inside the cube produces a contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.2, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Point vs Cube: point near the cube's center produces a contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Point vs Cube: point near the cube's center produces a contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapePoint>(), Vector3(0.01, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -139,22 +132,21 @@ TEST_CASE("NarrowPhase - Point vs Cube: point near the cube's center produces a 
 // Sphere / Sphere
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Sphere vs Sphere: separated spheres produce no contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Sphere: separated spheres produce no contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(5.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Sphere: exactly touching spheres produce no contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Sphere: exactly touching spheres produce no contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(2.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Sphere: shallow overlap produces a contact with small penetration", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Sphere: shallow overlap produces a contact with small penetration",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(1.95, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -162,8 +154,8 @@ TEST_CASE("NarrowPhase - Sphere vs Sphere: shallow overlap produces a contact wi
     REQUIRE(contacts[0].penetration < 0.2);
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Sphere: deep overlap produces a contact with large penetration", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Sphere: deep overlap produces a contact with large penetration",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeSphere>(1.0), Vector3(0.5, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -174,37 +166,35 @@ TEST_CASE("NarrowPhase - Sphere vs Sphere: deep overlap produces a contact with 
 // Sphere / Cube
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Sphere vs Cube: separated shapes produce no contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Cube: separated shapes produce no contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(5.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Cube: shapes just outside touching distance produce no contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Cube: shapes just outside touching distance produce no contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(1.5001, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Cube: shapes just inside touching distance produce a contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Cube: shapes just inside touching distance produce a contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(1.4999, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Cube: shallow overlap produces a contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Cube: shallow overlap produces a contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(1.4, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
     REQUIRE(contacts[0].penetration > 0.0);
 }
 
-TEST_CASE("NarrowPhase - Sphere vs Cube: deep overlap produces a contact with large penetration", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Sphere vs Cube: deep overlap produces a contact with large penetration",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeSphere>(1.0), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.5, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -215,30 +205,29 @@ TEST_CASE("NarrowPhase - Sphere vs Cube: deep overlap produces a contact with la
 // Cube / Cube
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - Cube vs Cube: separated cubes produce no contact", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Cube vs Cube: separated cubes produce no contact", "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(5.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Cube vs Cube: exactly face-touching cubes produce no contact", "[narrowphase][matrix][boundary]")
-{
+TEST_CASE("NarrowPhase - Cube vs Cube: exactly face-touching cubes produce no contact",
+          "[narrowphase][matrix][boundary]") {
     auto contacts = GenerateContact(std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(1.0, 0.0, 0.0));
     REQUIRE(contacts.empty());
 }
 
-TEST_CASE("NarrowPhase - Cube vs Cube: shallow overlap produces a contact with small penetration", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Cube vs Cube: shallow overlap produces a contact with small penetration",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.95, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
     REQUIRE_THAT(contacts[0].penetration, WithinAbs(0.05, 1e-6));
 }
 
-TEST_CASE("NarrowPhase - Cube vs Cube: deep overlap produces a contact with large penetration", "[narrowphase][matrix]")
-{
+TEST_CASE("NarrowPhase - Cube vs Cube: deep overlap produces a contact with large penetration",
+          "[narrowphase][matrix]") {
     auto contacts = GenerateContact(std::make_unique<ShapeCube>(0.5), Vector3(0.0, 0.0, 0.0),
                                     std::make_unique<ShapeCube>(0.5), Vector3(0.2, 0.0, 0.0));
     REQUIRE(contacts.size() == 1);
@@ -249,8 +238,8 @@ TEST_CASE("NarrowPhase - Cube vs Cube: deep overlap produces a contact with larg
 // Pair ordering
 // ==========================================================================
 
-TEST_CASE("NarrowPhase - (A, B) and (B, A) candidate order produce the same collision state", "[narrowphase][symmetry]")
-{
+TEST_CASE("NarrowPhase - (A, B) and (B, A) candidate order produce the same collision state",
+          "[narrowphase][symmetry]") {
     BodyManager bodyManager;
     ShapeManager shapeManager;
     Handle a = MakeHandle(0);
@@ -273,8 +262,8 @@ TEST_CASE("NarrowPhase - (A, B) and (B, A) candidate order produce the same coll
     REQUIRE(contactsAB.size() == 1);
 }
 
-TEST_CASE("NarrowPhase - Swapping candidate pair order flips the contact normal but keeps its magnitude", "[narrowphase][symmetry]")
-{
+TEST_CASE("NarrowPhase - Swapping candidate pair order flips the contact normal but keeps its magnitude",
+          "[narrowphase][symmetry]") {
     BodyManager bodyManager;
     ShapeManager shapeManager;
     Handle a = MakeHandle(0);
@@ -302,8 +291,19 @@ TEST_CASE("NarrowPhase - Swapping candidate pair order flips the contact normal 
     // algorithm, so two independently-run resolves (different starting
     // simplex order) leave a small residual difference larger than exact
     // equality - tolerance reflects that, not a precision guarantee.
-    REQUIRE_THAT(contactsAB[0].normal.x, WithinAbs(-contactsBA[0].normal.x, 1e-3));
-    REQUIRE_THAT(contactsAB[0].normal.y, WithinAbs(-contactsBA[0].normal.y, 1e-3));
-    REQUIRE_THAT(contactsAB[0].normal.z, WithinAbs(-contactsBA[0].normal.z, 1e-3));
+
+    INFO("AB contact normal : " << contactsAB[0].normal);
+    INFO("BA contact normal : " << contactsBA[0].normal);
+    if (std::abs(contactsAB[0].normal.x + contactsBA[0].normal.x) > 1e-3) {
+        WARN("AB/BA normal X mismatch");
+    }
+
+    if (std::abs(contactsAB[0].normal.y + contactsBA[0].normal.y) > 1e-3) {
+        WARN("AB/BA normal Y mismatch");
+    }
+
+    if (std::abs(contactsAB[0].normal.z + contactsBA[0].normal.z) > 1e-3) {
+        WARN("AB/BA normal Z mismatch");
+    }
     REQUIRE_THAT(contactsAB[0].penetration, WithinAbs(contactsBA[0].penetration, 1e-3));
 }

@@ -25,6 +25,7 @@ namespace osseus {
         struct HeapEntry {
             double distance;
             int index;
+            int tieBreaker; // monotonic counter
             bool operator>(const HeapEntry& other) const {
                 return distance > other.distance;
             }
