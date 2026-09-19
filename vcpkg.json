@@ -1,6 +1,7 @@
 {
 	"name": "osseus-engine-lib",
 	"version-string": "0.0.1",
+	"license" : "MIT",
 	"dependencies" : [
 		"catch2",
 		"sfml"

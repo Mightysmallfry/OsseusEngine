@@ -13,7 +13,7 @@ namespace sandbox {
         private:
         osseus::UniversalGravity universalGravity_;
 
-        const std::size_t bodyCount = 1000;
+        const std::size_t bodyCount = 3000;
         const double mass = 100.0;
 
         double boundaryRadius_ = 0.0;
